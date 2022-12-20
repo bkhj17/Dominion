@@ -1,19 +1,21 @@
 #pragma once
-class GameManager
+#include "Framework/Utilities/Singleton.h"
+
+class GameManager : public Singleton<GameManager>
 {
 private:
+	friend class Singleton;
+
 	GameManager();
 	~GameManager();
 public:
-	static GameManager* Get() { if (instance == nullptr) instance = new GameManager; return instance; }
-	static void Delete() { if (instance != nullptr) delete instance; }
 	void Init(HWND hWnd);
 	void Update();
 	void Render();
 
 	HWND GetHWND() { return hWnd; }
+
 private:
-	static GameManager* instance;
 
 	Scene* scene = nullptr;
 

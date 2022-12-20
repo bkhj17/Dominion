@@ -15,7 +15,6 @@ HomeworkScene221219::~HomeworkScene221219()
 		if (vRect[i] != nullptr)
 			delete vRect[i];
 	}
-
 }
 
 void HomeworkScene221219::Init()
@@ -24,27 +23,29 @@ void HomeworkScene221219::Init()
 
 void HomeworkScene221219::Update()
 {
-	clock_t now = (clock()/50)%1000;
+	clock_t now = clock();
 
-	if (nextVanishTime <= now) {
-		if (nextShowRect != nextVanishRect) {
-			nextVanishTime = (now + rand() % 2+2) % 1000;
-			(++nextVanishRect) %= MAX_RECT;
+	for (int i = 0; i < nShow; i++) {
+		if (vRect[i]->VanishTime() <= now) {
+			if (--nShow > 0) {
+				VanishingRect* tmp = vRect[i];
+				vRect[i] = vRect[nShow];
+				vRect[nShow] = tmp;
+			}
 		}
 	}
 
 	if (nextShowTime <= now) {
-		if ((nextShowRect + 1) % MAX_RECT != nextVanishRect) {
-			nextShowTime = (now + 1) % 1000;
-			(++nextShowRect) %= MAX_RECT;
-			vRect[nextShowRect]->Init();
+		if (nShow < MAX_RECT) {
+			nextShowTime = now + rand() % (MAX_SHOW_TIME-MIN_SHOW_TIME)+ MIN_SHOW_TIME;
+			vRect[nShow++]->Init();
 		}
 	}
 }
 
 void HomeworkScene221219::Render(HDC hdc)
 {
-	for (int i = nextVanishRect; i != nextShowRect; (++i) %= MAX_RECT) {
+	for (int i = 0; i != nShow; (++i) %= MAX_RECT) {
 		vRect[i]->Render(hdc);
 	}
 }
@@ -63,14 +64,16 @@ void HomeworkScene221219::VanishingRect::Init()
 	shape = (SHAPE)(rand() % 2);
 
 	GetClientRect(GameManager::Get()->GetHWND(), &winSize);
-
+	
 	if (brush != nullptr)
 		DeleteObject(brush);
 	brush = CreateSolidBrush(RGB(rand() % 256, rand() % 256, rand() % 256));
 
-	rect = Rect(rand() % 100 + 10, rand() % 100 + 10);
-	rect.Pos().x = rand() % (winSize.right-rect.GetSize().x)+rect.GetSize().x/2;
-	rect.Pos().y = rand() % (winSize.bottom-rect.GetSize().y) + rect.GetSize().y / 2;
+	rect;
+	
+	rect.Pos().x = Random(rect.GetSize().x * 0.5f, winSize.right - rect.GetSize().x*0.5f);
+	rect.Pos().y = Random(rect.GetSize().y * 0.5f, winSize.right - rect.GetSize().y * 0.5f);
+	vanishTime = clock() + rand()%(MAX_VANISH_TIME-MIN_VANISH_TIME) + MIN_VANISH_TIME;
 
 }
 
@@ -87,10 +90,10 @@ void HomeworkScene221219::VanishingRect::Render(HDC hdc)
 		SelectObject(hdc, origin);
 	}
 	else {
-		int left = rect.Pos().x - rect.GetSize().x / 2;
-		int right = rect.Pos().x + rect.GetSize().x / 2;
-		int top = rect.Pos().y - rect.GetSize().y / 2;
-		int bottom = rect.Pos().y + rect.GetSize().y / 2;
+		int left = (int)(rect.Pos().x - rect.GetSize().x *0.5f);
+		int right = (int)(rect.Pos().x + rect.GetSize().x * 0.5f);
+		int top = (int)(rect.Pos().y - rect.GetSize().y * 0.5f);
+		int bottom = (int)(rect.Pos().y + rect.GetSize().y * 0.5f);
 
 		if (shape == SHAPE::ELLIPSE) {
 			auto origin = SelectObject(hdc, brush);

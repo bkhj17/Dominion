@@ -1,12 +1,13 @@
 #pragma once
 
-class HomeworkScene221219 :
-    public Scene
+class HomeworkScene221219 : public Scene
 {
-    static const int MAX_RECT = 30;
-
+    static const int MAX_RECT = 300;
+    static const int MIN_SHOW_TIME = 0;
+    static const int MAX_SHOW_TIME = 50;
     class VanishingRect {
-
+        static const int MIN_VANISH_TIME = 0;
+        static const int MAX_VANISH_TIME = 1000;
     public:
         VanishingRect();
         ~VanishingRect();
@@ -20,14 +21,16 @@ class HomeworkScene221219 :
 
         void Update();
         void Render(HDC hdc);
+
+        const clock_t& VanishTime() { return vanishTime; }
     private:
+        RECT winSize = RECT();
+        SHAPE shape = SHAPE::RECT;
+        Rect rect = Rect();
+        HBRUSH brush = nullptr;
 
-        RECT winSize;
-        SHAPE shape;
-        Rect rect;
-        HBRUSH brush;
+        clock_t vanishTime = 0;
     };
-
 
 public:
     HomeworkScene221219();
@@ -41,6 +44,8 @@ public:
 
 
 private:
+    int nShow = 0;
+
     vector<VanishingRect*> vRect;
 
     int nextShowRect = 0;

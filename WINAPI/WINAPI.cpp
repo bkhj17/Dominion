@@ -55,8 +55,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     return (int) msg.wParam;
 }
 
-
-
 //
 //  함수: MyRegisterClass()
 //
@@ -101,8 +99,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    RECT size = { 0, 0, WIN_WIDTH, WIN_HEIGHT };
 
+   //실제 창 크기 얻기
    AdjustWindowRect(&size, WS_OVERLAPPEDWINDOW, true);
 
+   //창 생성
    HWND hWnd = CreateWindowW(szWindowClass, title, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, size.right-size.left, size.bottom-size.top, nullptr, nullptr, hInstance, nullptr);
 
@@ -129,7 +129,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 
 POINT rectPos = { 100, 100 };
-POINT mousePos = {};
+Vector2 mousePos = {};
 
 //hWnd :    윈도우 창 컨트롤 핸들
 //message(WM 시리즈) : 주 메세지
@@ -170,6 +170,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps; //그리기 속성 : 크기, 색 등등
             HDC hdc = BeginPaint(hWnd, &ps);    //hWnd 컨택스트 소환
 
+
+
             EndPaint(hWnd, &ps);    //그리기 종료 및 화면에 전달
 
         }
@@ -177,8 +179,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEMOVE:
     {
         //lPatam
-        mousePos.x = LOWORD(lParam); //보정 필수
-        mousePos.y = HIWORD(lParam);
+        mousePos.x = (float)LOWORD(lParam); //보정 필수
+        mousePos.y = (float)HIWORD(lParam);
     }
 #pragma endregion
     case WM_TIMER:

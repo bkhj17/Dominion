@@ -2,9 +2,7 @@
 
 TutorialScene::TutorialScene()
 {
-    rect = new Rect(50, 50);
-    rect->Pos() = { (long)CENTER_X, (long)CENTER_Y };
-
+    rect = new Rect(Vector2((long)CENTER_X, (long)CENTER_Y), Vector2(50, 50));
     hBrush = CreateSolidBrush(RGB(0, 255, 255));
 }
 

@@ -22,6 +22,9 @@
 #include <memory.h>
 #include <tchar.h>
 */
+#include <cmath>
+#include <cstring>
+
 // c++ 헤더
 #include <iostream>
 
@@ -30,11 +33,30 @@
 #include <stack>
 #include <queue>
 #include <map>
+#include <unordered_map>
 #include <algorithm>
-
 using namespace std;
 
-#include "Basic/Rect.h"
+//Framework
+#include "Framework/Math/Vector2.h"
+#include "Framework/Math/GameMath.h"
+using namespace GameMath;
+
+#include "Framework/Utilities/Singleton.h"
+#include "Framework/Utilities/Timer.h"
+#include "Framework/Utilities/KeyBoard.h"
+
+#define DELTA			Timer::Get()->GetElapsedTime()
+
+#define KEY_DOWN(k)		KeyBoard::Get()->Down(k)
+#define KEY_UP(k)		KeyBoard::Get()->Up(k)
+#define KEY_PRESS(k)	KeyBoard::Get()->Press(k)
+
+#include "Object/Basic/GameObject.h"
+#include "Object/Basic/Rect.h"
+#include "Object/Basic/Circle.h"
+#include "Object/Spawn/SpawnObject.h"
+#include "Object/Spawn/SpawnManager.h"
 
 //사용자 정의 헤더
 #include "WINAPI.h"
@@ -46,3 +68,5 @@ using namespace std;
 
 //Manager Header
 #include "Manager/GameManager.h"
+
+extern Vector2 mousePos;
