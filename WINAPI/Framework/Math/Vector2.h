@@ -62,7 +62,7 @@ struct Vector2
 		y /= length;
 	}
 
-	Vector2 Normarlized() const {
+	Vector2 GetNormarlized() const {
 		float length = Length();
 		return Vector2(x / length, y / length);
 	}

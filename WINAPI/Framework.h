@@ -7,11 +7,25 @@
 #include "targetver.h"
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.
 //사용자 정의 상수
-#define WIN_WIDTH	1280
-#define WIN_HEIGHT	720
+#define WIN_START_X 100
+#define WIN_START_Y 100
+
+#define WIN_WIDTH	640
+#define WIN_HEIGHT	890
 
 #define CENTER_X	(WIN_WIDTH * 0.5f)
 #define CENTER_Y	(WIN_HEIGHT * 0.5f)
+
+#define PI 3.14f
+
+#define RED RGB(255,0,0)
+#define GREEN RGB(0,255,0)
+#define BLUE RGB(0,0,255)
+#define YELLOW RGB(255,255,0)
+#define CYAN RGB(0,255,255)
+#define MAGENTA RGB(255,0,255)
+#define BLACK RGB(0,0,0)
+#define WHITE RGB(255,255,255)
 // Windows 헤더 파일
 #include <windows.h>
 
@@ -36,6 +50,8 @@
 #include <unordered_map>
 #include <algorithm>
 #include <cmath>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 //Framework
@@ -46,6 +62,8 @@ using namespace GameMath;
 #include "Framework/Utilities/Singleton.h"
 #include "Framework/Utilities/Timer.h"
 #include "Framework/Utilities/KeyBoard.h"
+#include "Framework/Utilities/Utility.h"
+using namespace Utility;
 
 #define DELTA			Timer::Get()->GetElapsedTime()
 
@@ -67,8 +85,14 @@ using namespace GameMath;
 #include "Object/Manager/PoolingManager.h"
 #include "Object/Manager/BulletManager.h"
 #include "Object/Manager/EnemyManager.h"
+#include "Object/Manager/BrickManager.h"
 
 #include "Object/Shooting/Cannon.h"
+
+#include "Object/BrickOut/ControlBar.h"
+#include "Object/BrickOut/Ball.h"
+#include "Object/BrickOut/Brick.h"
+
 
 //사용자 정의 헤더
 #include "WINAPI.h"
@@ -81,3 +105,5 @@ using namespace GameMath;
 #include "Manager/GameManager.h"
 
 extern Vector2 mousePos;
+extern HWND hWnd;
+extern HINSTANCE hInst;

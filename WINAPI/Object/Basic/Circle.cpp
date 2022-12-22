@@ -37,8 +37,6 @@ bool Circle::IsCircleCollision(const Circle* circle) const
 
 bool Circle::IsRectCollision(const Rect* rect) const
 {
-
-
 	Vector2 edges[4] = {
 		{rect->Left(), rect->Top()},
 		{rect->Right(), rect->Top()},
@@ -51,7 +49,6 @@ bool Circle::IsRectCollision(const Rect* rect) const
 		&& rect->Right() > pos.x-radius
 		&& rect->Top() < pos.y+radius
 		&& rect->Bottom() > pos.y-radius) {
-
 
 		if (pos.x < rect->Left() && pos.y < rect->Top()) {
 			return IsPointCollision(edges[0]);

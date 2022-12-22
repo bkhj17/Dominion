@@ -19,7 +19,7 @@ void TutorialScene::Init()
 void TutorialScene::Update()
 {
     RECT winSize;
-    GetClientRect(GameManager::Get()->GetHWND(), &winSize);
+    GetClientRect(hWnd, &winSize);
 
     if (GetAsyncKeyState(VK_RIGHT)) {
         rect->pos.x += speed;

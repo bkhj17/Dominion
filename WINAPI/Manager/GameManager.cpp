@@ -3,19 +3,23 @@
 #include "Scenes/HomeworkScene221219.h"
 #include "Scenes/HomeworkScene221220.h"
 #include "Scenes/HomeworkScene221221.h"
+#include "Scenes/HomeworkScene221222.h"
 #include "Scenes/SpawnScene.h"
 #include "Scenes/CollisionScene.h"
 #include "Scenes/ShootingScene.h"
 #include "Scenes/AngleScene.h"
+#include "Scenes/BrickOutScene.h"
+#include "Scenes/BitmapScene.h"
 
 
 GameManager::GameManager()
 {
-	Timer::Get()->SetLockFPS(1000);
+	//Timer::Get()->SetLockFPS(1000);
 
-	scene = new HomeworkScene221221();
-	
+	Init();
 	KeyBoard::Get();
+
+	scene = new HomeworkScene221222();
 }
 
 GameManager::~GameManager()
@@ -24,18 +28,12 @@ GameManager::~GameManager()
 	Timer::Get()->Delete();
 }
 
-void GameManager::Init(HWND hWnd)
+void GameManager::Init()
 {
-	this->hWnd = hWnd;
-
 	hdc = GetDC(hWnd);
-
 	hBackDC = CreateCompatibleDC(hdc);
 	hBitmap = CreateCompatibleBitmap(hdc, WIN_WIDTH, WIN_HEIGHT);
 	SelectObject(hBackDC, hBitmap);
-
-	scene->Init();
-
 }
 
 void GameManager::Update()

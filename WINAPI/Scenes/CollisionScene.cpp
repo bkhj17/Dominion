@@ -8,7 +8,7 @@ CollisionScene::CollisionScene()
 	hRedBrush = CreateSolidBrush(RGB(255, 0, 0));
 	hBlueBrush = CreateSolidBrush(RGB(0, 0, 255));
 
-	objects.push_back(new Circle(center, 50.0f));
+	objects.push_back(new Rect(center, { 50.0f, 50.0f }));
 }
 
 CollisionScene::~CollisionScene()

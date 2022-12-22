@@ -7,6 +7,7 @@
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
+HWND hWnd;
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
@@ -54,7 +55,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
             }
         }
-
         else {
             GameManager::Get()->Update();
             GameManager::Get()->Render();
@@ -112,10 +112,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    AdjustWindowRect(&size, WS_OVERLAPPEDWINDOW, true);
 
    //창 생성
-   HWND hWnd = CreateWindowW(szWindowClass, title, WS_OVERLAPPEDWINDOW,
-       CW_USEDEFAULT, 0,                            //창 위치
+   hWnd = CreateWindowW(szWindowClass, title, WS_OVERLAPPEDWINDOW,
+       WIN_START_X, WIN_START_Y,                            //창 위치. CW_USEDEFAULT 는 랜덤
        size.right-size.left, size.bottom-size.top,  //창 크기
        nullptr, nullptr, hInstance, nullptr);
+
+   SetMenu(hWnd, nullptr);
 
    if (!hWnd)
    {
@@ -151,13 +153,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
-    case WM_CREATE: 
-        {   //시작할 때
-
-            //SetTimer(hWnd, 0, 10, nullptr);
-            GameManager::Get()->Init(hWnd);
-        }
-        break;
     case WM_COMMAND:  // 메뉴 관련 메세지
         {
             int wmId = LOWORD(wParam);
@@ -180,8 +175,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             PAINTSTRUCT ps; //그리기 속성 : 크기, 색 등등
             HDC hdc = BeginPaint(hWnd, &ps);    //hWnd 컨택스트 소환
-
-
 
             EndPaint(hWnd, &ps);    //그리기 종료 및 화면에 전달
 

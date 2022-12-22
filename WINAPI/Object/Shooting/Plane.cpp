@@ -84,7 +84,7 @@ void Plane::Damage()
 	if (hit) {
 		Timer::Get()->SetDeltaScale(0.0f);
 
-		MessageBox(GameManager::Get()->GetHWND(), L"Game Over", L"GameOver", MB_OK);
+		MessageBox(hWnd, L"Game Over", L"GameOver", MB_OK);
 		PostQuitMessage(0);
 	}
 
@@ -96,7 +96,7 @@ void Plane::Damage()
 
 		Timer::Get()->SetDeltaScale(0.0f);
 
-		MessageBox(GameManager::Get()->GetHWND(), L"Game Over", L"GameOver", MB_OK);
+		MessageBox(hWnd, L"Game Over", L"GameOver", MB_OK);
 		PostQuitMessage(0);
 	}
 

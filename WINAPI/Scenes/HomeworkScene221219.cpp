@@ -63,7 +63,7 @@ void HomeworkScene221219::VanishingRect::Init()
 {
 	shape = (SHAPE)(rand() % 2);
 
-	GetClientRect(GameManager::Get()->GetHWND(), &winSize);
+	GetClientRect(hWnd, &winSize);
 	
 	if (brush != nullptr)
 		DeleteObject(brush);

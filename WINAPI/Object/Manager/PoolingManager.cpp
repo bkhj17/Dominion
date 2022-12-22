@@ -7,7 +7,6 @@ PoolingManager::~PoolingManager()
 		for (GameObject* object : objects.second)
 			delete object;
 	}
-
 }
 
 void PoolingManager::Update()
@@ -36,4 +35,16 @@ GameObject* PoolingManager::Pop(string key)
 			return object;
 	}
 	return nullptr;
+}
+
+void PoolingManager::ClearObjects(string key)
+{
+	if (totalObjects.count(key) == 0)
+		return;
+
+	for (GameObject* object : totalObjects[key]) {
+		delete object;
+	}
+	totalObjects[key].clear();
+	totalObjects.erase(key);
 }

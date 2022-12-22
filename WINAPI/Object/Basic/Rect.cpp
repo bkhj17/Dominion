@@ -33,9 +33,9 @@ bool Rect::IsPointCollision(const Vector2& point) const
 		&& point.y > Top() && point.y < Bottom();
 }
 
-bool Rect::IsCircleCollision(const Circle* point) const
+bool Rect::IsCircleCollision(const Circle* circle) const
 {
-	return point->IsCollision(this);
+	return circle->IsCollision(this);
 }
 
 bool Rect::IsRectCollision(const Rect* rect) const

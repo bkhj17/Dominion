@@ -130,9 +130,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Framework\Utilities\Utility.h" />
+    <ClInclude Include="Object\Manager\BrickManager.h" />
+    <ClInclude Include="Object\BrickOut\Brick.h" />
+    <ClInclude Include="Object\BrickOut\Ball.h" />
+    <ClInclude Include="Object\BrickOut\ControlBar.h" />
+    <ClInclude Include="Scenes\BitmapScene.h" />
+    <ClInclude Include="Scenes\BrickOutScene.h" />
     <ClInclude Include="Object\Shooting\Cannon.h" />
     <ClInclude Include="Object\Basic\Line.h" />
     <ClInclude Include="Scenes\AngleScene.h" />
+    <ClInclude Include="Scenes\HomeworkScene221222.h" />
     <ClInclude Include="Scenes\HomeworkScene221221.h" />
     <ClInclude Include="Object\Manager\BulletManager.h" />
     <ClInclude Include="Framework\Utilities\KeyBoard.h" />
@@ -164,6 +172,13 @@
     <ClInclude Include="WINAPI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Framework\Utilities\Utility.cpp" />
+    <ClCompile Include="Object\Manager\BrickManager.cpp" />
+    <ClCompile Include="Object\BrickOut\Brick.cpp" />
+    <ClCompile Include="Object\BrickOut\Ball.cpp" />
+    <ClCompile Include="Object\BrickOut\ControlBar.cpp" />
+    <ClCompile Include="Scenes\BitmapScene.cpp" />
+    <ClCompile Include="Scenes\BrickOutScene.cpp" />
     <ClCompile Include="Object\Shooting\Cannon.cpp" />
     <ClCompile Include="Object\Basic\Line.cpp" />
     <ClCompile Include="Scenes\AngleScene.cpp" />
@@ -187,6 +202,7 @@
     <ClCompile Include="Scenes\HomeworkScene221219.cpp" />
     <ClCompile Include="Manager\GameManager.cpp" />
     <ClCompile Include="Object\Basic\Rect.cpp" />
+    <ClCompile Include="Scenes\HomeworkScene221222.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\ShootingScene.cpp" />
     <ClCompile Include="Scenes\TutorialScene.cpp" />

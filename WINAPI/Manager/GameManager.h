@@ -9,17 +9,13 @@ private:
 	GameManager();
 	~GameManager();
 public:
-	void Init(HWND hWnd);
+	void Init();
 	void Update();
 	void Render();
 
-	HWND GetHWND() { return hWnd; }
-
 private:
-
 	Scene* scene = nullptr;
 
-	HWND hWnd = nullptr;
 	HDC hdc = nullptr;
 	//백버퍼
 	HDC hBackDC = nullptr;		//메모리

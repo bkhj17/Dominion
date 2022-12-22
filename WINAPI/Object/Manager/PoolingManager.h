@@ -5,11 +5,12 @@ public:
 	~PoolingManager();
 
 	void Update();
-	void Render(HDC hdc);
+	virtual void Render(HDC hdc);
 	GameObject* Pop(string key);
 
 	virtual void CreateObjects(string key, UINT poolSize) = 0; 
 
+	void ClearObjects(string key);
 protected:
 	typedef vector<GameObject*> Objects;
 

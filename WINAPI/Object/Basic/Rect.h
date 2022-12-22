@@ -21,7 +21,8 @@ public:
 	float Bottom() const { return pos.y + size.y * 0.5f; }
 
 
-	const Vector2& GetSize() { return size; }
+	Vector2& GetSize() { return size; }
+	Vector2 Half() { return size / 2; }
 protected:
 	Vector2 size;
 };

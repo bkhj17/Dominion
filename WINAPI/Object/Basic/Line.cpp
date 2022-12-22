@@ -8,8 +8,8 @@ Line::Line(Vector2 start, Vector2 end)
 
 void Line::Render(HDC hdc)
 {
-	MoveToEx(hdc, pos.x, pos.y, nullptr);
-	LineTo(hdc, end.x, end.y);
+	MoveToEx(hdc, (int)pos.x, (int)pos.y, nullptr);
+	LineTo(hdc, (int)end.x, (int)end.y);
 }
 
 bool Line::IsPointCollision(const Vector2& point) const

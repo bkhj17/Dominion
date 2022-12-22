@@ -224,17 +224,32 @@ bool HomeworkScene221221::Ball1221::CollisionToRect(Rect* rect)
     Vector2 overlap;
     if(!boundary.IsRectCollision(rect, &overlap))
         return false;
-    if(abs(overlap.x - overlap.y) < radius){
+    if(overlap.x < radius && overlap.y < radius){
+        //모서리 충돌
+        int fx = distance.x > 0 ? 1 : -1;
+        pos.x += -fx * overlap.x;             //
+        int fy = distance.y > 0 ? 1 : -1;
+        pos.y += fy * overlap.y;             // 
+
         Vector2 v = (pos - rect->pos);
         distance.x = -distance.x + v.x;
         distance.y = -distance.y + v.y;
         distance.Normalize();
-    } 
-    else if (overlap.x > overlap.y)
-        distance.y = pos.y < rect->pos.y ? -abs(distance.y) : abs(distance.y);
-    else
-        distance.x = pos.x < rect->pos.x ? -abs(distance.x) : abs(distance.x);
-    
+    }
+    else if (overlap.x < overlap.y || overlap.y == rect->GetSize().y) {
+        //좌우 충돌
+        int f = distance.x > 0 ? 1 : -1;
+
+        pos.x += -f * overlap.x;             //
+        distance.x = -f * abs(distance.x);   //   
+    }
+    else {   
+        //상하 충돌
+        int f = distance.y > 0 ? 1 : -1;
+
+        pos.y += f * overlap.y;             //
+        distance.y = -f * abs(distance.y);   //
+    }
     return true;
 }
 
