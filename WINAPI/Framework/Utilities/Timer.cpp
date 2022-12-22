@@ -13,7 +13,6 @@ Timer::Timer()
 
 Timer::~Timer()
 {
-	
 }
 
 void Timer::Update()
@@ -21,10 +20,18 @@ void Timer::Update()
 	//(현재 진동수 - 지난 시간 진동수) * 1/1초당진동수 => 지난 시간(초단위)
 	QueryPerformanceCounter((LARGE_INTEGER*)&curTime);
 	elapsedTime = (float)(curTime - lastTime)*timeScale;
+
+	if (lockFPS != 0) {
+		while (elapsedTime < (1.0f / lockFPS)) {
+			QueryPerformanceCounter((LARGE_INTEGER*)&curTime);
+			elapsedTime = (float)(curTime - lastTime) * timeScale;
+		}
+	}
 	lastTime = curTime;
 
 	frameCount++;
 	oneSecCount += elapsedTime;
+
 	if (oneSecCount >= 1.0f) {	//1초 이상 지났다면
 		frameRate = frameCount;
 		frameCount = 0;

@@ -130,11 +130,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Object\Shooting\Cannon.h" />
+    <ClInclude Include="Object\Basic\Line.h" />
+    <ClInclude Include="Scenes\AngleScene.h" />
+    <ClInclude Include="Scenes\HomeworkScene221221.h" />
+    <ClInclude Include="Object\Manager\BulletManager.h" />
     <ClInclude Include="Framework\Utilities\KeyBoard.h" />
     <ClInclude Include="Object\Basic\Circle.h" />
     <ClInclude Include="Object\Basic\GameObject.h" />
+    <ClInclude Include="Object\Manager\EnemyManager.h" />
+    <ClInclude Include="Object\Shooting\Bullet.h" />
+    <ClInclude Include="Object\Shooting\Enemy.h" />
+    <ClInclude Include="Object\Shooting\Plane.h" />
+    <ClInclude Include="Object\Manager\PoolingManager.h" />
     <ClInclude Include="Scenes\CollisionScene.h" />
-    <ClInclude Include="DrawShape.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="Framework\Math\GameMath.h" />
     <ClInclude Include="Framework\Utilities\Singleton.h" />
@@ -144,6 +153,7 @@
     <ClInclude Include="Object\Basic\Rect.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scenes\Scene.h" />
+    <ClInclude Include="Scenes\ShootingScene.h" />
     <ClInclude Include="Scenes\SpawnScene.h" />
     <ClInclude Include="Object\Spawn\SpawnObject.h" />
     <ClInclude Include="Object\Spawn\SpawnManager.h" />
@@ -154,13 +164,23 @@
     <ClInclude Include="WINAPI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Object\Shooting\Cannon.cpp" />
+    <ClCompile Include="Object\Basic\Line.cpp" />
+    <ClCompile Include="Scenes\AngleScene.cpp" />
+    <ClCompile Include="Scenes\HomeworkScene221221.cpp" />
+    <ClCompile Include="Object\Manager\BulletManager.cpp" />
     <ClCompile Include="Framework\Utilities\KeyBoard.cpp" />
     <ClCompile Include="Object\Basic\Circle.cpp" />
     <ClCompile Include="Object\Basic\GameObject.cpp" />
+    <ClCompile Include="Object\Manager\EnemyManager.cpp" />
+    <ClCompile Include="Object\Shooting\Bullet.cpp" />
+    <ClCompile Include="Object\Shooting\Enemy.cpp" />
+    <ClCompile Include="Object\Shooting\Plane.cpp" />
+    <ClCompile Include="Object\Manager\PoolingManager.cpp" />
     <ClCompile Include="Scenes\CollisionScene.cpp" />
-    <ClCompile Include="DrawShape.cpp" />
     <ClCompile Include="Framework.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Framework.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Framework\Math\GameMath.cpp" />
     <ClCompile Include="Scenes\HomeworkScene221220.cpp" />
@@ -168,6 +188,7 @@
     <ClCompile Include="Manager\GameManager.cpp" />
     <ClCompile Include="Object\Basic\Rect.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
+    <ClCompile Include="Scenes\ShootingScene.cpp" />
     <ClCompile Include="Scenes\TutorialScene.cpp" />
     <ClCompile Include="Scenes\SpawnScene.cpp" />
     <ClCompile Include="Object\Spawn\SpawnObject.cpp" />

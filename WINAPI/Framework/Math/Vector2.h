@@ -55,13 +55,16 @@ struct Vector2
 		return x * value.y - y * value.x;
 	}
 
+	//¡§±‘»≠
 	void Normalize() {
 		float length = Length();
-		if (length < FLT_EPSILON && length > -FLT_EPSILON)
-			return;
-
 		x /= length;
 		y /= length;
+	}
+
+	Vector2 Normarlized() const {
+		float length = Length();
+		return Vector2(x / length, y / length);
 	}
 };
 

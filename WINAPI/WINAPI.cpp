@@ -40,15 +40,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WINAPI));
 
-    MSG msg;
+    MSG msg = {};
 
     // 기본 메시지 루프입니다:
-    while (GetMessage(&msg, nullptr, 0, 0))
+    while (msg.message != WM_QUIT)
     {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+
+            if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+            {
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+
+            }
+        }
+
+        else {
+            GameManager::Get()->Update();
+            GameManager::Get()->Render();
         }
     }
 
@@ -104,7 +113,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    //창 생성
    HWND hWnd = CreateWindowW(szWindowClass, title, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, size.right-size.left, size.bottom-size.top, nullptr, nullptr, hInstance, nullptr);
+       CW_USEDEFAULT, 0,                            //창 위치
+       size.right-size.left, size.bottom-size.top,  //창 크기
+       nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -143,7 +154,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE: 
         {   //시작할 때
 
-            SetTimer(hWnd, 0, 10, nullptr);
+            //SetTimer(hWnd, 0, 10, nullptr);
             GameManager::Get()->Init(hWnd);
         }
         break;
@@ -181,15 +192,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         //lPatam
         mousePos.x = (float)LOWORD(lParam); //보정 필수
         mousePos.y = (float)HIWORD(lParam);
+        break;
     }
 #pragma endregion
-    case WM_TIMER:
-        GameManager::Get()->Update();
-        GameManager::Get()->Render();
+	//case WM_TIMER:
+	//	GameManager::Get()->Update();
+	//	GameManager::Get()->Render();
 
-        break;
+	//	break;
     case WM_DESTROY: //창이 닫힐 때
-        KillTimer(hWnd, 0);
+        //KillTimer(hWnd, 0);
 
         GameManager::Get()->Delete();
 

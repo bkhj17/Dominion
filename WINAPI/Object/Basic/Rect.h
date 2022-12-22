@@ -10,9 +10,10 @@ public:
 
 	void Render(HDC hdc) override;
 
-	virtual bool IsCollision(const Vector2& point) const override;
-	bool IsCollision(const Circle* point) const;
-	bool IsCollision(const Rect* other) const;
+	virtual bool IsPointCollision(const Vector2& point) const override;
+	virtual bool IsRectCollision(const Rect* rect) const override;
+	virtual bool IsRectCollision(IN const Rect* rect, OUT Vector2* overlapSize) const;
+	virtual bool IsCircleCollision(const Circle* circle) const override;
 
 	float Left() const { return pos.x - size.x * 0.5f; }
 	float Right() const { return pos.x + size.x * 0.5f; }
@@ -22,8 +23,6 @@ public:
 
 	const Vector2& GetSize() { return size; }
 protected:
-
 	Vector2 size;
-
 };
 

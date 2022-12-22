@@ -35,6 +35,7 @@
 #include <map>
 #include <unordered_map>
 #include <algorithm>
+#include <cmath>
 using namespace std;
 
 //Framework
@@ -55,12 +56,22 @@ using namespace GameMath;
 #include "Object/Basic/GameObject.h"
 #include "Object/Basic/Rect.h"
 #include "Object/Basic/Circle.h"
+#include "Object/Basic/Line.h"
+
 #include "Object/Spawn/SpawnObject.h"
 #include "Object/Spawn/SpawnManager.h"
+#include "Object/Shooting/Bullet.h"
+#include "Object/Shooting/Plane.h"
+#include "Object/Shooting/Enemy.h"
+
+#include "Object/Manager/PoolingManager.h"
+#include "Object/Manager/BulletManager.h"
+#include "Object/Manager/EnemyManager.h"
+
+#include "Object/Shooting/Cannon.h"
 
 //사용자 정의 헤더
 #include "WINAPI.h"
-#include "DrawShape.h"
 
 //Scenes Header
 #include "Scenes/Scene.h"

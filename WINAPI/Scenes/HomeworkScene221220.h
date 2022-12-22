@@ -3,10 +3,10 @@
 class HomeworkScene221220 :
     public Scene
 {
-    class Plane : public Rect {
+    class Plane1220 : public Rect {
         static const Vector2 DEFAULT_SIZE;
     public:
-        Plane(Vector2 pos = { 0,0 });
+        Plane1220(Vector2 pos = { 0,0 });
 
         void Update();
         virtual void Render(HDC hdc) override;
@@ -29,11 +29,11 @@ class HomeworkScene221220 :
         Rect body;
     };
 
-    class Bullet : public Circle {
+    class Bullet1220 : public Circle {
         static const float DEFUALT_RADIUS;
         static const float DEFUALT_SPEED;
     public:
-        Bullet();
+        Bullet1220();
         void Init(Vector2 pos);
         void Update();
         void Destroy();
@@ -52,7 +52,7 @@ class HomeworkScene221220 :
 
         void Destroy();
     private:
-        float speed = 100.0f;
+        float speed = 1000.0f;
     };
 
 public:
@@ -72,9 +72,9 @@ private:
     void SpawnMonsters();
     void UpdateMonsters();
 
-    Plane* plane = nullptr;
+    Plane1220* plane = nullptr;
 
-    vector<Bullet*> bullets;
+    vector<Bullet1220*> bullets;
     vector<Monster*> monsters;
 
     HBRUSH hPlaneBrush = nullptr;

@@ -2,13 +2,19 @@
 #include "Scenes/TutorialScene.h"
 #include "Scenes/HomeworkScene221219.h"
 #include "Scenes/HomeworkScene221220.h"
+#include "Scenes/HomeworkScene221221.h"
 #include "Scenes/SpawnScene.h"
 #include "Scenes/CollisionScene.h"
+#include "Scenes/ShootingScene.h"
+#include "Scenes/AngleScene.h"
+
 
 GameManager::GameManager()
 {
-	scene = new HomeworkScene221220();
-	Timer::Get();
+	Timer::Get()->SetLockFPS(1000);
+
+	scene = new HomeworkScene221221();
+	
 	KeyBoard::Get();
 }
 
@@ -27,6 +33,8 @@ void GameManager::Init(HWND hWnd)
 	hBackDC = CreateCompatibleDC(hdc);
 	hBitmap = CreateCompatibleBitmap(hdc, WIN_WIDTH, WIN_HEIGHT);
 	SelectObject(hBackDC, hBitmap);
+
+	scene->Init();
 
 }
 

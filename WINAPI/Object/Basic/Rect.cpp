@@ -26,19 +26,19 @@ void Rect::Render(HDC hdc)
 	Rectangle(hdc, left, top, right, bottom);
 }
 
-bool Rect::IsCollision(const Vector2& point) const
+bool Rect::IsPointCollision(const Vector2& point) const
 {
-	return Active()
+	return isActive
 		&& point.x > Left() && point.x < Right() 
 		&& point.y > Top() && point.y < Bottom();
 }
 
-bool Rect::IsCollision(const Circle* point) const
+bool Rect::IsCircleCollision(const Circle* point) const
 {
-	return false;
+	return point->IsCollision(this);
 }
 
-bool Rect::IsCollision(const Rect* rect) const
+bool Rect::IsRectCollision(const Rect* rect) const
 {
 	if(!isActive || !rect->isActive)
 		return false;
@@ -47,5 +47,23 @@ bool Rect::IsCollision(const Rect* rect) const
 		if (rect->Top() < Bottom() && rect->Bottom() > Top())
 			return true;
 	}
+	return false;
+}
+
+bool Rect::IsRectCollision(IN const Rect* rect, OUT Vector2* overlapSize) const
+{
+	if (!isActive || !rect->isActive)
+		return false;
+
+	float left = max(rect->Left(), Left());
+	float right = min(rect->Right(), Right());
+	float top = max(rect->Top(), Top());
+	float bottom = min(rect->Bottom(), Bottom());
+
+	overlapSize->x = right - left;
+	overlapSize->y = bottom - top;
+	if (overlapSize->x > 0 && overlapSize->y > 0)
+		return true;
+	
 	return false;
 }

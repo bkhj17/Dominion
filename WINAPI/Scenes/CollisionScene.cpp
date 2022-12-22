@@ -24,7 +24,7 @@ void CollisionScene::Init()
 
 void CollisionScene::Update()
 {
-	isCollision = objects[0]->IsCollision(mousePos);
+	isCollision = objects[0]->IsPointCollision(mousePos);
 }
 
 void CollisionScene::Render(HDC hdc)

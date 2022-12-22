@@ -1,17 +1,17 @@
-#include "framework.h"
+#include "Framework.h"
 #include "HomeworkScene221220.h"
 
-const Vector2 HomeworkScene221220::Plane::DEFAULT_SIZE = { 70.0f, 50.0f };
+const Vector2 HomeworkScene221220::Plane1220::DEFAULT_SIZE = { 70.0f, 50.0f };
 
 HomeworkScene221220::HomeworkScene221220()
 {
-	plane = new Plane();
-	plane->Pos().x = WIN_WIDTH * 0.5f;
-	plane->Pos().y = WIN_HEIGHT - plane->GetSize().y *0.5f;
+	plane = new Plane1220();
+	plane->pos.x = WIN_WIDTH * 0.5f;
+	plane->pos.y = WIN_HEIGHT - plane->GetSize().y *0.5f;
 
 	bullets.resize(200);
 	for (auto& bullet : bullets)
-		bullet = new Bullet;
+		bullet = new Bullet1220;
 
 	monsters.resize(20);
 	for (auto& monster : monsters)
@@ -41,7 +41,7 @@ void HomeworkScene221220::ShotBullet()
 {
 	if (plane->Shot()) {
 		for (auto bullet : bullets) {
-			if (!bullet->Active()) {
+			if (!bullet->isActive) {
 				bullet->Init(plane->ShotPos());
 				break;
 			}
@@ -53,6 +53,8 @@ void HomeworkScene221220::UpdateBullets()
 {
 	for (auto bullet : bullets) {
 		bullet->Update();
+		if (!bullet->isActive)
+			continue;
 
 		for (auto monster : monsters) {
 			if (bullet->IsCollision(monster)) {
@@ -69,7 +71,7 @@ void HomeworkScene221220::SpawnMonsters()
 {
 		int cnt = GameMath::Random(1, 4);
 		for (auto monster : monsters) {
-			if (!monster->Active()) {
+			if (!monster->isActive) {
 				monster->Init();
 				if (--cnt == 0)
 					break;
@@ -82,7 +84,7 @@ void HomeworkScene221220::UpdateMonsters()
 
 	for (auto monster : monsters) {
 		monster->Update();
-		if (monster->Pos().y > WIN_HEIGHT) {
+		if (monster->pos.y > WIN_HEIGHT) {
 			//게임오버
 			isPlaying = false;
 		}
@@ -95,6 +97,9 @@ void HomeworkScene221220::Init()
 
 void HomeworkScene221220::Update()
 {
+	if (!isPlaying)
+		return;
+
 	plane->Update();
 	if (KEY_PRESS(VK_SPACE) || KEY_DOWN(VK_SPACE))
 		ShotBullet();
@@ -113,7 +118,6 @@ void HomeworkScene221220::Render(HDC hdc)
 	SelectObject(hdc, hPlaneBrush);
 	plane->Render(hdc);
 
-
 	SelectObject(hdc, hBulletBrush);
 	for (auto bullet : bullets) {
 		bullet->Render(hdc);
@@ -127,12 +131,10 @@ void HomeworkScene221220::Render(HDC hdc)
 	if (!isPlaying) {
 		wstring outText = L"Game Over...";
 
-		TextOut(hdc, 
-			(int)CENTER_X - outText.size() * 5, 
-			(int)CENTER_Y - 10, 
-			outText.c_str(), 
-			(int)outText.size()
-		);
+		TextOut(hdc,
+			(int)(CENTER_X - outText.size() * 5),
+			(int)(CENTER_Y - 10),
+			outText.c_str(), (int)outText.size());
 	}
 
 
@@ -140,7 +142,7 @@ void HomeworkScene221220::Render(HDC hdc)
 	TextOut(hdc, WIN_WIDTH - 150, 0, str.c_str(), (int)str.size());
 }
 
-HomeworkScene221220::Plane::Plane(Vector2 pos)
+HomeworkScene221220::Plane1220::Plane1220(Vector2 pos)
 	: Rect(pos, DEFAULT_SIZE)
 {
 	shotPos = Vector2(0, -size.y / 2);
@@ -149,23 +151,23 @@ HomeworkScene221220::Plane::Plane(Vector2 pos)
 	body = Rect(-size.x * 0.2f, -size.y * 0.5f, size.x * 0.2f, size.y * 0.5f);
 }
 
-void HomeworkScene221220::Plane::Update()
+void HomeworkScene221220::Plane1220::Update()
 {
 	Move();
 
 	shotWait += DELTA;
 }
 
-void HomeworkScene221220::Plane::Render(HDC hdc)
+void HomeworkScene221220::Plane1220::Render(HDC hdc)
 {
 	if (!isActive)
 		return;
 
 	Rect renderBody = body;
-	renderBody.Pos() += pos;
+	renderBody.pos += pos;
 
 	Rect renderWing = wing;
-	renderWing.Pos() += pos;
+	renderWing.pos += pos;
 
 	Ellipse(hdc, 
 		(int)renderBody.Left(), 
@@ -175,7 +177,7 @@ void HomeworkScene221220::Plane::Render(HDC hdc)
 	renderWing.Render(hdc);
 
 }
-void HomeworkScene221220::Plane::Move()
+void HomeworkScene221220::Plane1220::Move()
 {
 	Vector2 move(0.0f, 0.0f);
 	if (KEY_DOWN(VK_LEFT) || KEY_PRESS(VK_LEFT))
@@ -199,7 +201,7 @@ void HomeworkScene221220::Plane::Move()
 		pos.y = WIN_HEIGHT - size.y * 0.5f;
 }
 
-bool HomeworkScene221220::Plane::Shot() {
+bool HomeworkScene221220::Plane1220::Shot() {
 	if (shotWait < shotRate)
 		return false;
 	
@@ -207,27 +209,27 @@ bool HomeworkScene221220::Plane::Shot() {
 	return true;
 }
 
-const float HomeworkScene221220::Bullet::DEFUALT_RADIUS = 10.0f;
-const float HomeworkScene221220::Bullet::DEFUALT_SPEED = 2000.0f;
+const float HomeworkScene221220::Bullet1220::DEFUALT_RADIUS = 10.0f;
+const float HomeworkScene221220::Bullet1220::DEFUALT_SPEED = 2000.0f;
 
-HomeworkScene221220::Bullet::Bullet()
+HomeworkScene221220::Bullet1220::Bullet1220()
 {
 	radius = DEFUALT_RADIUS;
 	isActive = false;
 }
 
-void HomeworkScene221220::Bullet::Destroy()
+void HomeworkScene221220::Bullet1220::Destroy()
 {
 	isActive = false;
 }
 
-void HomeworkScene221220::Bullet::Init(Vector2 pos)
+void HomeworkScene221220::Bullet1220::Init(Vector2 pos)
 {
 	isActive = true;
 	this->pos = pos;
 }
 
-void HomeworkScene221220::Bullet::Update()
+void HomeworkScene221220::Bullet1220::Update()
 {
 	if (!isActive)
 		return;

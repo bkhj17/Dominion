@@ -22,24 +22,24 @@ void TutorialScene::Update()
     GetClientRect(GameManager::Get()->GetHWND(), &winSize);
 
     if (GetAsyncKeyState(VK_RIGHT)) {
-        rect->Pos().x += speed;
-        if (rect->Pos().x > winSize.right - rect->GetSize().x / 2)
-            rect->Pos().x = winSize.right - rect->GetSize().x / 2;
+        rect->pos.x += speed;
+        if (rect->pos.x > winSize.right - rect->GetSize().x / 2)
+            rect->pos.x = winSize.right - rect->GetSize().x / 2;
     }
     if (GetAsyncKeyState(VK_LEFT)) {
-        rect->Pos().x -= speed;
-        if (rect->Pos().x < rect->GetSize().x / 2)
-            rect->Pos().x = rect->GetSize().x / 2;
+        rect->pos.x -= speed;
+        if (rect->pos.x < rect->GetSize().x / 2)
+            rect->pos.x = rect->GetSize().x / 2;
     }
     if (GetAsyncKeyState(VK_UP)) {
-        rect->Pos().y -= speed;
-        if (rect->Pos().y < rect->GetSize().y / 2)
-            rect->Pos().y = rect->GetSize().y / 2;
+        rect->pos.y -= speed;
+        if (rect->pos.y < rect->GetSize().y / 2)
+            rect->pos.y = rect->GetSize().y / 2;
     }
     if (GetAsyncKeyState(VK_DOWN)) {
-        rect->Pos().y += speed;
-        if (rect->Pos().y > winSize.bottom - rect->GetSize().y / 2)
-            rect->Pos().y = winSize.bottom - rect->GetSize().y / 2;
+        rect->pos.y += speed;
+        if (rect->pos.y > winSize.bottom - rect->GetSize().y / 2)
+            rect->pos.y = winSize.bottom - rect->GetSize().y / 2;
     }
 }
 

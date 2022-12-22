@@ -43,7 +43,7 @@ void SpawnManager::Update()
 		spawnObject->Update();
 	}
 
-	rect->Pos() = mousePos;
+	rect->pos = mousePos;
 }
 
 void SpawnManager::Render(HDC hdc)
