@@ -236,7 +236,7 @@ bool HomeworkScene221221::Ball1221::CollisionToRect(Rect* rect)
         distance.y = -distance.y + v.y;
         distance.Normalize();
     }
-    else if (overlap.x < overlap.y || overlap.y == rect->GetSize().y) {
+    else if (overlap.x < overlap.y || overlap.y == rect->size.y) {
         //ÁÂ¿ì Ãæµ¹
         int f = distance.x > 0 ? 1 : -1;
 

@@ -4,7 +4,7 @@ class PoolingManager
 public:
 	~PoolingManager();
 
-	void Update();
+	virtual void Update();
 	virtual void Render(HDC hdc);
 	GameObject* Pop(string key);
 

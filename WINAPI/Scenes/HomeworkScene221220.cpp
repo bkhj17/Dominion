@@ -7,7 +7,7 @@ HomeworkScene221220::HomeworkScene221220()
 {
 	plane = new Plane1220();
 	plane->pos.x = WIN_WIDTH * 0.5f;
-	plane->pos.y = WIN_HEIGHT - plane->GetSize().y *0.5f;
+	plane->pos.y = WIN_HEIGHT - plane->size.y *0.5f;
 
 	bullets.resize(200);
 	for (auto& bullet : bullets)

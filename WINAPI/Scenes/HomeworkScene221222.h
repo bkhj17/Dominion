@@ -3,7 +3,8 @@ class HomeworkScene221222 : public Scene {
 public:
 	static const float SPEED;
 
-	struct Texture1222 {
+	class Texture1222 {
+	public:
 		HDC memDC = nullptr;
 		int copyX = 0, copyY = 0, sizeX = 0, sizeY = 0;
 
@@ -14,6 +15,20 @@ public:
 		~Texture1222() { memDC = nullptr; }
 
 		void Render(HDC hdc, Vector2 pos, Vector2 size);
+	};
+
+	class LoopTexture1222 : public Texture1222 {
+	public:
+		LoopTexture1222(HDC memDC,
+			int copyX, int copyY, int sizeX, int sizeY, float speed = 0.3f)
+			: Texture1222(memDC, copyX, copyY, sizeX, sizeY)
+			, xSpeed(speed) {}
+
+		void Update();
+		void Render(HDC hdc, Vector2 pos, Vector2 size);
+	private:
+		float moveX = 0.0f;
+		float xSpeed;
 	};
 
 	class Bird1222 : public Circle {
@@ -28,8 +43,8 @@ public:
 
 		bool IsFall() { return pos.y > WIN_HEIGHT + radius; }
 	private:
+		float gravity = 300.0f;
 		float speed = 0;
-
 		Texture1222 *texture = nullptr;
 	};
 
@@ -120,5 +135,7 @@ private:
 	HDC memDC;
 	HBITMAP hBitmap;
 
-	Texture1222* bg = nullptr;
+	LoopTexture1222* bg = nullptr;
+	float bg_x = 0.0f;
+	float bgSpeed = 2.0f;
 };

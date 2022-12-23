@@ -71,8 +71,8 @@ void HomeworkScene221219::VanishingRect::Init()
 
 	rect;
 	
-	rect.pos.x = Random(rect.GetSize().x * 0.5f, winSize.right - rect.GetSize().x*0.5f);
-	rect.pos.y = Random(rect.GetSize().y * 0.5f, winSize.right - rect.GetSize().y * 0.5f);
+	rect.pos.x = Random(rect.size.x * 0.5f, winSize.right - rect.size.x*0.5f);
+	rect.pos.y = Random(rect.size.y * 0.5f, winSize.right - rect.size.y * 0.5f);
 	vanishTime = clock() + rand()%(MAX_VANISH_TIME-MIN_VANISH_TIME) + MIN_VANISH_TIME;
 
 }
@@ -90,10 +90,10 @@ void HomeworkScene221219::VanishingRect::Render(HDC hdc)
 		SelectObject(hdc, origin);
 	}
 	else {
-		int left = (int)(rect.pos.x - rect.GetSize().x *0.5f);
-		int right = (int)(rect.pos.x + rect.GetSize().x * 0.5f);
-		int top = (int)(rect.pos.y - rect.GetSize().y * 0.5f);
-		int bottom = (int)(rect.pos.y + rect.GetSize().y * 0.5f);
+		int left = (int)(rect.pos.x - rect.size.x *0.5f);
+		int right = (int)(rect.pos.x + rect.size.x * 0.5f);
+		int top = (int)(rect.pos.y - rect.size.y * 0.5f);
+		int bottom = (int)(rect.pos.y + rect.size.y * 0.5f);
 
 		if (shape == SHAPE::ELLIPSE) {
 			auto origin = SelectObject(hdc, brush);

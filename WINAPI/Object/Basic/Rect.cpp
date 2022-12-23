@@ -26,6 +26,19 @@ void Rect::Render(HDC hdc)
 	Rectangle(hdc, left, top, right, bottom);
 }
 
+void Rect::LineRender(HDC hdc)
+{
+
+	if (!isActive)
+		return;
+
+	MoveToEx(hdc, (int)Left(), (int)Top(), nullptr);
+	LineTo(hdc, (int)Left(), (int)Bottom());
+	LineTo(hdc, (int)Right(), (int)Bottom());
+	LineTo(hdc, (int)Right(), (int)Top());
+	LineTo(hdc, (int)Left(), (int)Top());
+}
+
 bool Rect::IsPointCollision(const Vector2& point) const
 {
 	return isActive

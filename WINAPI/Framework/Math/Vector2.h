@@ -6,6 +6,7 @@ struct Vector2
 
 	Vector2() = default;
 	Vector2(float x, float y) : x(x), y(y) {}
+	Vector2(POINT point) : x(point.x), y(point.y) {}
 
 	Vector2 operator+(const Vector2& value) const {
 		return Vector2(x + value.x, y + value.y);

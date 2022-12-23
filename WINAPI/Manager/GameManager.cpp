@@ -4,12 +4,15 @@
 #include "Scenes/HomeworkScene221220.h"
 #include "Scenes/HomeworkScene221221.h"
 #include "Scenes/HomeworkScene221222.h"
+#include "Scenes/Homework221223.h"
 #include "Scenes/SpawnScene.h"
 #include "Scenes/CollisionScene.h"
 #include "Scenes/ShootingScene.h"
 #include "Scenes/AngleScene.h"
 #include "Scenes/BrickOutScene.h"
 #include "Scenes/BitmapScene.h"
+#include "Scenes/FlappyBirdScene.h"
+#include "Scenes/AnimationScene.h"
 
 
 GameManager::GameManager()
@@ -19,13 +22,14 @@ GameManager::GameManager()
 	Init();
 	KeyBoard::Get();
 
-	scene = new HomeworkScene221222();
+	scene = new HomeworkScene221223();
 }
 
 GameManager::~GameManager()
 {
 	delete scene;
 	Timer::Get()->Delete();
+	Texture::Delete();
 }
 
 void GameManager::Init()

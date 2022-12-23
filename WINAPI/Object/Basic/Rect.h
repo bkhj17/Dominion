@@ -9,6 +9,8 @@ public:
 	Rect(float left, float top, float right, float bottom);
 
 	void Render(HDC hdc) override;
+	void LineRender(HDC hdc);
+
 
 	virtual bool IsPointCollision(const Vector2& point) const override;
 	virtual bool IsRectCollision(const Rect* rect) const override;
@@ -20,10 +22,8 @@ public:
 	float Top() const { return pos.y - size.y * 0.5f; }
 	float Bottom() const { return pos.y + size.y * 0.5f; }
 
-
-	Vector2& GetSize() { return size; }
 	Vector2 Half() { return size / 2; }
-protected:
+public:
 	Vector2 size;
 };
 

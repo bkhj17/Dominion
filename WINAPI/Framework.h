@@ -10,8 +10,8 @@
 #define WIN_START_X 100
 #define WIN_START_Y 100
 
-#define WIN_WIDTH	640
-#define WIN_HEIGHT	890
+#define WIN_WIDTH	1280
+#define WIN_HEIGHT	720
 
 #define CENTER_X	(WIN_WIDTH * 0.5f)
 #define CENTER_Y	(WIN_HEIGHT * 0.5f)
@@ -59,11 +59,16 @@ using namespace std;
 #include "Framework/Math/GameMath.h"
 using namespace GameMath;
 
+#include "Framework/Render/Texture.h"
+#include "Framework/Render/Animation.h"
+
 #include "Framework/Utilities/Singleton.h"
 #include "Framework/Utilities/Timer.h"
 #include "Framework/Utilities/KeyBoard.h"
 #include "Framework/Utilities/Utility.h"
 using namespace Utility;
+
+
 
 #define DELTA			Timer::Get()->GetElapsedTime()
 
@@ -75,23 +80,31 @@ using namespace Utility;
 #include "Object/Basic/Rect.h"
 #include "Object/Basic/Circle.h"
 #include "Object/Basic/Line.h"
+#include "Object/Basic/ImageRect.h"
 
 #include "Object/Spawn/SpawnObject.h"
 #include "Object/Spawn/SpawnManager.h"
+
 #include "Object/Shooting/Bullet.h"
 #include "Object/Shooting/Plane.h"
 #include "Object/Shooting/Enemy.h"
+
+#include "Object/Character/Megaman.h"
 
 #include "Object/Manager/PoolingManager.h"
 #include "Object/Manager/BulletManager.h"
 #include "Object/Manager/EnemyManager.h"
 #include "Object/Manager/BrickManager.h"
+#include "Object/Manager/PipeManager.h"
 
 #include "Object/Shooting/Cannon.h"
 
 #include "Object/BrickOut/ControlBar.h"
 #include "Object/BrickOut/Ball.h"
 #include "Object/BrickOut/Brick.h"
+
+#include "Object/FlappyBird/LandScape.h"
+#include "Object/FlappyBird/FlappyBird.h"
 
 
 //사용자 정의 헤더

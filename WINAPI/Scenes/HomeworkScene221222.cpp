@@ -22,7 +22,7 @@ HomeworkScene221222::HomeworkScene221222()
 		LR_LOADFROMFILE
 	);
 
-	bg = new Texture1222(memDC, 0, 0, 143, 255);
+	bg = new LoopTexture1222(memDC, 0, 0, 143, 255);
 	bird->SetTexture(new Texture1222(memDC, 264, 64, 17, 12));
 
 	PipeManager1222::Get()->SetTopTexture(new Texture1222(memDC, 303, 0, 24, 125));
@@ -55,15 +55,15 @@ void HomeworkScene221222::Update()
 		Timer::Get()->SetDeltaScale(0.0f);
 		gameOver = true;
 	}
+
+	bg->Update();
 }
 
 void HomeworkScene221222::Render(HDC hdc)
 {
 	SelectObject(memDC, hBitmap);
 
-	if (bg != nullptr) {
-		bg->Render(hdc, { CENTER_X, CENTER_Y }, { WIN_WIDTH, WIN_HEIGHT });
-	}
+	bg->Render(hdc, { 0, 0 }, {WIN_WIDTH, WIN_HEIGHT});
 
 	bird->Render(hdc);
 	PipeManager1222::Get()->Render(hdc);
@@ -75,7 +75,6 @@ void HomeworkScene221222::Render(HDC hdc)
 	else
 		ScoreManager::Get()->Render(hdc);
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -89,6 +88,45 @@ void HomeworkScene221222::Texture1222::Render(HDC hdc, Vector2 pos, Vector2 size
 			memDC,				//복사해올 영역
 			copyX, copyY,				//복사위치
 			sizeX, sizeY,	//복사할 크기
+			MAGENTA				//무시할 색(배경)
+		);
+	}
+}
+
+void HomeworkScene221222::LoopTexture1222::Update() {
+	moveX -= DELTA * xSpeed;
+	if (moveX < 0.0f)
+		moveX = 1.0f;
+}
+
+void HomeworkScene221222::LoopTexture1222::Render(HDC hdc, Vector2 pos, Vector2 size)
+{
+
+	if (memDC != nullptr) {
+		GdiTransparentBlt(
+			hdc,				//출력할 영역
+			(int)pos.x,
+			(int)pos.y,	//출력 위치
+			(int)(size.x * moveX),
+			(int)size.y,	//출력 크기
+			memDC,				//복사해올 영역
+			copyX + (int)((1.0f - moveX)*sizeX),
+			copyY,				//복사위치
+			(int)(sizeX * moveX), 
+			sizeY,	//복사할 크기
+			MAGENTA				//무시할 색(배경)
+		);
+		GdiTransparentBlt(
+			hdc,				//출력할 영역
+			(int)(pos.x + size.x * moveX),
+			(int)pos.y,	//출력 위치
+			(int)(size.x * (1.0f - moveX)), 
+			(int)size.y,	//출력 크기
+			memDC,				//복사해올 영역
+			copyX, 
+			copyY,				//복사위치
+			(int)(sizeX * (1.0f - moveX)), 
+			sizeY,	//복사할 크기
 			MAGENTA				//무시할 색(배경)
 		);
 	}
@@ -109,9 +147,9 @@ HomeworkScene221222::Bird1222::~Bird1222()
 
 void HomeworkScene221222::Bird1222::Update()
 {
-	speed += 200.0f * DELTA;
+	speed += gravity * DELTA;
 	if (KEY_DOWN(VK_SPACE)) {
-		speed = -200.0f;
+		speed = -gravity;
 	}
 
 	pos.y += speed * DELTA;
@@ -130,7 +168,6 @@ void HomeworkScene221222::Bird1222::Render(HDC hdc)
 	}
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const Vector2 HomeworkScene221222::Pipe1222::DEFAULT_SIZE = { 100.0f,300.0f };
@@ -147,7 +184,7 @@ void HomeworkScene221222::Pipe1222::Spawn()
 	isActive = true;
 	pass = false;
 	pos = { WIN_WIDTH + size.x, pos.y };
-	safeArea = { GameMath::Random(200.0f, WIN_HEIGHT - 400.0f), safeArea.y };
+	safeArea = { GameMath::Random(200.0f, WIN_HEIGHT - 200.0f), safeArea.y };
 	SetPipe();
 }
 
@@ -155,11 +192,11 @@ void HomeworkScene221222::Pipe1222::SetPipe()
 {
 	float topBottom = safeArea.x - safeArea.y * 0.5f;
 	topRect.pos = Vector2(pos.x, (Top() + topBottom) * 0.5f);
-	topRect.GetSize() = Vector2(size.x, abs(topBottom - Top()));
+	topRect.size = Vector2(size.x, abs(topBottom - Top()));
 
 	float bottomTop = safeArea.x + safeArea.y * 0.5f;
 	bottomRect.pos = Vector2(pos.x, (bottomTop + Bottom()) * 0.5f);
-	bottomRect.GetSize() = Vector2(size.x, abs(Bottom() - bottomTop));
+	bottomRect.size = Vector2(size.x, abs(Bottom() - bottomTop));
 }
 
 
@@ -183,21 +220,7 @@ void HomeworkScene221222::Pipe1222::Render(HDC hdc)
 
 	//__super::Render(hdc);
 	topRect.Render(hdc);
-	/*
-	Rectangle(hdc,
-		(int)Left(),
-		(int)Top(),
-		(int)Right(),
-		(int)(safeArea.x - safeArea.y * 0.5f));
-		*/
 	bottomRect.Render(hdc);
-	/*
-	Rectangle(hdc,
-		(int)Left(),
-		(int)(safeArea.x + safeArea.y * 0.5f),
-		(int)Right(),
-		(int)Bottom());
-		*/
 }
 
 void HomeworkScene221222::Pipe1222::RenderTexture(
@@ -210,14 +233,14 @@ void HomeworkScene221222::Pipe1222::RenderTexture(
 		return;
 
 	if (topTexture != nullptr) {
-		topTexture->Render(hdc, topRect.pos, topRect.GetSize());
+		topTexture->Render(hdc, topRect.pos, topRect.size);
 	}
 	else {
 		topRect.Render(hdc);
 	}
 	
 	if (bottomTexture != nullptr) {
-		bottomTexture->Render(hdc, bottomRect.pos, bottomRect.GetSize());
+		bottomTexture->Render(hdc, bottomRect.pos, bottomRect.size);
 	}
 	else {
 		bottomRect.Render(hdc);
@@ -348,5 +371,5 @@ void HomeworkScene221222::ScoreManager::ScoreUp()
 
 void HomeworkScene221222::ScoreManager::Render(HDC hdc) {
 	wstring str = L"Score : " + to_wstring(score);
-	TextOut(hdc, WIN_WIDTH - 500, 0, str.c_str(), str.length());
+	TextOut(hdc, WIN_WIDTH - 500, 0, str.c_str(), (int)str.length());
 }

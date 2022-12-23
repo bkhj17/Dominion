@@ -13,6 +13,7 @@ public:
 	void Update();
 	void Render();
 
+	HDC GetHDC() { return hdc; }
 private:
 	Scene* scene = nullptr;
 

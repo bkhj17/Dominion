@@ -52,7 +52,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             {
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
-
             }
         }
         else {
@@ -83,7 +82,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINAPI));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_WINAPI);
+    wcex.lpszMenuName   = nullptr;//MAKEINTRESOURCEW(IDC_WINAPI);
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -177,7 +176,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hWnd, &ps);    //hWnd 컨택스트 소환
 
             EndPaint(hWnd, &ps);    //그리기 종료 및 화면에 전달
-
         }
         break;
     case WM_MOUSEMOVE:

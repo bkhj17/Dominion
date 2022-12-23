@@ -23,23 +23,23 @@ void TutorialScene::Update()
 
     if (GetAsyncKeyState(VK_RIGHT)) {
         rect->pos.x += speed;
-        if (rect->pos.x > winSize.right - rect->GetSize().x / 2)
-            rect->pos.x = winSize.right - rect->GetSize().x / 2;
+        if (rect->pos.x > winSize.right - rect->size.x / 2)
+            rect->pos.x = winSize.right - rect->size.x / 2;
     }
     if (GetAsyncKeyState(VK_LEFT)) {
         rect->pos.x -= speed;
-        if (rect->pos.x < rect->GetSize().x / 2)
-            rect->pos.x = rect->GetSize().x / 2;
+        if (rect->pos.x < rect->size.x / 2)
+            rect->pos.x = rect->size.x / 2;
     }
     if (GetAsyncKeyState(VK_UP)) {
         rect->pos.y -= speed;
-        if (rect->pos.y < rect->GetSize().y / 2)
-            rect->pos.y = rect->GetSize().y / 2;
+        if (rect->pos.y < rect->size.y / 2)
+            rect->pos.y = rect->size.y / 2;
     }
     if (GetAsyncKeyState(VK_DOWN)) {
         rect->pos.y += speed;
-        if (rect->pos.y > winSize.bottom - rect->GetSize().y / 2)
-            rect->pos.y = winSize.bottom - rect->GetSize().y / 2;
+        if (rect->pos.y > winSize.bottom - rect->size.y / 2)
+            rect->pos.y = winSize.bottom - rect->size.y / 2;
     }
 }
 
