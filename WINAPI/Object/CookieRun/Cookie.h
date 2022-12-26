@@ -29,7 +29,7 @@ private:
 private:
 	Texture* texture;
 	ImageRect* imageRect;
-	Vector2 ImageOffset;
+	Vector2 imageOffset;
 
 	map<ActionType, Animation*> animations;
 	ActionType curType = ActionType::JUMP;

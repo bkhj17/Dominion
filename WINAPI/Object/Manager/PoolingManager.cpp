@@ -13,7 +13,8 @@ void PoolingManager::Update()
 {
 	for (pair<string, Objects> objects : totalObjects) {
 		for (GameObject* object : objects.second)
-			object->Update();
+			if(object->isActive)
+				object->Update();
 	}
 }
 

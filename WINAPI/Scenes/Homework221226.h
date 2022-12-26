@@ -1,5 +1,4 @@
 #pragma once
-
 class Player1226 : public Rect {
     enum class ActionType {
         IDLE, RUN, ATTACK, HIT, DEAD
@@ -32,21 +31,31 @@ public:
     Rect GetAttackRect();
 
     void SetDeadEvent(function<void ()> func);
+
+    void UpdateHPBar();
+    void RenderHPBar(HDC hdc);
+
+    void SetPos(Vector2 pos);
 private:
     void AttactEnd() {
         isAttack = false; 
-        SetAction(ActionType::IDLE);
+        SetAnimation();
     }
-    void HitEnd() { isHit = false; SetAction(ActionType::IDLE); }
+    void HitEnd() { isHit = false; SetAnimation(); }
 
     Texture* texture;
+
     ImageRect* imageRect;
-    Vector2 ImageOffset;
+    Vector2 imageOffset;
+
+    Rect* hpbar;
+    Vector2 hpOffset;
 
     map<ActionType, Animation*> animations;
     ActionType curAction;
 
     int curHp, maxHp = 50.0f;
+    float maxInverse;
     int attack = 10.0f;
     float attackRange = 50.0f;
 
@@ -61,8 +70,41 @@ private:
 
     Player1226* enemy = nullptr;
 
-
     int alpha = 255;
+
+    HBRUSH* hBrush;
+};
+
+class MonsterManager : public PoolingManager, public Singleton<MonsterManager> {
+    friend class Singleton;
+    MonsterManager();
+
+public:
+    int GetCount();
+    void SetEnemy(Player1226* player);
+    vector<GameObject*>& GetMonsters() { return totalObjects["Monster"]; }
+
+    void Collision(Rect* rect);
+private:
+    virtual void CreateObjects(string key, UINT poolSize);
+};
+
+class AttackBox1226 : public Rect, public Singleton<AttackBox1226>{
+    friend class Singleton;
+    AttackBox1226();
+    ~AttackBox1226();
+public:
+    void Update();
+    void Render(HDC hdc);
+
+    void Collision();
+
+    int attack = 0;
+private:
+    Animation* animation;
+    ImageRect* image;
+
+    float speed = 2000.0f;
 };
 
 class Homework221226 : public Scene
@@ -81,10 +123,8 @@ public:
     void GameEnd();
 private:
     Player1226* player;
-    Player1226* monster;
 
     ImageRect* bg;
-
     bool gameEnd = false;
 };
 

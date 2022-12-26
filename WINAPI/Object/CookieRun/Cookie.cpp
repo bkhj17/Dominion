@@ -5,7 +5,7 @@ Cookie::Cookie()
 	texture = Texture::Add(L"Textures/CookieRun.bmp", 11, 6);
 	imageRect = new ImageRect(texture);
 	size = { 120, 150 };
-	ImageOffset = { 0.0f, -110.0f };
+	imageOffset = { 0.0f, -110.0f };
 
 	CreateAnimations();
 	animations[curType]->Play();
@@ -26,7 +26,7 @@ void Cookie::Update()
 	Jump();
 	SetAnimation();
 	Crash();
-	imageRect->pos = pos+ImageOffset;
+	imageRect->pos = pos+imageOffset;
 
 	animations[curType]->Update();
 }
