@@ -30,7 +30,7 @@ void FlappyBird::Update()
 void FlappyBird::Render(HDC hdc)
 {
 	POINT frame = animation->GetFrame();
-	ImageRect::Render(hdc, true, animation->GetFrame());
+	ImageRect::Render(hdc, animation->GetFrame());
 	LineRender(hdc);
 }
 

@@ -16,7 +16,7 @@ class HomeworkScene221221 :
 
         bool isHoldBall = true;
 
-        Vector2 GetBarrelDist() const { return (barrel->end - barrel->pos).GetNormarlized(); }
+        Vector2 GetBarrelDist() const { return (barrel->end - barrel->pos).GetNormalized(); }
     private:
         float speed = 500.0f;
 

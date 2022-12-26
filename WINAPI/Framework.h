@@ -52,6 +52,7 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
+#include <functional>
 using namespace std;
 
 //Framework
@@ -106,6 +107,9 @@ using namespace Utility;
 #include "Object/FlappyBird/LandScape.h"
 #include "Object/FlappyBird/FlappyBird.h"
 
+#include "Object/CookieRun/Coin.h"
+#include "Object/CookieRun/Cookie.h"
+#include "Object/CookieRun/StageManager.h"
 
 //사용자 정의 헤더
 #include "WINAPI.h"

@@ -2,13 +2,12 @@
 
 unordered_map<wstring, Texture*> Texture::textures;
 
-Texture::Texture(wstring file, COLORREF transColor, UINT frameX, UINT frameY)
+Texture::Texture(wstring file, UINT frameX, UINT frameY, COLORREF transColor)
     : imageFrame{(long)frameX, (long)frameY}, transColor(transColor)
 {
     HDC hdc = GetDC(hWnd);
-    memDC = CreateCompatibleDC(memDC);
-    ReleaseDC(hWnd, hdc);
-
+    memDC = CreateCompatibleDC(hdc);
+    alphaMemDC = CreateCompatibleDC(hdc);
     hBitmap = (HBITMAP)LoadImage(hInst, file.c_str(), IMAGE_BITMAP,
         0, 0, LR_LOADFROMFILE);
 
@@ -19,6 +18,11 @@ Texture::Texture(wstring file, COLORREF transColor, UINT frameX, UINT frameY)
     imageSize = { bitmap.bmWidth, bitmap.bmHeight };
 
     cutSize = { imageSize.x / imageFrame.x, imageSize.y / imageFrame.y };
+
+    hAlphaBitmap = CreateCompatibleBitmap(hdc, imageSize.x, imageSize.y);
+    SelectObject(alphaMemDC, hAlphaBitmap);
+    
+    ReleaseDC(hWnd, hdc);
 }
 
 Texture::~Texture()
@@ -27,12 +31,12 @@ Texture::~Texture()
     DeleteObject(hBitmap);
 }
 
-Texture* Texture::Add(wstring file, COLORREF transColor, UINT frameX, UINT frameY)
+Texture* Texture::Add(wstring file, UINT frameX, UINT frameY, COLORREF transColor)
 {
     if(textures.count(file) > 0)
         return textures[file];
 
-    Texture* texture = new Texture(file, transColor, frameX, frameY);
+    Texture* texture = new Texture(file, frameX, frameY, transColor);
     textures[file] = texture;
     return texture;
 }
@@ -59,9 +63,10 @@ void Texture::Render(HDC hdc, Rect* rect, POINT curFrame, bool isTrans)
             0,
             SRCCOPY
         );
+        return;
     }
-    else {
-        GdiTransparentBlt(
+
+    GdiTransparentBlt(
             hdc,
             (int)rect->Left(),
             (int)rect->Top(),
@@ -74,6 +79,62 @@ void Texture::Render(HDC hdc, Rect* rect, POINT curFrame, bool isTrans)
             cutSize.y,
             transColor
         );
+}
+
+void Texture::Render(HDC hdc, Rect* rect, int alpha, POINT curFrame, bool isTrans)
+{
+    blendFunc.SourceConstantAlpha = alpha;
+
+    if (!isTrans) {
+        BitBlt(alphaMemDC,
+            (int)rect->Left(),
+            (int)rect->Top(),
+            (int)rect->size.x,
+            (int)rect->size.y,
+            hdc,
+            (int)rect->Left(),
+            (int)rect->Top(),
+            SRCCOPY
+        );
+        return;
     }
+
+    BitBlt(alphaMemDC,
+        0,
+        0,
+        cutSize.x,
+        cutSize.y,
+        hdc,
+        (int)rect->Left(),
+        (int)rect->Top(),
+        SRCCOPY
+    );
+
+	GdiTransparentBlt(
+		alphaMemDC,
+		0,
+		0,
+		cutSize.x,
+        cutSize.y,
+		memDC,
+		cutSize.x * curFrame.x,
+		cutSize.y * curFrame.y,
+		cutSize.x,
+		cutSize.y,
+		transColor
+	);
+	GdiAlphaBlend(
+		hdc,
+		(int)rect->Left(),
+		(int)rect->Top(),
+		(int)rect->size.x,
+		(int)rect->size.y,
+		alphaMemDC,
+		0,
+		0,
+		cutSize.x,
+        cutSize.y,
+		blendFunc
+	);
 
 }

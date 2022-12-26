@@ -1,13 +1,13 @@
 #pragma once
 class LandScape {
 public:
-	LandScape();
+	LandScape(wstring file);
 	~LandScape();
 
 	void Update();
 	void Render(HDC hdc);
 
-	void SetBgSpeed(float speed) { bgSpeed = speed; }
+	void SetSpeed(float speed) { bgSpeed = speed; }
 private:
 
 	vector<ImageRect*> bgs;

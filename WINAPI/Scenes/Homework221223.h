@@ -1,4 +1,16 @@
 #pragma once
+class Goal221223 : public ImageRect{
+public:
+	Goal221223(Texture * texture);
+	~Goal221223();
+
+	void Update();
+	void Render(HDC hdc);
+
+private:
+	Animation* animation = nullptr;
+};
+
 class Stage221223 {
 	const float SIZE_X = 400.0f;
 public:
@@ -15,7 +27,7 @@ public:
 
 	vector<ImageRect*> lands;
 	vector<ImageRect*> dusts;
-	ImageRect* goal;
+	Goal221223* goal;
 };
 
 //////////////////////////////////////////////////////////////////

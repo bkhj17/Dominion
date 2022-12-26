@@ -4,9 +4,10 @@
 
 Stage221223::Stage221223()
 {
-	Texture* GoalTexture = Texture::Add(L"Textures/1223/Goal.bmp", MAGENTA, 7, 1);
 
-	goal = new ImageRect(GoalTexture);
+	Texture* GoalTexture = Texture::Add(L"Textures/1223/Goal.bmp", 7, 1);
+
+	goal = new Goal221223(GoalTexture);
 	LoadStage("TextData/Homework221223/RunStage.csv");
 }
 
@@ -86,6 +87,7 @@ void Stage221223::Update(Vector2 velocity)
 		dust->pos.x -= velocity.x;
 	}
 
+	goal->Update();
 	goal->pos.x -= velocity.x;
 }
 
@@ -95,7 +97,7 @@ void Stage221223::Render(HDC hdc, Rect* screen)
 		return;
 
 	if (goal->IsRectCollision(screen))
-		goal->Render(hdc, true);
+		goal->Render(hdc);
 
 	for (auto land : lands) {
 		if (land->isActive && land->IsRectCollision(screen))
@@ -104,7 +106,7 @@ void Stage221223::Render(HDC hdc, Rect* screen)
 
 	for (auto dust : dusts) {
 		if (dust->isActive && dust->IsRectCollision(screen))
-			dust->Render(hdc, true);
+			dust->Render(hdc);
 	}
 }
 
@@ -147,7 +149,7 @@ HomeworkScene221223::HomeworkScene221223()
 
 	screen = new Rect(0.0f, 0.0f, WIN_WIDTH, WIN_HEIGHT);
 
-	landScape = new LandScape;
+	landScape = new LandScape(L"Textures/CookieRun/Background.bmp");
 }
 
 HomeworkScene221223::~HomeworkScene221223()
@@ -181,7 +183,7 @@ void HomeworkScene221223::Update()
 	stage->Update(velocity);
 	screen->pos.x += velocity.x * DELTA;
 	
-	landScape->SetBgSpeed(velocity.x * 2000.0f);
+	landScape->SetSpeed(velocity.x * 2000.0f);
 	landScape->Update();
 	if (isPlaying && megaman->Top() > screen->Bottom()) {
 		isPlaying = false;
@@ -197,4 +199,28 @@ void HomeworkScene221223::Render(HDC hdc)
 	landScape->Render(hdc);
 	stage->Render(hdc, screen);
 	megaman->Render(hdc);
+}
+
+Goal221223::Goal221223(Texture* texture)
+	:ImageRect(texture)
+{
+	animation = new Animation(texture->GetFrame());
+	animation->SetDefault();
+	animation->Play();
+}
+
+Goal221223::~Goal221223()
+{
+	if(animation)
+		delete animation;
+}
+
+void Goal221223::Update()
+{
+	animation->Update();
+}
+
+void Goal221223::Render(HDC hdc)
+{
+	ImageRect::Render(hdc, animation->GetFrame());
 }

@@ -1,10 +1,10 @@
 #include "framework.h"
 
-LandScape::LandScape()
+LandScape::LandScape(wstring file)
 {
 	for (int i = 0; i < 2; i++) {
-		ImageRect* bg = new ImageRect(L"Textures/background.bmp");
-		bg->pos = { CENTER_X + WIN_WIDTH*i, CENTER_Y };
+		ImageRect* bg = new ImageRect(file);
+		bg->pos = { bg->Half().x + bg->size.x * i,  bg->Half().y };
 		//bg->size = { WIN_WIDTH, WIN_HEIGHT };
 		bgs.push_back(bg);
 	}
@@ -23,7 +23,7 @@ void LandScape::Update()
 		bg->pos.x -= bgSpeed * DELTA;
 
 		if (bg->Right() <= 0.0f) {
-			bg->pos.x += WIN_WIDTH * bgs.size();
+			bg->pos.x += bg->size.x * bgs.size();
 		}
 	}
 }

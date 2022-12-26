@@ -8,7 +8,10 @@ public:
 		COLORREF transColor = MAGENTA);
 	~ImageRect() = default;
 
-	void Render(HDC hdc, bool isTrans = false, POINT curFrame = { 0,0 });
+
+	void Render(HDC hdc, POINT curFrame, bool isTrans = true);
+	void Render(HDC hdc, int alpha, POINT curFrame, bool isTrans = true);
+	virtual void Render(HDC hdc) override;
 
 protected:
 	Texture* texture;

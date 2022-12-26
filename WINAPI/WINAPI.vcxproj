@@ -130,8 +130,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Scenes\Homework221226.h" />
+    <ClInclude Include="Object\CookieRun\Cookie.h" />
     <ClInclude Include="Framework\Render\Animation.h" />
+    <ClInclude Include="MyFramework\MyMovement.h" />
+    <ClInclude Include="MyFramework\TestRect.h" />
+    <ClInclude Include="MyFramework\TestScene.h" />
     <ClInclude Include="Object\Character\Megaman.h" />
+    <ClInclude Include="Object\CookieRun\Coin.h" />
+    <ClInclude Include="Object\CookieRun\StageManager.h" />
     <ClInclude Include="Object\FlappyBird\FlappyBird.h" />
     <ClInclude Include="Framework\Render\Texture.h" />
     <ClInclude Include="Framework\Utilities\Utility.h" />
@@ -148,6 +155,7 @@
     <ClInclude Include="Object\Shooting\Cannon.h" />
     <ClInclude Include="Object\Basic\Line.h" />
     <ClInclude Include="Scenes\AngleScene.h" />
+    <ClInclude Include="Scenes\CookieRunScene.h" />
     <ClInclude Include="Scenes\FlappyBirdScene.h" />
     <ClInclude Include="Scenes\Homework221223.h" />
     <ClInclude Include="Scenes\HomeworkScene221222.h" />
@@ -182,8 +190,15 @@
     <ClInclude Include="WINAPI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Scenes\Homework221226.cpp" />
+    <ClCompile Include="Object\CookieRun\Cookie.cpp" />
     <ClCompile Include="Framework\Render\Animation.cpp" />
+    <ClCompile Include="MyFramework\MyMovement.cpp" />
+    <ClCompile Include="MyFramework\TestRect.cpp" />
+    <ClCompile Include="MyFramework\TestScene.cpp" />
     <ClCompile Include="Object\Character\Megaman.cpp" />
+    <ClCompile Include="Object\CookieRun\Coin.cpp" />
+    <ClCompile Include="Object\CookieRun\StageManager.cpp" />
     <ClCompile Include="Object\FlappyBird\FlappyBird.cpp" />
     <ClCompile Include="Framework\Render\Texture.cpp" />
     <ClCompile Include="Framework\Utilities\Utility.cpp" />
@@ -200,6 +215,7 @@
     <ClCompile Include="Object\Shooting\Cannon.cpp" />
     <ClCompile Include="Object\Basic\Line.cpp" />
     <ClCompile Include="Scenes\AngleScene.cpp" />
+    <ClCompile Include="Scenes\CookieRunScene.cpp" />
     <ClCompile Include="Scenes\FlappyBirdScene.cpp" />
     <ClCompile Include="Scenes\Homework221223.cpp" />
     <ClCompile Include="Scenes\HomeworkScene221221.cpp" />

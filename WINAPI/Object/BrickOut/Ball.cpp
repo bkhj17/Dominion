@@ -60,7 +60,7 @@ void Ball::AimControl()
 	aimingDirection->end.x = pos.x + cosf(aimingAngle) * aimLength;
 	aimingDirection->end.y = pos.y + -sinf(aimingAngle) * aimLength;
 
-	direction = (aimingDirection->end - pos).GetNormarlized();
+	direction = (aimingDirection->end - pos).GetNormalized();
 }
 
 void Ball::CollisionBorder()
@@ -90,7 +90,7 @@ void Ball::CollisionBar()
 	if (!barRect->IsCircleCollision(this))
 		return;
 	
-	direction = (pos - barRect->pos).GetNormarlized();
+	direction = (pos - barRect->pos).GetNormalized();
 }
 
 void Ball::CollisionBrick()

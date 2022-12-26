@@ -33,7 +33,7 @@ void Megaman::Update()
 void Megaman::Render(HDC hdc)
 {
 	bodyRect->LineRender(hdc);
-	ImageRect::Render(hdc, true, animations[curType]->GetFrame());
+	ImageRect::Render(hdc, animations[curType]->GetFrame(), true);
 }
 
 void Megaman::Move()

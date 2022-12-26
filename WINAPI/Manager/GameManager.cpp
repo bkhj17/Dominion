@@ -1,34 +1,34 @@
 #include "framework.h"
-#include "Scenes/TutorialScene.h"
-#include "Scenes/HomeworkScene221219.h"
-#include "Scenes/HomeworkScene221220.h"
-#include "Scenes/HomeworkScene221221.h"
-#include "Scenes/HomeworkScene221222.h"
-#include "Scenes/Homework221223.h"
-#include "Scenes/SpawnScene.h"
-#include "Scenes/CollisionScene.h"
-#include "Scenes/ShootingScene.h"
-#include "Scenes/AngleScene.h"
-#include "Scenes/BrickOutScene.h"
-#include "Scenes/BitmapScene.h"
-#include "Scenes/FlappyBirdScene.h"
-#include "Scenes/AnimationScene.h"
-
+//#include "Scenes/TutorialScene.h"
+//#include "Scenes/HomeworkScene221219.h"
+//#include "Scenes/HomeworkScene221220.h"
+//#include "Scenes/HomeworkScene221221.h"
+//#include "Scenes/HomeworkScene221222.h"
+//#include "Scenes/Homework221223.h"
+//#include "Scenes/SpawnScene.h"
+//#include "Scenes/CollisionScene.h"
+//#include "Scenes/ShootingScene.h"
+//#include "Scenes/AngleScene.h"
+//#include "Scenes/BrickOutScene.h"
+//#include "Scenes/BitmapScene.h"
+//#include "Scenes/FlappyBirdScene.h"
+//#include "Scenes/Homework221223.h"
+#include "Scenes/Homework221226.h"
+#include "Scenes/CookieRunScene.h"
+#include "MyFramework/TestScene.h"
 
 GameManager::GameManager()
 {
 	//Timer::Get()->SetLockFPS(1000);
 
 	Init();
-	KeyBoard::Get();
-
-	scene = new HomeworkScene221223();
+	scene = new Homework221226();
 }
 
 GameManager::~GameManager()
 {
 	delete scene;
-	Timer::Get()->Delete();
+	Timer::Delete();
 	Texture::Delete();
 }
 
@@ -38,6 +38,12 @@ void GameManager::Init()
 	hBackDC = CreateCompatibleDC(hdc);
 	hBitmap = CreateCompatibleBitmap(hdc, WIN_WIDTH, WIN_HEIGHT);
 	SelectObject(hBackDC, hBitmap);
+
+
+	Timer::Get();
+	KeyBoard::Get();
+	SetBkMode(hBackDC, TRANSPARENT);
+	SetTextColor(hdc, WHITE);
 }
 
 void GameManager::Update()

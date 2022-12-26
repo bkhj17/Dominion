@@ -8,7 +8,7 @@ public:
 	virtual void Render(HDC hdc);
 	GameObject* Pop(string key);
 
-	virtual void CreateObjects(string key, UINT poolSize) = 0; 
+	virtual void CreateObjects(string key, UINT poolSize) {};
 
 	void ClearObjects(string key);
 protected:

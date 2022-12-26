@@ -8,9 +8,8 @@ public:
 	Rect(Vector2 pos, Vector2 size);
 	Rect(float left, float top, float right, float bottom);
 
-	void Render(HDC hdc) override;
+	virtual void Render(HDC hdc) override;
 	void LineRender(HDC hdc);
-
 
 	virtual bool IsPointCollision(const Vector2& point) const override;
 	virtual bool IsRectCollision(const Rect* rect) const override;

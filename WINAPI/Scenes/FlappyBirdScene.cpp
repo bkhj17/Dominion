@@ -3,7 +3,7 @@
 
 FlappyBirdScene::FlappyBirdScene()
 {
-	landScape = new LandScape;
+	landScape = new LandScape(L"Textures/background.bmp");
 	flappyBird = new FlappyBird();
 	flappyBird->pos = { WIN_WIDTH * 0.2f, CENTER_Y };
 	PipeManager::Get();

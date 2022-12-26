@@ -51,7 +51,7 @@ void Animation::SetDefault(bool loop, bool pingpong)
 		SetPingpong();
 }
 
-void Animation::SetPart(int start, int end, bool loop, bool pingpong)
+void Animation::SetPart(UINT start, UINT end, bool loop, bool pingpong)
 {
 	isLoop = loop;
 	action.clear();
@@ -66,7 +66,7 @@ void Animation::SetPart(int start, int end, bool loop, bool pingpong)
 
 void Animation::SetPingpong()
 {
-	for (int i = action.size() - 2; i >= 0; i--) {
+	for (int i = (int)action.size() - 2; i >= 0; i--) {
 		action.push_back(action[i]);
 	}
 }
@@ -74,4 +74,6 @@ void Animation::SetPingpong()
 void Animation::Stop()
 {
 	isPlay = false;
+	if(endEvent)
+		endEvent();
 }
