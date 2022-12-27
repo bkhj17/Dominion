@@ -64,6 +64,19 @@ void Animation::SetPart(UINT start, UINT end, bool loop, bool pingpong)
 		SetPingpong();
 }
 
+void Animation::SetArray(int* arr, int arrSize, bool loop, bool pingpong)
+{
+	isLoop = loop;
+	action.clear();
+
+	for (int i = 0; i < arrSize; i++) {
+		action.push_back(arr[i]);
+	}
+
+	if (pingpong)
+		SetPingpong();
+}
+
 void Animation::SetPingpong()
 {
 	for (int i = (int)action.size() - 2; i >= 0; i--) {

@@ -86,15 +86,18 @@ void Texture::Render(HDC hdc, Rect* rect, int alpha, POINT curFrame, bool isTran
     blendFunc.SourceConstantAlpha = alpha;
 
     if (!isTrans) {
-        BitBlt(alphaMemDC,
+        GdiAlphaBlend(
+            hdc,
             (int)rect->Left(),
             (int)rect->Top(),
             (int)rect->size.x,
             (int)rect->size.y,
-            hdc,
-            (int)rect->Left(),
-            (int)rect->Top(),
-            SRCCOPY
+            memDC,
+            cutSize.x * curFrame.x,
+            cutSize.y * curFrame.y,
+            cutSize.x,
+            cutSize.y,
+            blendFunc
         );
         return;
     }

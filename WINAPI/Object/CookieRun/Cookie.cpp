@@ -1,41 +1,29 @@
 #include "Framework.h"
 
 Cookie::Cookie()
+	: Character(L"Textures/CookieRun.bmp", 11, 6)
 {
-	texture = Texture::Add(L"Textures/CookieRun.bmp", 11, 6);
-	imageRect = new ImageRect(texture);
-	size = { 120, 150 };
 	imageOffset = { 0.0f, -110.0f };
 
 	CreateAnimations();
-	animations[curType]->Play();
+	animations[(int)curType]->Play();
 }
-
 
 Cookie::~Cookie()
 {
-	delete imageRect;
-
-	for (pair<ActionType, Animation*> animation : animations) {
-		delete animation.second;
-	}
 }
 
 void Cookie::Update()
 {
 	Jump();
-	SetAnimation();
 	Crash();
-	imageRect->pos = pos+imageOffset;
 
-	animations[curType]->Update();
+	__super::Update();
 }
 
 void Cookie::Render(HDC hdc)
 {
-	Rect::LineRender(hdc);
-
-	imageRect->Render(hdc, (int)alphaValue, animations[curType]->GetFrame());
+	Character::Render(hdc, (int)alphaValue);
 }
 
 void Cookie::Jump()
@@ -43,9 +31,9 @@ void Cookie::Jump()
 	if (jumpCount < 2 && KEY_DOWN(VK_UP) && StageManager::Get()->IsPlay()) {
 		velocity = JUMP_POWER;
 		if (++jumpCount == 2)
-			SetAction(ActionType::DOUBLE_JUMP);
+			SetAction((int)ActionType::DOUBLE_JUMP);
 		else
-			SetAction(ActionType::JUMP);
+			SetAction((int)ActionType::JUMP);
 	}
 
 	velocity -= GRAVITY * DELTA;
@@ -70,10 +58,10 @@ void Cookie::SetAnimation()
 	if (velocity > 0.0f) return;
 
 	if (velocity < 0.0f) {
-		SetAction(ActionType::JUMP_DOWN);
+		SetAction((int)ActionType::JUMP_DOWN);
 	}
 	else {
-		SetAction(ActionType::RUN);
+		SetAction((int)ActionType::RUN);
 	}
 }
 
@@ -103,7 +91,7 @@ void Cookie::Crash()
 	if (!StageManager::Get()->CollisionObstacle(this))
 		return;
 
-	SetAction(ActionType::CRASH);
+	SetAction((int)ActionType::CRASH);
 	isGhost = true;
 	ghostTime = 0.0f;
 	StageManager::Get()->Stop();
@@ -111,38 +99,29 @@ void Cookie::Crash()
 
 void Cookie::EndCrash()
 {
-	SetAction(ActionType::RUN);
+	SetAction((int)ActionType::RUN);
 	StageManager::Get()->Play();
-}
-
-void Cookie::SetAction(ActionType type)
-{
-	if (curType == type)
-		return;
-
-	curType = type;
-	animations[curType]->Play();
 }
 
 
 void Cookie::CreateAnimations()
 {
-	animations[ActionType::IDLE] = new Animation(texture->GetFrame());
-	animations[ActionType::IDLE]->SetPart(22, 31);
+	animations[(int)ActionType::IDLE] = new Animation(texture->GetFrame());
+	animations[(int)ActionType::IDLE]->SetPart(22, 31);
 
-	animations[ActionType::RUN] = new Animation(texture->GetFrame());
-	animations[ActionType::RUN]->SetPart(11, 18);
+	animations[(int)ActionType::RUN] = new Animation(texture->GetFrame());
+	animations[(int)ActionType::RUN]->SetPart(11, 18);
 
-	animations[ActionType::JUMP] = new Animation(texture->GetFrame());
-	animations[ActionType::JUMP]->SetPart(33, 37, false);
+	animations[(int)ActionType::JUMP] = new Animation(texture->GetFrame());
+	animations[(int)ActionType::JUMP]->SetPart(33, 37, false);
 
-	animations[ActionType::DOUBLE_JUMP] = new Animation(texture->GetFrame());
-	animations[ActionType::DOUBLE_JUMP]->SetPart(0, 5, false);
+	animations[(int)ActionType::DOUBLE_JUMP] = new Animation(texture->GetFrame());
+	animations[(int)ActionType::DOUBLE_JUMP]->SetPart(0, 5, false);
 
-	animations[ActionType::JUMP_DOWN] = new Animation(texture->GetFrame());
-	animations[ActionType::JUMP_DOWN]->SetPart(5, 5, false);
+	animations[(int)ActionType::JUMP_DOWN] = new Animation(texture->GetFrame());
+	animations[(int)ActionType::JUMP_DOWN]->SetPart(5, 5, false);
 
-	animations[ActionType::CRASH] = new Animation(texture->GetFrame());
-	animations[ActionType::CRASH]->SetPart(44, 49, false);
-	animations[ActionType::CRASH]->SetEndEvent(bind(&Cookie::EndCrash, this));
+	animations[(int)ActionType::CRASH] = new Animation(texture->GetFrame());
+	animations[(int)ActionType::CRASH]->SetPart(44, 49, false);
+	animations[(int)ActionType::CRASH]->SetEndEvent(bind(&Cookie::EndCrash, this));
 }

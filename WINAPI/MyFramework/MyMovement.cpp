@@ -1,12 +1,12 @@
 #include "framework.h"
 #include "MyMovement.h"
 
-MyMovement::MyMovement(GameObject* owner)
+MyPointMovement::MyPointMovement(GameObject* owner)
 	: owner(owner)
 {
 }
 
-void MyMovement::Update()
+void MyPointMovement::Update()
 {
 	if (isMoving) {
 		Vector2 vector = (targetPos - owner->pos);
@@ -19,7 +19,7 @@ void MyMovement::Update()
 	}
 }
 
-void MyMovement::SetTargetPos(Vector2 target, float speed, float tolerance)
+void MyPointMovement::SetTargetPos(Vector2 target, float speed, float tolerance)
 {
 	this->tolerance = tolerance;
 
@@ -34,22 +34,17 @@ void MyMovement::SetTargetPos(Vector2 target, float speed, float tolerance)
 	targetPos = target;
 }
 
-void MyMovement::SetTargetPosByTime(Vector2 target, float time, float tolerance)
+void MyPointMovement::SetTargetPosByTime(Vector2 target, float time, float tolerance)
 {
 	this->tolerance = tolerance;
 
 	Vector2 v = target - owner->pos;
-	if (v.Length() < tolerance) {
-		Teleport(target);
-		return;
-	}
-
 	isMoving = true;
 	speed = v.Length() / time;
 	targetPos = target;
 }
 
-void MyMovement::Teleport(Vector2 target)
+void MyPointMovement::Teleport(Vector2 target)
 {
 	isMoving = false;
 	owner->pos = targetPos = target;

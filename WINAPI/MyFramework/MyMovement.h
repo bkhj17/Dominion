@@ -1,8 +1,8 @@
 #pragma once
-class MyMovement {
+class MyPointMovement {
 public:	
-	MyMovement(GameObject* owner);
-	~MyMovement() = default;
+	MyPointMovement(GameObject* owner);
+	~MyPointMovement() = default;
 
 	void Update();
 

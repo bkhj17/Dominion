@@ -6,6 +6,6 @@ public:
 
 	void Update();
 
-	class MyMovement* movement;
+	class MyPointMovement* movement;
 private:
 };

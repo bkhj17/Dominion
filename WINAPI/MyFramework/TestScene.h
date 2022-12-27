@@ -1,4 +1,5 @@
 #pragma once
+
 class TestScene : public Scene {
 public:
 	TestScene();

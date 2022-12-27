@@ -15,7 +15,7 @@ HomeworkScene221220::HomeworkScene221220()
 
 	monsters.resize(20);
 	for (auto& monster : monsters)
-		monster = new Monster();
+		monster = new Monster1220();
 
 	hPlaneBrush = CreateSolidBrush(RGB(100, 100, 250));
 	hBulletBrush = CreateSolidBrush(RGB(255, 255, 0));
@@ -242,15 +242,15 @@ void HomeworkScene221220::Bullet1220::Update()
 }
 
 
-const float HomeworkScene221220::Monster::MONSTER_SIZE_MIN = 50.0f;
-const float HomeworkScene221220::Monster::MONSTER_SIZE_MAX = 100.0f;
+const float HomeworkScene221220::Monster1220::MONSTER_SIZE_MIN = 50.0f;
+const float HomeworkScene221220::Monster1220::MONSTER_SIZE_MAX = 100.0f;
 
-HomeworkScene221220::Monster::Monster()
+HomeworkScene221220::Monster1220::Monster1220()
 {
 	isActive = false;
 }
 
-void HomeworkScene221220::Monster::Init()
+void HomeworkScene221220::Monster1220::Init()
 {
 	isActive = true;
 	float sz = GameMath::Random(MONSTER_SIZE_MIN, MONSTER_SIZE_MAX);
@@ -262,7 +262,7 @@ void HomeworkScene221220::Monster::Init()
 	speed = GameMath::Random(10.0f, 100.0f);
 }
 
-void HomeworkScene221220::Monster::Update()
+void HomeworkScene221220::Monster1220::Update()
 {
 	if (!isActive)
 		return;
@@ -270,6 +270,6 @@ void HomeworkScene221220::Monster::Update()
 	pos.y += speed * DELTA;
 }
 
-void HomeworkScene221220::Monster::Destroy() {
+void HomeworkScene221220::Monster1220::Destroy() {
 	isActive = false;
 }

@@ -130,6 +130,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Framework\Utilities\Audio.h" />
+    <ClInclude Include="Scenes\Homework221227.h" />
+    <ClInclude Include="Object\Character\BattleCharacter.h" />
+    <ClInclude Include="Object\Character\Monster.h" />
+    <ClInclude Include="Object\Character\Character.h" />
+    <ClInclude Include="Object\Character\Fighter.h" />
+    <ClInclude Include="Scenes\BattleScene.h" />
+    <ClInclude Include="MyFramework\TestDeck.h" />
     <ClInclude Include="Scenes\Homework221226.h" />
     <ClInclude Include="Object\CookieRun\Cookie.h" />
     <ClInclude Include="Framework\Render\Animation.h" />
@@ -190,6 +198,13 @@
     <ClInclude Include="WINAPI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Framework\Utilities\Audio.cpp" />
+    <ClCompile Include="Scenes\Homework221227.cpp" />
+    <ClCompile Include="Object\Character\BattleCharacter.cpp" />
+    <ClCompile Include="Object\Character\Monster.cpp" />
+    <ClCompile Include="Object\Character\Character.cpp" />
+    <ClCompile Include="Object\Character\Fighter.cpp" />
+    <ClCompile Include="Scenes\BattleScene.cpp" />
     <ClCompile Include="Scenes\Homework221226.cpp" />
     <ClCompile Include="Object\CookieRun\Cookie.cpp" />
     <ClCompile Include="Framework\Render\Animation.cpp" />

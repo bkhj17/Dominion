@@ -53,9 +53,9 @@ private:
     map<ActionType, Animation*> animations;
     ActionType curAction;
 
-    int curHp, maxHp = 50.0f;
+    int curHp, maxHp = 50;
     float maxInverse;
-    int attack = 10.0f;
+    int attack = 10;
     float attackRange = 50.0f;
 
     float velocityX = 0.0f;

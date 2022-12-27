@@ -12,6 +12,7 @@ public:
 
 	void SetDefault(bool loop = true, bool pingpong = false);
 	void SetPart(UINT start, UINT end, bool loop = true, bool pingpong = false);
+	void SetArray(int* arr, int arrSize, bool loop = false, bool pingpong = false);
 	void SetPingpong();
 
 	void Play() { isPlay = true, curFrameNum = 0; }

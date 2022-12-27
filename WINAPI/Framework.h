@@ -55,6 +55,10 @@
 #include <functional>
 using namespace std;
 
+//FMOD Library
+#include "Libraries/inc/fmod.hpp"
+#pragma comment(lib, "Libraries/lib/fmod_vc.lib")
+
 //Framework
 #include "Framework/Math/Vector2.h"
 #include "Framework/Math/GameMath.h"
@@ -66,7 +70,10 @@ using namespace GameMath;
 #include "Framework/Utilities/Singleton.h"
 #include "Framework/Utilities/Timer.h"
 #include "Framework/Utilities/KeyBoard.h"
+#include "Framework/Utilities/Audio.h"
+
 #include "Framework/Utilities/Utility.h"
+
 using namespace Utility;
 
 
@@ -90,7 +97,11 @@ using namespace Utility;
 #include "Object/Shooting/Plane.h"
 #include "Object/Shooting/Enemy.h"
 
+#include "Object/Character/Character.h"
 #include "Object/Character/Megaman.h"
+#include "Object/Character/BattleCharacter.h"
+#include "Object/Character/Fighter.h"
+#include "Object/Character/Monster.h"
 
 #include "Object/Manager/PoolingManager.h"
 #include "Object/Manager/BulletManager.h"

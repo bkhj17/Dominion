@@ -5,7 +5,7 @@
 TestRect::TestRect(Vector2 pos, Vector2 size)
 	: Rect(pos, size)
 {
-	movement = new MyMovement(this);
+	movement = new MyPointMovement(this);
 }
 
 TestRect::~TestRect()

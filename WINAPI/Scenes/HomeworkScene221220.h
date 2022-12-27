@@ -41,11 +41,11 @@ class HomeworkScene221220 :
         float speed = DEFUALT_SPEED;
     };
 
-    class Monster : public Rect {
+    class Monster1220 : public Rect {
         static const float MONSTER_SIZE_MIN;
         static const float MONSTER_SIZE_MAX;
     public:
-        Monster();
+        Monster1220();
 
         void Init();
         void Update();
@@ -75,7 +75,7 @@ private:
     Plane1220* plane = nullptr;
 
     vector<Bullet1220*> bullets;
-    vector<Monster*> monsters;
+    vector<Monster1220*> monsters;
 
     HBRUSH hPlaneBrush = nullptr;
     HBRUSH hBulletBrush = nullptr;
