@@ -26,7 +26,6 @@ public:
 
     bool IsHit() { return isHit; }
     bool IsDead() { return isDead; }
-
     bool IsAttack() { return isAttack; }
     Rect GetAttackRect();
 
@@ -38,7 +37,7 @@ public:
     void SetPos(Vector2 pos);
 private:
     void AttactEnd() {
-        isAttack = false; 
+        isAttack = false;
         SetAnimation();
     }
     void HitEnd() { isHit = false; SetAnimation(); }

@@ -104,7 +104,7 @@ void Player1226::Input()
 			fire->isActive = true;
 			fire->pos = pos;
 			fire->attack = attack;
-			SetAction(ActionType::ATTACK);
+			isAttack = true;
 		}
 	}
 }
@@ -160,11 +160,10 @@ void Player1226::Move()
 
 void Player1226::Attack()
 {
-	if (isDead || isAttack)
+	if (isDead || isAttack || isHit)
 		return;
 
 	isAttack = true;
-	SetAction(ActionType::ATTACK);
 
 	auto atkRect = GetAttackRect();
 	if (isControl) {
@@ -186,7 +185,7 @@ void Player1226::Attack()
 
 void Player1226::Hit(int atk)
 {
-	if (curAction == ActionType::HIT)
+	if (isHit)
 		return;
 
 	curHp -= atk;
@@ -195,22 +194,17 @@ void Player1226::Hit(int atk)
 	}
 	else {
 		isHit = true;
-		SetAction(ActionType::HIT);
 	}
 }
 
 void Player1226::Dead()
 {
 	isDead = true;
-	SetAction(ActionType::DEAD);
 }
 
 void Player1226::SetAction(ActionType type)
 {
-	if (curAction == ActionType::DEAD)
-		return;
-
-	if (curAction == type && animations[curAction]->IsPlay())
+	if (curAction == type)
 		return;
 
 	curAction = type;
@@ -219,10 +213,18 @@ void Player1226::SetAction(ActionType type)
 
 void Player1226::SetAnimation()
 {
-	if (curAction == ActionType::ATTACK 
-		|| curAction == ActionType::HIT 
-		|| curAction == ActionType::DEAD)
+	if (isAttack) {
+		SetAction(ActionType::ATTACK);
 		return;
+	}
+	if (isHit) {
+		SetAction(ActionType::HIT);
+		return;
+	}
+	if (isDead) {
+		SetAction(ActionType::DEAD);
+		return;
+	}
 
 	if (abs(velocityX) > 0.5f) {
 		SetAction(ActionType::RUN);
@@ -237,7 +239,7 @@ void Player1226::CreateAnimations()
 	if (isControl) {
 		animations[ActionType::IDLE] = new Animation(texture->GetFrame());
 		animations[ActionType::RUN] = new Animation(texture->GetFrame());
-		animations[ActionType::ATTACK] = new Animation(texture->GetFrame(), 5.0f);
+		animations[ActionType::ATTACK] = new Animation(texture->GetFrame());
 		animations[ActionType::HIT] = new Animation(texture->GetFrame());
 		animations[ActionType::DEAD] = new Animation(texture->GetFrame());
 		animations[ActionType::IDLE]->SetPart(0, 9);
@@ -249,7 +251,7 @@ void Player1226::CreateAnimations()
 	else {
 		animations[ActionType::IDLE] = new Animation(texture->GetFrame());
 		animations[ActionType::RUN] = new Animation(texture->GetFrame());
-		animations[ActionType::ATTACK] = new Animation(texture->GetFrame(),5.0f);
+		animations[ActionType::ATTACK] = new Animation(texture->GetFrame());
 		animations[ActionType::HIT] = new Animation(texture->GetFrame());
 		animations[ActionType::DEAD] = new Animation(texture->GetFrame());
 		animations[ActionType::IDLE]->SetPart(0, 1);
