@@ -5,12 +5,10 @@ BulletManager::BulletManager()
 {
 	CreateObjects("PlayerBullet", 50);
 	CreateObjects("EnemyBullet", 50);
-	hPen = CreatePen(PS_SOLID, 10, RGB(255, 0, 0));
 }
 
 BulletManager::~BulletManager()
 {
-	DeleteObject(hPen);
 }
 
 void BulletManager::CreateObjects(string key, UINT poolSize)
@@ -38,12 +36,6 @@ void BulletManager::Fire(const Vector2& pos, const Vector2& direction)
 	Bullet* bullet = dynamic_cast<Bullet*>(Pop("EnemyBullet"));
 	if (bullet != nullptr)
 		bullet->Fire(pos, direction);
-}
-
-void BulletManager::Render(HDC hdc)
-{
-	SelectObject(hdc, hPen);
-	__super::Render(hdc);
 }
 
 bool BulletManager::Collision(const GameObject* object)
@@ -90,4 +82,20 @@ void BulletManager::CollisionBullet(string key1, string key2)
 			}
 		}
 	}
+}
+
+GameObject* BulletManager::CollisionLand(Texture* texture)
+{
+	vector<GameObject*> bullets = totalObjects["EnemyBullet"];
+	for (auto bullet : bullets) {
+		if (!bullet->isActive)
+			continue;
+
+		float height = texture->GetPixelHeight(bullet->pos);
+		if (bullet->pos.y > height) {
+			return bullet;
+		}
+	}
+
+	return nullptr;
 }

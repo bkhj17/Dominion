@@ -130,15 +130,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Framework\Render\Camera.h" />
+    <ClInclude Include="Scenes\Homework\Homework221228.h" />
+    <ClInclude Include="Object\Manager\EffectManager.h" />
+    <ClInclude Include="Object\Basic\Effect.h" />
     <ClInclude Include="Framework\Utilities\Audio.h" />
-    <ClInclude Include="Scenes\Homework221227.h" />
+    <ClInclude Include="Object\UI\ProgressBar.h" />
+    <ClInclude Include="Scenes\Homework\Homework221227.h" />
     <ClInclude Include="Object\Character\BattleCharacter.h" />
     <ClInclude Include="Object\Character\Monster.h" />
     <ClInclude Include="Object\Character\Character.h" />
     <ClInclude Include="Object\Character\Fighter.h" />
     <ClInclude Include="Scenes\BattleScene.h" />
     <ClInclude Include="MyFramework\TestDeck.h" />
-    <ClInclude Include="Scenes\Homework221226.h" />
+    <ClInclude Include="Scenes\Homework\Homework221226.h" />
     <ClInclude Include="Object\CookieRun\Cookie.h" />
     <ClInclude Include="Framework\Render\Animation.h" />
     <ClInclude Include="MyFramework\MyMovement.h" />
@@ -165,9 +170,9 @@
     <ClInclude Include="Scenes\AngleScene.h" />
     <ClInclude Include="Scenes\CookieRunScene.h" />
     <ClInclude Include="Scenes\FlappyBirdScene.h" />
-    <ClInclude Include="Scenes\Homework221223.h" />
-    <ClInclude Include="Scenes\HomeworkScene221222.h" />
-    <ClInclude Include="Scenes\HomeworkScene221221.h" />
+    <ClInclude Include="Scenes\Homework\Homework221223.h" />
+    <ClInclude Include="Scenes\Homework\HomeworkScene221222.h" />
+    <ClInclude Include="Scenes\Homework\HomeworkScene221221.h" />
     <ClInclude Include="Object\Manager\BulletManager.h" />
     <ClInclude Include="Framework\Utilities\KeyBoard.h" />
     <ClInclude Include="Object\Basic\Circle.h" />
@@ -181,11 +186,12 @@
     <ClInclude Include="Framework.h" />
     <ClInclude Include="Framework\Math\GameMath.h" />
     <ClInclude Include="Framework\Utilities\Singleton.h" />
-    <ClInclude Include="Scenes\HomeworkScene221220.h" />
-    <ClInclude Include="Scenes\HomeworkScene221219.h" />
+    <ClInclude Include="Scenes\Homework\HomeworkScene221220.h" />
+    <ClInclude Include="Scenes\Homework\HomeworkScene221219.h" />
     <ClInclude Include="Manager\GameManager.h" />
     <ClInclude Include="Object\Basic\Rect.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Scenes\PixelCollisionScene.h" />
     <ClInclude Include="Scenes\Scene.h" />
     <ClInclude Include="Scenes\ShootingScene.h" />
     <ClInclude Include="Scenes\SpawnScene.h" />
@@ -198,14 +204,19 @@
     <ClInclude Include="WINAPI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Framework\Render\Camera.cpp" />
+    <ClCompile Include="Scenes\Homework\Homework221228.cpp" />
+    <ClCompile Include="Object\Manager\EffectManager.cpp" />
+    <ClCompile Include="Object\Basic\Effect.cpp" />
     <ClCompile Include="Framework\Utilities\Audio.cpp" />
-    <ClCompile Include="Scenes\Homework221227.cpp" />
+    <ClCompile Include="Object\UI\ProgressBar.cpp" />
+    <ClCompile Include="Scenes\Homework\Homework221227.cpp" />
     <ClCompile Include="Object\Character\BattleCharacter.cpp" />
     <ClCompile Include="Object\Character\Monster.cpp" />
     <ClCompile Include="Object\Character\Character.cpp" />
     <ClCompile Include="Object\Character\Fighter.cpp" />
     <ClCompile Include="Scenes\BattleScene.cpp" />
-    <ClCompile Include="Scenes\Homework221226.cpp" />
+    <ClCompile Include="Scenes\Homework\Homework221226.cpp" />
     <ClCompile Include="Object\CookieRun\Cookie.cpp" />
     <ClCompile Include="Framework\Render\Animation.cpp" />
     <ClCompile Include="MyFramework\MyMovement.cpp" />
@@ -232,8 +243,8 @@
     <ClCompile Include="Scenes\AngleScene.cpp" />
     <ClCompile Include="Scenes\CookieRunScene.cpp" />
     <ClCompile Include="Scenes\FlappyBirdScene.cpp" />
-    <ClCompile Include="Scenes\Homework221223.cpp" />
-    <ClCompile Include="Scenes\HomeworkScene221221.cpp" />
+    <ClCompile Include="Scenes\Homework\Homework221223.cpp" />
+    <ClCompile Include="Scenes\Homework\HomeworkScene221221.cpp" />
     <ClCompile Include="Object\Manager\BulletManager.cpp" />
     <ClCompile Include="Framework\Utilities\KeyBoard.cpp" />
     <ClCompile Include="Object\Basic\Circle.cpp" />
@@ -249,11 +260,12 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Framework.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Framework\Math\GameMath.cpp" />
-    <ClCompile Include="Scenes\HomeworkScene221220.cpp" />
-    <ClCompile Include="Scenes\HomeworkScene221219.cpp" />
+    <ClCompile Include="Scenes\Homework\HomeworkScene221220.cpp" />
+    <ClCompile Include="Scenes\Homework\HomeworkScene221219.cpp" />
     <ClCompile Include="Manager\GameManager.cpp" />
     <ClCompile Include="Object\Basic\Rect.cpp" />
-    <ClCompile Include="Scenes\HomeworkScene221222.cpp" />
+    <ClCompile Include="Scenes\Homework\HomeworkScene221222.cpp" />
+    <ClCompile Include="Scenes\PixelCollisionScene.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\ShootingScene.cpp" />
     <ClCompile Include="Scenes\TutorialScene.cpp" />

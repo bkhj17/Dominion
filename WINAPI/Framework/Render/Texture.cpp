@@ -1,6 +1,7 @@
 #include "framework.h"
 
 unordered_map<wstring, Texture*> Texture::textures;
+bool Texture::isDebugMode = false;
 
 Texture::Texture(wstring file, UINT frameX, UINT frameY, COLORREF transColor)
     : imageFrame{(long)frameX, (long)frameY}, transColor(transColor)
@@ -50,6 +51,8 @@ void Texture::Delete()
 
 void Texture::Render(HDC hdc, Rect* rect, POINT curFrame, bool isTrans)
 {
+    if (isDebugMode)
+        rect->LineRender(hdc);
 
     if (!isTrans) {
         BitBlt(
@@ -78,13 +81,18 @@ void Texture::Render(HDC hdc, Rect* rect, POINT curFrame, bool isTrans)
             cutSize.x,
             cutSize.y,
             transColor
-        );
+    );
 }
 
 void Texture::Render(HDC hdc, Rect* rect, int alpha, POINT curFrame, bool isTrans)
 {
+    if (isDebugMode)
+        rect->LineRender(hdc);
+
     blendFunc.SourceConstantAlpha = alpha;
 
+    if (isDebugMode)
+        rect->LineRender(hdc);
     if (!isTrans) {
         GdiAlphaBlend(
             hdc,
@@ -140,4 +148,28 @@ void Texture::Render(HDC hdc, Rect* rect, int alpha, POINT curFrame, bool isTran
 		blendFunc
 	);
 
+}
+
+float Texture::GetPixelHeight(const Vector2& pos)
+{
+    int startY = max((int)pos.y, 0);
+
+    int y = startY;
+    for (; y < imageSize.y; y++) {
+        COLORREF color = GetPixel(memDC, (int)pos.x, y);
+        if (color != transColor) {
+            return (float)y;
+        }
+    }
+
+    if (y == startY) {
+        for (; y > 0; y--) {
+            COLORREF color = GetPixel(memDC, (int)pos.x, y);
+            if (color != transColor) {
+                return (float)y;
+            }
+        }
+    }
+
+    return (float)imageSize.y;
 }

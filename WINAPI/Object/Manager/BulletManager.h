@@ -11,11 +11,8 @@ public:
 	void Fire(const Vector2& pos);
 	void Fire(const Vector2& pos, const Vector2& direction);
 
-	virtual void Render(HDC hdc);
-
 	bool Collision(const GameObject* object);
 	void CollisionBullet(string key1, string key2);
-private:
-	HPEN hPen = nullptr;
+	GameObject* CollisionLand(Texture* texture);
 };
 

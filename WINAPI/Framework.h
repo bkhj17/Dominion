@@ -64,13 +64,15 @@ using namespace std;
 #include "Framework/Math/GameMath.h"
 using namespace GameMath;
 
-#include "Framework/Render/Texture.h"
-#include "Framework/Render/Animation.h"
-
 #include "Framework/Utilities/Singleton.h"
 #include "Framework/Utilities/Timer.h"
 #include "Framework/Utilities/KeyBoard.h"
 #include "Framework/Utilities/Audio.h"
+
+#include "Framework/Render/Texture.h"
+#include "Framework/Render/Animation.h"
+#include "Framework/Render/Camera.h"
+
 
 #include "Framework/Utilities/Utility.h"
 
@@ -89,6 +91,9 @@ using namespace Utility;
 #include "Object/Basic/Circle.h"
 #include "Object/Basic/Line.h"
 #include "Object/Basic/ImageRect.h"
+#include "Object/Basic/Effect.h"
+
+#include "Object/UI/ProgressBar.h"
 
 #include "Object/Spawn/SpawnObject.h"
 #include "Object/Spawn/SpawnManager.h"
@@ -104,6 +109,7 @@ using namespace Utility;
 #include "Object/Character/Monster.h"
 
 #include "Object/Manager/PoolingManager.h"
+#include "Object/Manager/EffectManager.h"
 #include "Object/Manager/BulletManager.h"
 #include "Object/Manager/EnemyManager.h"
 #include "Object/Manager/BrickManager.h"

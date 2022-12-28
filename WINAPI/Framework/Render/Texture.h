@@ -19,8 +19,13 @@ public:
 	void Render(HDC hdc, Rect* rect, POINT curFrame = {0,0}, bool isTrans = true);
 	void Render(HDC hdc, Rect* rect, int alpha, POINT curFrame = { 0,0 }, bool isTrans = true);
 
+	float GetPixelHeight(const Vector2& pos);
+
 	Vector2 GetSize() { return Vector2(cutSize); }
 	POINT GetFrame() { return imageFrame; }
+	HDC GetMemDC() { return memDC; }
+	static void SetDebug() { isDebugMode = !isDebugMode; }
+
 private:
 	HDC memDC;	//ÂüÁ¶
 	HDC alphaMemDC;
@@ -36,5 +41,5 @@ private:
 	POINT cutSize;
 
 	static unordered_map<wstring, Texture*> textures;
-
+	static bool isDebugMode;
 };

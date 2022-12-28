@@ -6,8 +6,13 @@ Megaman::Megaman()
 	CreateAnimations();
 	animations[curType]->Play();
 
+	BulletManager::Get();
+
 	bodyOffset = { 0,120 };
 	bodyRect = new Rect(pos+bodyOffset, {95, 133});
+
+	hBrush = CreateSolidBrush(RGB(0, 178, 255));
+	hPen = CreatePen(PS_SOLID, 10, RGB(0, 178, 255));
 }
 
 Megaman::~Megaman()
@@ -17,23 +22,53 @@ Megaman::~Megaman()
 	}
 
 	delete bodyRect;
+	DeleteObject(hBrush);
+	DeleteObject(hPen);
+
 }
 
 void Megaman::Update()
 {
+	Fire();
 	Move();
 	Jump();
+	SetAnimation();
 
 	bodyRect->pos = pos + bodyOffset;
 
-	SetAnimation();
 	animations[curType]->Update();
+
+	BulletManager::Get()->Update();
 }
 
 void Megaman::Render(HDC hdc)
 {
-	bodyRect->LineRender(hdc);
-	ImageRect::Render(hdc, animations[curType]->GetFrame(), true);
+	//bodyRect->LineRender(hdc);
+	ImageRect::CamRender(hdc, animations[curType]->GetFrame());
+
+	BulletManager::Get()->Render(hdc);
+}
+
+void Megaman::Fire()
+{
+	if (KEY_DOWN(VK_SPACE)) {
+		BulletManager::Get()->Fire(pos, Vector2(1, -1));
+	}
+
+	GameObject* bullet = BulletManager::Get()->CollisionLand(landTexture);
+	if (bullet) {
+		EffectManager::Get()->Play("Exp", bullet->pos);
+		SelectObject(landTexture->GetMemDC(), hBrush);
+		SelectObject(landTexture->GetMemDC(), hPen);
+
+		int left = bullet->pos.x - expRange;
+		int right = bullet->pos.x + expRange;
+		int top = bullet->pos.y - expRange;
+		int bottom = bullet->pos.y + expRange;
+
+		bullet->isActive = false;
+		Ellipse(landTexture->GetMemDC(), left, top, right, bottom);
+	}
 }
 
 void Megaman::Move()
@@ -41,11 +76,11 @@ void Megaman::Move()
 	bool isMove = false;
 
 	if (KEY_PRESS(VK_RIGHT)) {
-		velocity.x = speed * DELTA;
+		velocity.x = speed;
 		isMove = true;
 	}
 	if (KEY_PRESS(VK_LEFT)) {
-		velocity.x = -speed * DELTA;
+		velocity.x = -speed;
 		isMove = true;
 	}
 
@@ -53,26 +88,35 @@ void Megaman::Move()
 		velocity.x = 0.0f;
 	}
 
+	pos.x += velocity.x * DELTA;
 }
 
 void Megaman::Jump()
 {
-
 	if (jumpCount < 2 && KEY_DOWN(VK_UP)) {
 		velocity.y = JUMP_POWER;
 		jumpCount++;
+
+		if (jumpCount >= 2)
+		{
+			SetAction(ActionType::JUMP_DOWN);
+		}
 	}
 
 	velocity.y -= GRAVITY * DELTA;
 	pos.y -= velocity.y * DELTA;
-	/*
-	if (Bottom() > WIN_HEIGHT) {
-		velocity.y = 0.0f;
-		pos.y = WIN_HEIGHT - Half().y;
+	
+	Vector2 bottomPos = pos;
+	bottomPos.y = Bottom() - 20.0f;
+	float height = landTexture->GetPixelHeight(bottomPos);
 
-		jumpCount = 0;
+	if (Bottom() > height) {
+		if (velocity.y < 0.0f) {
+			velocity.y = 0.0f;
+			jumpCount = 0;
+			pos.y = height - Half().y;
+		}
 	}
-	*/
 }
 
 void Megaman::SetAnimation()

@@ -10,6 +10,9 @@ Fighter::Fighter()
 
 	size = { 70, 120 };
 	imageOffset = { 35, 0 };
+
+	EffectManager::Get()->Add("Punch", 3, L"Textures/Fight/Effect.bmp", 4, 4);
+	EffectManager::Get()->Add("Kick", 3, L"Textures/Fight/Effect.bmp", 8, 1);
 }
 
 Fighter::~Fighter()
@@ -94,6 +97,8 @@ void Fighter::Attack()
 		attackCollider->isActive = true;
 		attackCollider->pos = pos + Vector2(50, 0);
 		attackCollider->size = { 100.0f,70.0f };
+
+		EffectManager::Get()->Play("Punch", attackCollider->pos);
 	}
 	if (KEY_DOWN('X')) {
 		//ű
@@ -103,6 +108,8 @@ void Fighter::Attack()
 		attackCollider->isActive = true;
 		attackCollider->pos = pos + Vector2(50, 10);
 		attackCollider->size = { 80.0f,40.0f };
+
+		EffectManager::Get()->Play("Kick", attackCollider->pos);
 	}
 }
 

@@ -3,11 +3,9 @@
 Monster::Monster()
 	: BattleCharacter(L"Textures/Fight/Monster.bmp", 6, 5)
 {
-
-	Audio::Get()->Add("Hit", "Sounds/hit.wav");
+	SetAction(IDLE);
 
 	CreateAnimations();
-	SetAction(IDLE);
 	animations[curType]->Play();
 
 	traceRange = new Circle(Vector2(), TRACE_RANGE);
@@ -15,13 +13,18 @@ Monster::Monster()
 
 	destPos = pos = { CENTER_X + 100.0f, CENTER_Y };
 
-	size = imageRect->size;
+	size = texture->GetSize();
+
+	Texture* front = Texture::Add(L"Textures/Pixel/ProgressBar1.bmp");
+	Texture* back = Texture::Add(L"Textures/Pixel/ProgressBar.bmp");
+	hpBar = new ProgressBar(front, back);
 }
 
 Monster::~Monster()
 {
 	delete traceRange;
 	delete attackRange;
+	delete hpBar;
 }
 
 void Monster::Update()
@@ -29,10 +32,14 @@ void Monster::Update()
 	traceRange->pos = pos;
 	attackRange->pos = pos;
 
+	hpBar->pos = { pos.x, Top() };
+	hpBar->SetValue(curHp/ maxHp);
+
 	SetState();
+	ActionState();
+	SetAnimation();
 
 	__super::Update();
-	SetAnimation();
 }
 
 void Monster::Render(HDC hdc)
@@ -41,17 +48,27 @@ void Monster::Render(HDC hdc)
 	SelectObject(hdc, nBrush);
 	traceRange->Render(hdc);
 	attackRange->Render(hdc);
-
+	
 	__super::Render(hdc);
+
+	hpBar->Render(hdc);
 }
 
 void Monster::Damage()
 {
-	if(curType == HIT)
-		Audio::Get()->Play("Hit");
+	if (curType == HIT || curType == DEATH)
+		return;
 
 	isAttack = false;
+	Audio::Get()->Play("Hit");
 	SetAction(HIT);
+
+	curHp -= 10.0f;
+	if (curHp <= 0.0f)
+	{
+		state = State::DEATH;
+		SetAction(DEATH);
+	}
 }
 
 void Monster::Move()
@@ -64,30 +81,6 @@ void Monster::Move()
 }
 
 void Monster::SetState()
-{
-	ActionState();
-
-	switch (state)
-	{
-	case Monster::State::PATROL:
-		Patrol();
-		break;
-	case Monster::State::TRACE:
-		Trace();
-		break;
-	case Monster::State::ATTACK:
-		Attack();
-		break;
-	case Monster::State::HIT:
-		Hit();
-		break;
-	case Monster::State::DEATH:
-		Death();
-		break;
-	}
-}
-
-void Monster::ActionState()
 {
 	if (state == State::HIT || state == State::DEATH) {
 		return;
@@ -108,6 +101,43 @@ void Monster::ActionState()
 	else {
 		state = State::PATROL;
 	}
+
+}
+
+void Monster::ActionState()
+{
+	switch (state)
+	{
+	case Monster::State::PATROL:
+		Patrol();
+		break;
+	case Monster::State::TRACE:
+		Trace();
+		break;
+	case Monster::State::ATTACK:
+		Attack();
+		break;
+	case Monster::State::HIT:
+		Hit();
+		break;
+	case Monster::State::DEATH:
+		Death();
+		break;
+	}
+}
+
+void Monster::SetAnimation()
+{
+	if (curType == ATTACK) return;
+	if (curType == HIT) return;
+	if (curType == DEATH) return;
+
+	if (velocity.Length() > 0.0f) {
+		SetAction(RUN);
+	}
+	else {
+		SetAction(IDLE);
+	}
 }
 
 void Monster::Patrol()
@@ -124,12 +154,14 @@ void Monster::Patrol()
 
 void Monster::Trace()
 {
-	destPos = target->pos;
-	velocity = (destPos - pos).GetNormalized();
+	velocity = (target->pos - pos).GetNormalized();
 }
 
 void Monster::Attack()
 {
+	if (curType == HIT) return;
+	if (curType == DEATH) return;
+
 	velocity = {};
 
 	SetAction(ATTACK);
@@ -141,20 +173,6 @@ void Monster::Hit()
 
 void Monster::Death()
 {
-}
-
-void Monster::SetAnimation()
-{
-	if (curType == ATTACK) return;
-	if (curType == HIT) return;
-	if (curType == DEATH) return;
-
-	if (velocity.Length() > 0.0f) {
-		SetAction(RUN);
-	}
-	else {
-		SetAction(IDLE);
-	}
 }
 
 void Monster::CreateAnimations()

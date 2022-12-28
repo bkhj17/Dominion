@@ -39,7 +39,7 @@
     <ClInclude Include="Object\Basic\Rect.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\HomeworkScene221219.h">
+    <ClInclude Include="Scenes\Homework\HomeworkScene221219.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\SpawnScene.h">
@@ -63,7 +63,7 @@
     <ClInclude Include="Framework\Math\Vector2.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\HomeworkScene221220.h">
+    <ClInclude Include="Scenes\Homework\HomeworkScene221220.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\CollisionScene.h">
@@ -99,7 +99,7 @@
     <ClInclude Include="Object\Manager\EnemyManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\HomeworkScene221221.h">
+    <ClInclude Include="Scenes\Homework\HomeworkScene221221.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\AngleScene.h">
@@ -132,7 +132,7 @@
     <ClInclude Include="Scenes\BitmapScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\HomeworkScene221222.h">
+    <ClInclude Include="Scenes\Homework\HomeworkScene221222.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\FlappyBirdScene.h">
@@ -156,7 +156,7 @@
     <ClInclude Include="Object\Manager\PipeManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\Homework221223.h">
+    <ClInclude Include="Scenes\Homework\Homework221223.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Object\Character\Megaman.h">
@@ -186,7 +186,7 @@
     <ClInclude Include="Object\CookieRun\Cookie.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\Homework221226.h">
+    <ClInclude Include="Scenes\Homework\Homework221226.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="MyFramework\TestDeck.h">
@@ -210,7 +210,25 @@
     <ClInclude Include="Framework\Utilities\Audio.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\Homework221227.h">
+    <ClInclude Include="Scenes\Homework\Homework221227.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Basic\Effect.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Manager\EffectManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\PixelCollisionScene.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Render\Camera.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\UI\ProgressBar.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\Homework\Homework221228.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -233,7 +251,7 @@
     <ClCompile Include="Object\Basic\Rect.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\HomeworkScene221219.cpp">
+    <ClCompile Include="Scenes\Homework\HomeworkScene221219.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\SpawnScene.cpp">
@@ -254,7 +272,7 @@
     <ClCompile Include="Framework\Math\Vector2.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\HomeworkScene221220.cpp">
+    <ClCompile Include="Scenes\Homework\HomeworkScene221220.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\CollisionScene.cpp">
@@ -290,7 +308,7 @@
     <ClCompile Include="Object\Manager\EnemyManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\HomeworkScene221221.cpp">
+    <ClCompile Include="Scenes\Homework\HomeworkScene221221.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\AngleScene.cpp">
@@ -323,7 +341,7 @@
     <ClCompile Include="Scenes\BitmapScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\HomeworkScene221222.cpp">
+    <ClCompile Include="Scenes\Homework\HomeworkScene221222.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\FlappyBirdScene.cpp">
@@ -347,7 +365,7 @@
     <ClCompile Include="Object\Manager\PipeManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\Homework221223.cpp">
+    <ClCompile Include="Scenes\Homework\Homework221223.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Object\Character\Megaman.cpp">
@@ -377,7 +395,7 @@
     <ClCompile Include="Object\CookieRun\Cookie.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\Homework221226.cpp">
+    <ClCompile Include="Scenes\Homework\Homework221226.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\BattleScene.cpp">
@@ -398,7 +416,25 @@
     <ClCompile Include="Framework\Utilities\Audio.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\Homework221227.cpp">
+    <ClCompile Include="Scenes\Homework\Homework221227.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Basic\Effect.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Manager\EffectManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\PixelCollisionScene.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Render\Camera.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\UI\ProgressBar.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\Homework\Homework221228.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

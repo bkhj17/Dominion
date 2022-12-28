@@ -47,4 +47,7 @@ private:
 
 	GameObject* traceRange;
 	GameObject* attackRange;
+
+	float curHp = 200.0f, maxHp = 200.0f;
+	ProgressBar* hpBar;
 };

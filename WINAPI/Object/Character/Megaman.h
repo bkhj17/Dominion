@@ -17,11 +17,15 @@ public:
     void Update();
     void Render(HDC hdc);
 
+    void SetLand(Texture* texture) { landTexture = texture; }
+
     Vector2 GetVelocity() { return velocity; }
     
     bool LandCollision(Rect* rect);
     Rect* GetBody() { return bodyRect; }
 private:
+    void Fire();
+
     void Move();
     void Jump();
 
@@ -40,7 +44,14 @@ private:
 
     int jumpCount = 0;
 
+    Texture* landTexture;
+
     Rect* bodyRect;
     Vector2 bodyOffset;
+
+    HBRUSH hBrush;
+    HPEN hPen;
+
+    float expRange = 200.0f;
 };
 

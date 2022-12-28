@@ -28,7 +28,6 @@ void BattleCharacter::Render(HDC hdc)
 
 void BattleCharacter::Move()
 {
-
 	pos += velocity * DELTA;
 }
 
