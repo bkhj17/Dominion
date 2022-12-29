@@ -61,9 +61,12 @@ void SellScene1229::Render(HDC hdc)
 {
 	auto& items = Inventory1229::Get()->items;
 	for(int i = 0; i < items.size(); i++) {
-		BagUsable1229* usable = (BagUsable1229 *)items[i];
-		string s = usable->data->name + +" "
-			+ to_string(usable->data->price) + " (" + to_string(usable->count) + "°³)";
+		string s = items[i]->data->name + +" "
+			+ to_string(items[i]->data->price);
+		if (items[i]->data->category == 0) {
+			BagUsable1229* usable = (BagUsable1229*)items[i];
+			s += " (" + to_string(usable->count) + "°³)";
+		}
 
 		sellButtons[i]->SetText(s);
 		sellButtons[i]->Render(hdc);

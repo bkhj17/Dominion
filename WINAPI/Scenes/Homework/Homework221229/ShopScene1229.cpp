@@ -33,7 +33,7 @@ void ShopScene1229::Start()
 		button->SetOverTexture(over);
 		button->SetDownTexture(down);
 		button->pos = { CENTER_X, button->Half().y + button->size.y * cnt++ };
-		button->itemData = const_cast<ItemData1229*>(&item.second);
+		button->itemData = const_cast<ItemData1229*>(item.second);
 		auto inven =  Inventory1229::Get();
 		function<bool(ItemData1229*)> event = bind(&Inventory1229::BuyItem, inven, placeholders::_1);
 		button->SetEvent([button]() -> void {
@@ -62,14 +62,27 @@ void ShopScene1229::Update()
 void ShopScene1229::Render(HDC hdc)
 {
 	for (auto button : buyButtons) {
+		string str;
+		if (button->itemData->category == 0) {
+			str = button->itemData->name + " "
+				+ to_string(button->itemData->price)
+				+ "(소지 :"
+				+ to_string(Inventory1229::Get()->GetItemCount(button->itemData->key))
+				+ "개)";
+			button->SetText(str);
+			button->Render(hdc);
+		}
+		else {
+			EquipItemData1229* equipData = (EquipItemData1229*)(button->itemData);
+			str = equipData->name + " "
+				+ to_string(equipData->price);
 
-		string str = button->itemData->name + " " 
-			+ to_string(button->itemData->price) 
-			+ "(소지 :"
-			+ to_string(Inventory1229::Get()->GetItemCount(button->itemData->key))
-			+"개)";
-		button->SetText(str);
-		button->Render(hdc);
+			for (auto f : equipData->forces) {
+				str += " " + f.first + (f.second >= 0 ? " +" : " ") + to_string(f.second);
+			}
+			button->SetText(str);
+			button->Render(hdc);
+		}
 	}
 
 	wstring str = L"Money : " + to_wstring(Inventory1229::Get()->GetMoney());

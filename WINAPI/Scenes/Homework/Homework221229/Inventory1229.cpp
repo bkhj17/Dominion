@@ -15,8 +15,6 @@ BagUsable1229::BagUsable1229(ItemData1229* data, int count)
 {
 }
 
-
-
 /// <summary>
 /// //////////////////////////////////////////////////////////
 /// </summary>
@@ -64,18 +62,28 @@ void Inventory1229::SellItem(int index)
 		return;
 
 	GainMoney(items[index]->data->price);
-	BagUsable1229* usable = (BagUsable1229*)items[index];
-	usable->count--;
-	if (usable->count == 0) {
-		items.erase(items.begin()+index);
+
+	int category = items[index]->data->category;
+	if (category == 0) {
+		BagUsable1229* usable = (BagUsable1229*)items[index];
+		usable->count--;
+		if (usable->count == 0) {
+			items.erase(items.begin() + index);
+		}
+	}
+	else if (category == 1) {
+		items.erase(items.begin() + index);
 	}
 }
-
 
 void Inventory1229::AddItem(ItemData1229* data)
 {
 	int itemIndex = HaveItem(data->key);
-	if (itemIndex >= items.size()) {
+	if (data->category == 1) {
+		BagEquip1229* equip = new BagEquip1229(data);
+		items.push_back(equip);
+	}
+	else if (itemIndex >= items.size()) {
 		BagUsable1229* usable = new BagUsable1229(data, 1);
 		items.push_back(usable);
 	}

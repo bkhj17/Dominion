@@ -24,7 +24,7 @@ private:
 	friend class SellScene1229;
 	friend class InventoryScene1229;
 
-	const int START_MONEY = 2000;
+	const int START_MONEY = 3000;
 
 public:
 	bool BuyItem(ItemData1229* data);

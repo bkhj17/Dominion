@@ -13,7 +13,6 @@ public:
 	virtual void Render(HDC hdc) override;
 
 	virtual void End() override;
-
 private:
 	vector<Button*> buttons;
 	Button* backButton;
@@ -21,5 +20,7 @@ private:
 	Texture* normal;
 	Texture* over;
 	Texture* down;
+
+	string strInfo;
 };
 

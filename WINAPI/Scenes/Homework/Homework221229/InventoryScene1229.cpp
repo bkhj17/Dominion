@@ -43,7 +43,6 @@ void InventoryScene1229::Update()
 		buttons[i]->Update();
 	}
 
-
 	backButton->Update();
 }
 
@@ -51,15 +50,29 @@ void InventoryScene1229::Render(HDC hdc)
 {
 	auto& items = Inventory1229::Get()->items;
 	for (int i = 0; i < items.size(); i++) {
-		BagUsable1229* usable = (BagUsable1229*)items[i];
-		string s = usable->data->name + " (" + to_string(usable->count) + "°³)";
+		int category = items[i]->data->category;
+		if (category == 0) {
+			BagUsable1229* usable = (BagUsable1229*)items[i];
+			string s = usable->data->name + " (" + to_string(usable->count) + "°³)";
 
-		buttons[i]->SetText(s);
-		buttons[i]->Render(hdc);
+			buttons[i]->SetText(s);
+			buttons[i]->Render(hdc);
+		}
+		else if (category == 1) {
+
+			EquipItemData1229* equip = (EquipItemData1229*)(items[i]->data);
+			string s = equip->name + " ";
+			for (auto f : equip->forces) {
+				s += f.first + " " + to_string(f.second);
+			}
+
+			buttons[i]->SetText(s);
+			buttons[i]->Render(hdc);
+		}
 	}
 
 	wstring str = L"Money : " + to_wstring(Inventory1229::Get()->GetMoney());
-	TextOut(hdc, 100, 200, str.c_str(), str.size());
+	TextOut(hdc, 100, 200, str.c_str(), (int)str.size());
 
 	backButton->Render(hdc);
 }

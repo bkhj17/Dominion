@@ -3,7 +3,7 @@ class BuyButton : public Button {
 public:
 	BuyButton(Texture* texture) : Button(texture) {}
 
-	struct ItemData1229* itemData = nullptr;
+	class ItemData1229* itemData = nullptr;
 private:
 };
 
