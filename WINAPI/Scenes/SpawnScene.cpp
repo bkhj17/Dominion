@@ -14,7 +14,7 @@ SpawnScene::~SpawnScene()
 
 }
 
-void SpawnScene::Init()
+void SpawnScene::Start()
 {
 }
 

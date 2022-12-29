@@ -3,7 +3,6 @@
 
 PixelCollisionScene::PixelCollisionScene()
 {
-
 	land = new ImageRect(L"Textures/Pixel/land.bmp", 1, 1, RGB(0, 178, 255));
 	land->pos = land->Half();
 	background = new ImageRect(L"Textures/Pixel/background.bmp");
@@ -27,7 +26,7 @@ PixelCollisionScene::~PixelCollisionScene()
 	delete megaman;
 }
 
-void PixelCollisionScene::Init()
+void PixelCollisionScene::Start()
 {
 }
 

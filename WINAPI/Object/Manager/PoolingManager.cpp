@@ -6,7 +6,9 @@ PoolingManager::~PoolingManager()
 	for (pair<string, Objects> objects : totalObjects) {
 		for (GameObject* object : objects.second)
 			delete object;
+		objects.second.clear();
 	}
+	totalObjects.clear();
 }
 
 void PoolingManager::Update()

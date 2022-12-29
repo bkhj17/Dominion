@@ -15,7 +15,7 @@ ShootingScene::~ShootingScene()
 	EnemyManager::Delete();
 }
 
-void ShootingScene::Init()
+void ShootingScene::Start()
 {
 }
 

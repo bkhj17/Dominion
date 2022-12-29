@@ -17,7 +17,7 @@ class HomeworkScene221219 : public Scene
             TRIANGE
         };
 
-        void Init();
+        void Start();
 
         void Update();
         void Render(HDC hdc);
@@ -37,7 +37,7 @@ public:
     ~HomeworkScene221219();
 
     // Scene을(를) 통해 상속됨
-    virtual void Init() override;
+    virtual void Start() override;
     virtual void Update() override;
     virtual void Render(HDC hdc) override;
 

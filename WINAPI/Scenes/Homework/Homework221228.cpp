@@ -46,7 +46,7 @@ Homework221228::~Homework221228()
 	delete goal;
 }
 
-void Homework221228::Init()
+void Homework221228::Start()
 {
 }
 

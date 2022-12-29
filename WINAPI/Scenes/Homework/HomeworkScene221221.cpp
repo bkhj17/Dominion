@@ -21,7 +21,7 @@ HomeworkScene221221::~HomeworkScene221221()
     BlockManager1221::Delete();
 }
 
-void HomeworkScene221221::Init()
+void HomeworkScene221221::Start()
 {
     
     ball->pos = bar->GetBarrelPos();

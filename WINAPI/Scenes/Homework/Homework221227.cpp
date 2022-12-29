@@ -215,7 +215,7 @@ Homework221227::~Homework221227()
 	DeleteObject(hBrush);
 }
 
-void Homework221227::Init()
+void Homework221227::Start()
 {
 }
 

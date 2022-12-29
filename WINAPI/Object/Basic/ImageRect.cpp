@@ -27,12 +27,12 @@ void ImageRect::Render(HDC hdc, POINT curFrame, bool isTrans) {
 	texture->Render(hdc, this, curFrame, isTrans);
 }
 
-void ImageRect::Render(HDC hdc, int alpha, POINT curFrame, bool isTrans)
+void ImageRect::Render(HDC hdc, int alphaValue, POINT curFrame, bool isTrans)
 {
 	if (!isActive)
 		return;
 
-	texture->Render(hdc, this, alpha, curFrame, isTrans);
+	texture->Render(hdc, this, alphaValue, curFrame, isTrans);
 }
 
 void ImageRect::Render(HDC hdc)
@@ -52,12 +52,12 @@ void ImageRect::CamRender(HDC hdc, POINT curFrame, bool isTrans)
 	texture->Render(hdc, camRect, curFrame, isTrans);
 }
 
-void ImageRect::CamRender(HDC hdc, int alpha, POINT curFrame, bool isTrans)
+void ImageRect::CamRender(HDC hdc, int alphaValue, POINT curFrame, bool isTrans)
 {
 
 	if (!isActive)
 		return;
 
 	camRect->pos = pos - Camera::Get()->GetPos();
-	texture->Render(hdc, camRect, alpha, curFrame, isTrans);
+	texture->Render(hdc, camRect, alphaValue, curFrame, isTrans);
 }

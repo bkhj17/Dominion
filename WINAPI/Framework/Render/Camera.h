@@ -19,7 +19,7 @@ public:
     void SetMapRect(Rect* rect) { mapRect = rect; }
 
     Vector2 GetPos();
-
+    void SetPos(Vector2 pos);
 private:
     void FreeMove();
     void FollowMode();

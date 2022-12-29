@@ -23,6 +23,11 @@ Vector2 Camera::GetPos()
 	return rect->pos;
 }
 
+void Camera::SetPos(Vector2 pos)
+{
+	rect->pos = pos;
+}
+
 void Camera::FreeMove()
 {
 	if (KEY_PRESS(VK_LBUTTON)) {

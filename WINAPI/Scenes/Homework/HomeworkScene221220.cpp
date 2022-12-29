@@ -42,7 +42,7 @@ void HomeworkScene221220::ShotBullet()
 	if (plane->Shot()) {
 		for (auto bullet : bullets) {
 			if (!bullet->isActive) {
-				bullet->Init(plane->ShotPos());
+				bullet->Start(plane->ShotPos());
 				break;
 			}
 		}
@@ -72,7 +72,7 @@ void HomeworkScene221220::SpawnMonsters()
 		int cnt = GameMath::Random(1, 4);
 		for (auto monster : monsters) {
 			if (!monster->isActive) {
-				monster->Init();
+				monster->Start();
 				if (--cnt == 0)
 					break;
 			}
@@ -91,7 +91,7 @@ void HomeworkScene221220::UpdateMonsters()
 	}
 }
 
-void HomeworkScene221220::Init()
+void HomeworkScene221220::Start()
 {
 }
 
@@ -223,7 +223,7 @@ void HomeworkScene221220::Bullet1220::Destroy()
 	isActive = false;
 }
 
-void HomeworkScene221220::Bullet1220::Init(Vector2 pos)
+void HomeworkScene221220::Bullet1220::Start(Vector2 pos)
 {
 	isActive = true;
 	this->pos = pos;
@@ -250,7 +250,7 @@ HomeworkScene221220::Monster1220::Monster1220()
 	isActive = false;
 }
 
-void HomeworkScene221220::Monster1220::Init()
+void HomeworkScene221220::Monster1220::Start()
 {
 	isActive = true;
 	float sz = GameMath::Random(MONSTER_SIZE_MIN, MONSTER_SIZE_MAX);

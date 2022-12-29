@@ -160,7 +160,7 @@ HomeworkScene221223::~HomeworkScene221223()
 	delete screen;
 }
 
-void HomeworkScene221223::Init()
+void HomeworkScene221223::Start()
 {
 }
 

@@ -42,6 +42,15 @@ Texture* Texture::Add(wstring file, UINT frameX, UINT frameY, COLORREF transColo
     return texture;
 }
 
+void Texture::Remove(wstring file)
+{
+    if (textures.count(file) == 0)
+        return;
+
+    delete textures[file];
+    textures.erase(file);
+}
+
 void Texture::Delete()
 {
     for (pair<wstring, Texture*> texture : textures) {
@@ -84,12 +93,12 @@ void Texture::Render(HDC hdc, Rect* rect, POINT curFrame, bool isTrans)
     );
 }
 
-void Texture::Render(HDC hdc, Rect* rect, int alpha, POINT curFrame, bool isTrans)
+void Texture::Render(HDC hdc, Rect* rect, int alphaValue, POINT curFrame, bool isTrans)
 {
     if (isDebugMode)
         rect->LineRender(hdc);
 
-    blendFunc.SourceConstantAlpha = alpha;
+    blendFunc.SourceConstantAlpha = alphaValue;
 
     if (isDebugMode)
         rect->LineRender(hdc);
@@ -158,18 +167,18 @@ float Texture::GetPixelHeight(const Vector2& pos)
     for (; y < imageSize.y; y++) {
         COLORREF color = GetPixel(memDC, (int)pos.x, y);
         if (color != transColor) {
-            return (float)y;
+            break;
         }
     }
 
     if (y == startY) {
         for (; y > 0; y--) {
             COLORREF color = GetPixel(memDC, (int)pos.x, y);
-            if (color != transColor) {
-                return (float)y;
+            if (color == transColor) {
+                return (float)(y+1);
             }
         }
     }
 
-    return (float)imageSize.y;
+    return (float)y;
 }

@@ -12,7 +12,7 @@ Enemy::~Enemy()
 	DeleteObject(hPen);
 }
 
-void Enemy::Init()
+void Enemy::Start()
 {
 }
 

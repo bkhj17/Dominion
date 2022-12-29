@@ -1,60 +1,39 @@
 #include "framework.h"
 
 Megaman::Megaman()
-	: ImageRect(L"Textures/CookieRun.bmp", 11, 6)
+	: PixelCharacter(L"Textures/CookieRun.bmp", 11, 6)
 {
 	CreateAnimations();
 	animations[curType]->Play();
 
-	BulletManager::Get();
 
 	bodyOffset = { 0,120 };
 	bodyRect = new Rect(pos+bodyOffset, {95, 133});
 
-	hBrush = CreateSolidBrush(RGB(0, 178, 255));
-	hPen = CreatePen(PS_SOLID, 10, RGB(0, 178, 255));
 }
 
 Megaman::~Megaman()
 {
-	for (pair<ActionType, Animation*> animation : animations) {
-		delete animation.second;
-	}
-
 	delete bodyRect;
-	DeleteObject(hBrush);
-	DeleteObject(hPen);
-
 }
 
 void Megaman::Update()
 {
-	Fire();
+	Control();
 	Move();
-	Jump();
+	__super::Update();
 	SetAnimation();
 
 	bodyRect->pos = pos + bodyOffset;
 
 	animations[curType]->Update();
-
-	BulletManager::Get()->Update();
-}
-
-void Megaman::Render(HDC hdc)
-{
-	//bodyRect->LineRender(hdc);
-	ImageRect::CamRender(hdc, animations[curType]->GetFrame());
-
-	BulletManager::Get()->Render(hdc);
 }
 
 void Megaman::Fire()
 {
-	if (KEY_DOWN(VK_SPACE)) {
-		BulletManager::Get()->Fire(pos, Vector2(1, -1));
-	}
-
+	if (curType != ActionType::PLANT)
+		BombManager::Get()->Plant({ pos.x, pos.y });
+	/*
 	GameObject* bullet = BulletManager::Get()->CollisionLand(landTexture);
 	if (bullet) {
 		EffectManager::Get()->Play("Exp", bullet->pos);
@@ -69,10 +48,24 @@ void Megaman::Fire()
 		bullet->isActive = false;
 		Ellipse(landTexture->GetMemDC(), left, top, right, bottom);
 	}
+	*/
 }
 
 void Megaman::Move()
 {
+	if (curType == (int)ActionType::PLANT)
+		return;
+
+	if (CanMove())
+		pos.x += velocity.x * DELTA;
+}
+
+void Megaman::Control()
+{
+	if (KEY_DOWN(VK_SPACE)) {
+		Fire();
+	}
+
 	bool isMove = false;
 
 	if (KEY_PRESS(VK_RIGHT)) {
@@ -88,11 +81,6 @@ void Megaman::Move()
 		velocity.x = 0.0f;
 	}
 
-	pos.x += velocity.x * DELTA;
-}
-
-void Megaman::Jump()
-{
 	if (jumpCount < 2 && KEY_DOWN(VK_UP)) {
 		velocity.y = JUMP_POWER;
 		jumpCount++;
@@ -102,26 +90,11 @@ void Megaman::Jump()
 			SetAction(ActionType::JUMP_DOWN);
 		}
 	}
-
-	velocity.y -= GRAVITY * DELTA;
-	pos.y -= velocity.y * DELTA;
-	
-	Vector2 bottomPos = pos;
-	bottomPos.y = Bottom() - 20.0f;
-	float height = landTexture->GetPixelHeight(bottomPos);
-
-	if (Bottom() > height) {
-		if (velocity.y < 0.0f) {
-			velocity.y = 0.0f;
-			jumpCount = 0;
-			pos.y = height - Half().y;
-		}
-	}
 }
 
 void Megaman::SetAnimation()
 {
-	if (velocity.y < -1.0f) {
+	if (velocity.y < -3.0f) {
 		SetAction(ActionType::JUMP_DOWN);
 		return;
 	}
@@ -136,28 +109,24 @@ void Megaman::SetAnimation()
 		SetAction(ActionType::IDLE);
 }
 
-void Megaman::SetAction(ActionType type)
-{
-	if (curType == type)
-		return;
-
-	curType = type;
-	animations[curType]->Play();
-}
 
 void Megaman::CreateAnimations()
 {
-	animations[ActionType::IDLE] = new Animation(texture->GetFrame());
-	animations[ActionType::IDLE]->SetPart(35, 37);
+	animations[IDLE] = new Animation(texture->GetFrame());
+	animations[IDLE]->SetPart(35, 37);
 
-	animations[ActionType::RUN] = new Animation(texture->GetFrame());
-	animations[ActionType::RUN]->SetPart(11, 18);
+	animations[RUN] = new Animation(texture->GetFrame());
+	animations[RUN]->SetPart(11, 18);
 
-	animations[ActionType::JUMP_UP] = new Animation(texture->GetFrame());
-	animations[ActionType::JUMP_UP]->SetPart(0, 0, false);
+	animations[JUMP_UP] = new Animation(texture->GetFrame());
+	animations[JUMP_UP]->SetPart(0, 0, false);
 
-	animations[ActionType::JUMP_DOWN] = new Animation(texture->GetFrame());
-	animations[ActionType::JUMP_DOWN]->SetPart(1, 1, false);
+	animations[JUMP_DOWN] = new Animation(texture->GetFrame());
+	animations[JUMP_DOWN]->SetPart(1, 1, false);
+
+	animations[PLANT] = new Animation(texture->GetFrame());
+	animations[PLANT]->SetPart(1, 1, false);
+	animations[PLANT]->SetEndEvent(bind(&Megaman::SetIdle, this));
 }
 
 bool Megaman::LandCollision(Rect* land)

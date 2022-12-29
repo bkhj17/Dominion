@@ -1,23 +1,17 @@
 #pragma once
 class Megaman :
-    public ImageRect
+    public PixelCharacter
 {
 private:
-    enum class ActionType {
-        IDLE, RUN, JUMP_UP, JUMP_DOWN
+    enum ActionType : int {
+        IDLE, RUN, JUMP_UP, JUMP_DOWN, PLANT
     };
-
-    const float JUMP_POWER = 600.0f;
-    const float GRAVITY = 980.0f;
 
 public:
     Megaman();
     ~Megaman();
 
-    void Update();
-    void Render(HDC hdc);
-
-    void SetLand(Texture* texture) { landTexture = texture; }
+    virtual void Update() override;
 
     Vector2 GetVelocity() { return velocity; }
     
@@ -27,30 +21,16 @@ private:
     void Fire();
 
     void Move();
-    void Jump();
+    void Control();
 
     void SetAnimation();
 
-    void SetAction(ActionType type);
+    void SetIdle() { SetAction((int)ActionType::IDLE); }
     void CreateAnimations();
 
 private:
-    map<ActionType, Animation*> animations;
-
-    ActionType curType = ActionType::IDLE;
-    Vector2 velocity;
-
-    float speed = 400.0f;
-
-    int jumpCount = 0;
-
-    Texture* landTexture;
-
     Rect* bodyRect;
     Vector2 bodyOffset;
-
-    HBRUSH hBrush;
-    HPEN hPen;
 
     float expRange = 200.0f;
 };

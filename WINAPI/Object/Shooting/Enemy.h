@@ -14,7 +14,7 @@ public:
 	Enemy();
 	~Enemy();
 
-	void Init();
+	void Start();
 	void Update();
 	void Render(HDC hdc);
 

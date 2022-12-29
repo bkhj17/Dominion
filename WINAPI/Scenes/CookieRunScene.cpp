@@ -17,7 +17,7 @@ CookieRunScene::~CookieRunScene()
 	delete cookie;
 }
 
-void CookieRunScene::Init()
+void CookieRunScene::Start()
 {
 }
 

@@ -34,7 +34,7 @@ class HomeworkScene221220 :
         static const float DEFUALT_SPEED;
     public:
         Bullet1220();
-        void Init(Vector2 pos);
+        void Start(Vector2 pos);
         void Update();
         void Destroy();
     private:
@@ -47,7 +47,7 @@ class HomeworkScene221220 :
     public:
         Monster1220();
 
-        void Init();
+        void Start();
         void Update();
 
         void Destroy();
@@ -60,7 +60,7 @@ public:
     ~HomeworkScene221220();
 
     // Scene을(를) 통해 상속됨
-    virtual void Init() override;
+    virtual void Start() override;
 
     virtual void Update() override;
 

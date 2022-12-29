@@ -30,7 +30,7 @@ BitmapScene::~BitmapScene()
 	DeleteObject(sivaBitmap);
 }
 
-void BitmapScene::Init()
+void BitmapScene::Start()
 {
 }
 

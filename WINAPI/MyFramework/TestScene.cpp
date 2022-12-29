@@ -13,7 +13,7 @@ TestScene::~TestScene()
 	delete rect;
 }
 
-void TestScene::Init()
+void TestScene::Start()
 {
 	rect->pos = { CENTER_X, CENTER_Y };
 }

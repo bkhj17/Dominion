@@ -55,6 +55,9 @@
 #include <functional>
 using namespace std;
 
+typedef function<void()> Event;
+typedef function<void(void*)> ParamEvent;
+
 //FMOD Library
 #include "Libraries/inc/fmod.hpp"
 #pragma comment(lib, "Libraries/lib/fmod_vc.lib")
@@ -94,29 +97,35 @@ using namespace Utility;
 #include "Object/Basic/Effect.h"
 
 #include "Object/UI/ProgressBar.h"
+#include "Object/UI/Button.h"
 
 #include "Object/Spawn/SpawnObject.h"
 #include "Object/Spawn/SpawnManager.h"
 
+#include "Object/Manager/PoolingManager.h"
+#include "Object/Manager/EffectManager.h"
+#include "Object/Manager/Observer.h"
+#include "Object/Manager/PipeManager.h"
+
 #include "Object/Shooting/Bullet.h"
+#include "Object/Shooting/BulletManager.h"
 #include "Object/Shooting/Plane.h"
 #include "Object/Shooting/Enemy.h"
+#include "Object/Shooting/EnemyManager.h"
+#include "Object/Shooting/Cannon.h"
+
 
 #include "Object/Character/Character.h"
+#include "Object/Character/PixelCharacter.h"
 #include "Object/Character/Megaman.h"
+#include "Object/Character/Siva.h"
 #include "Object/Character/BattleCharacter.h"
 #include "Object/Character/Fighter.h"
 #include "Object/Character/Monster.h"
 
-#include "Object/Manager/PoolingManager.h"
-#include "Object/Manager/EffectManager.h"
-#include "Object/Manager/BulletManager.h"
-#include "Object/Manager/EnemyManager.h"
-#include "Object/Manager/BrickManager.h"
-#include "Object/Manager/PipeManager.h"
 
-#include "Object/Shooting/Cannon.h"
 
+#include "Object/BrickOut/BrickManager.h"
 #include "Object/BrickOut/ControlBar.h"
 #include "Object/BrickOut/Ball.h"
 #include "Object/BrickOut/Brick.h"
@@ -128,6 +137,13 @@ using namespace Utility;
 #include "Object/CookieRun/Cookie.h"
 #include "Object/CookieRun/StageManager.h"
 
+#include "Object/Dig/Bomb.h"
+#include "Object/Dig/BoomManager.h"
+
+
+#include "Scenes/Homework/Homework221229/DataManager1229.h"
+#include "Scenes/Homework/Homework221229/Inventory1229.h"
+
 //사용자 정의 헤더
 #include "WINAPI.h"
 
@@ -136,7 +152,9 @@ using namespace Utility;
 #include "Scenes/TutorialScene.h"
 
 //Manager Header
+#include "Manager/SceneManager.h"
 #include "Manager/GameManager.h"
+
 
 extern Vector2 mousePos;
 extern HWND hWnd;

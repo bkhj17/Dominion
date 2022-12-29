@@ -9,13 +9,12 @@ private:
 	GameManager();
 	~GameManager();
 public:
-	void Init();
+	void Start();
 	void Update();
 	void Render();
 
 	HDC GetHDC() { return hdc; }
 private:
-	Scene* scene = nullptr;
 
 	HDC hdc = nullptr;
 	//¹é¹öÆÛ

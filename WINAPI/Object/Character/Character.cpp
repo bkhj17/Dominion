@@ -23,7 +23,7 @@ void Character::Update()
 	animations[curType]->Update();
 }
 
-void Character::Render(HDC hdc, int alpha)
+void Character::Render(HDC hdc, int alphaValue)
 {
 	imageRect->LineRender(hdc);
 	if (animations.count(curType) == 0)
@@ -32,8 +32,8 @@ void Character::Render(HDC hdc, int alpha)
 		return;
 	}
 
-	if (alpha < 255) {
-		imageRect->Render(hdc, (int)alpha, animations[curType]->GetFrame());
+	if (alphaValue < 255) {
+		imageRect->Render(hdc, (int)alphaValue, animations[curType]->GetFrame());
 	}
 	else {
 		imageRect->Render(hdc, animations[curType]->GetFrame());

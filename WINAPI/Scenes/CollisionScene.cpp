@@ -18,7 +18,7 @@ CollisionScene::~CollisionScene()
 	DeleteObject(hBlueBrush);
 }
 
-void CollisionScene::Init()
+void CollisionScene::Start()
 {
 }
 

@@ -96,7 +96,7 @@ public:
     HomeworkScene221221();
     ~HomeworkScene221221();
     // Scene을(를) 통해 상속됨
-    virtual void Init() override;
+    virtual void Start() override;
 
 
     void UpdateReady();

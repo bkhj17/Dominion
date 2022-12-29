@@ -11,7 +11,7 @@ SpawnObject::~SpawnObject()
 	Destroy();
 }
 
-void SpawnObject::Init()
+void SpawnObject::Start()
 {
 }
 

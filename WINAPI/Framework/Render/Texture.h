@@ -14,10 +14,11 @@ public:
 		UINT frameY = 1,
 		COLORREF transColor = MAGENTA
 	);
+	static void Remove(wstring file);
 	static void Delete();
 
 	void Render(HDC hdc, Rect* rect, POINT curFrame = {0,0}, bool isTrans = true);
-	void Render(HDC hdc, Rect* rect, int alpha, POINT curFrame = { 0,0 }, bool isTrans = true);
+	void Render(HDC hdc, Rect* rect, int alphaValue, POINT curFrame = { 0,0 }, bool isTrans = true);
 
 	float GetPixelHeight(const Vector2& pos);
 

@@ -13,7 +13,7 @@ AngleScene::~AngleScene()
 	delete cannon;
 }
 
-void AngleScene::Init()
+void AngleScene::Start()
 {
 }
 

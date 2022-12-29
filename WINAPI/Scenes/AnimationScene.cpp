@@ -13,7 +13,7 @@ AnimationScene::~AnimationScene()
 	delete megaman;
 }
 
-void AnimationScene::Init()
+void AnimationScene::Start()
 {
 }
 

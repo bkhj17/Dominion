@@ -15,7 +15,7 @@ FlappyBirdScene::~FlappyBirdScene()
 	delete landScape;
 }
 
-void FlappyBirdScene::Init()
+void FlappyBirdScene::Start()
 {
 }
 

@@ -18,7 +18,7 @@ BrickOutScene::~BrickOutScene()
 	BrickManager::Delete();
 }
 
-void BrickOutScene::Init()
+void BrickOutScene::Start()
 {
 }
 

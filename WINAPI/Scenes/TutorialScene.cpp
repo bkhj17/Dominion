@@ -12,7 +12,7 @@ TutorialScene::~TutorialScene()
     DeleteObject(hBrush);
 }
 
-void TutorialScene::Init()
+void TutorialScene::Start()
 {
 }
 

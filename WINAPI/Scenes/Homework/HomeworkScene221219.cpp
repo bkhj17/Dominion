@@ -17,7 +17,7 @@ HomeworkScene221219::~HomeworkScene221219()
 	}
 }
 
-void HomeworkScene221219::Init()
+void HomeworkScene221219::Start()
 {
 }
 
@@ -38,7 +38,7 @@ void HomeworkScene221219::Update()
 	if (nextShowTime <= now) {
 		if (nShow < MAX_RECT) {
 			nextShowTime = now + rand() % (MAX_SHOW_TIME-MIN_SHOW_TIME)+ MIN_SHOW_TIME;
-			vRect[nShow++]->Init();
+			vRect[nShow++]->Start();
 		}
 	}
 }
@@ -59,7 +59,7 @@ HomeworkScene221219::VanishingRect::~VanishingRect()
 	DeleteObject(this->brush);
 }
 
-void HomeworkScene221219::VanishingRect::Init()
+void HomeworkScene221219::VanishingRect::Start()
 {
 	shape = (SHAPE)(rand() % 2);
 

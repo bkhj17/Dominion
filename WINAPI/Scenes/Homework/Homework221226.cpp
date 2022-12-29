@@ -73,7 +73,7 @@ void Player1226::Update()
 void Player1226::Render(HDC hdc)
 {
 
-	imageRect->Render(hdc, alpha, animations[curAction]->GetFrame());
+	imageRect->Render(hdc, alphaValue, animations[curAction]->GetFrame());
 	imageRect->LineRender(hdc);
 	LineRender(hdc);
 
@@ -342,7 +342,7 @@ Homework221226::~Homework221226()
 	MonsterManager::Delete();
 }
 
-void Homework221226::Init()
+void Homework221226::Start()
 {
 }
 

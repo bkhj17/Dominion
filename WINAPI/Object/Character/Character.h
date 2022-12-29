@@ -12,7 +12,7 @@ public:
     ~Character();
 
     virtual void Update();
-    virtual void Render(HDC hdc, int alpha = 255);
+    virtual void Render(HDC hdc, int alphaValue = 255);
 
 protected:
     void SetAction(int type);
