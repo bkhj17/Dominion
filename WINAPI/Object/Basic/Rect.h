@@ -1,4 +1,5 @@
 #pragma once
+class Line;
 class Circle;
 
 class Rect : public GameObject
@@ -16,6 +17,9 @@ public:
 	virtual bool IsRectCollision(IN const Rect* rect, OUT Vector2* overlapSize) const;
 	virtual bool IsCircleCollision(const Circle* circle) const override;
 
+	// GameObject을(를) 통해 상속됨
+	virtual bool IsLineCollision(const Line* line) const override;
+
 	float Left() const { return pos.x - size.x * 0.5f; }
 	float Right() const { return pos.x + size.x * 0.5f; }
 	float Top() const { return pos.y - size.y * 0.5f; }
@@ -24,5 +28,6 @@ public:
 	Vector2 Half() { return size / 2; }
 public:
 	Vector2 size;
+
 };
 

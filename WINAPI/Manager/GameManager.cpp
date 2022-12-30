@@ -7,22 +7,23 @@
 //#include "Scenes/Homework221223.h"
 //#include "Scenes/Homework221226.h"
 //#include "Scenes/Homework/Homework221228.h"
-#include "Scenes/Homework/Homework221229/Homework221229.h"
-#include "Scenes/Homework/Homework221229/ShopScene1229.h"
-#include "Scenes/Homework/Homework221229/SellScene1229.h"
-#include "Scenes/Homework/Homework221229/InventoryScene1229.h"
+//#include "Scenes/Homework/Homework221229/Homework221229.h"
+//#include "Scenes/Homework/Homework221229/ShopScene1229.h"
+//#include "Scenes/Homework/Homework221229/SellScene1229.h"
+//#include "Scenes/Homework/Homework221229/InventoryScene1229.h"
 //#include "Scenes/SpawnScene.h"
-//#include "Scenes/CollisionScene.h"
+#include "Scenes/CollisionScene.h"
 //#include "Scenes/ShootingScene.h"
 //#include "Scenes/AngleScene.h"
 //#include "Scenes/BrickOutScene.h"
 //#include "Scenes/BitmapScene.h"
 //#include "Scenes/FlappyBirdScene.h"
 //#include "Scenes/CookieRunScene.h"
-#include "Scenes/BattleScene.h"
+//#include "Scenes/BattleScene.h"
 //#include "Scenes/PixelCollisionScene.h"
-#include "Scenes/DigGameScene.h"
-#include "Scenes/ButtonScene.h"
+//#include "Scenes/DigGameScene.h"
+//#include "Scenes/ButtonScene.h"
+#include "Scenes/InventoryScene.h"
 //#include "MyFramework/TestScene.h"
 
 GameManager::GameManager()
@@ -30,11 +31,9 @@ GameManager::GameManager()
 	//Timer::Get()->SetLockFPS(1000);
 
 	Start();
-	SceneManager::Get()->Add("Homwork1229", new Homework221229);
-	SceneManager::Get()->Add("Shop1229", new ShopScene1229);
-	SceneManager::Get()->Add("Sell1229", new SellScene1229);
-	SceneManager::Get()->Add("Inventory1229", new InventoryScene1229);
-	SceneManager::Get()->ChangeScene("Homwork1229");
+	SceneManager::Get()->Add("InventoryScene", new InventoryScene);
+	SceneManager::Get()->Add("CollisionScene", new CollisionScene);
+	SceneManager::Get()->ChangeScene("CollisionScene");
 }
 
 GameManager::~GameManager()

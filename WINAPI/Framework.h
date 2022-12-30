@@ -106,6 +106,7 @@ using namespace Utility;
 #include "Object/Manager/EffectManager.h"
 #include "Object/Manager/Observer.h"
 #include "Object/Manager/PipeManager.h"
+#include "Object/Manager/DataManager.h"
 
 #include "Object/Shooting/Bullet.h"
 #include "Object/Shooting/BulletManager.h"
@@ -140,6 +141,10 @@ using namespace Utility;
 #include "Object/Dig/Bomb.h"
 #include "Object/Dig/BoomManager.h"
 
+#include "Object/Inventory/Item.h"
+#include "Object/Inventory/Panel.h"
+#include "Object/Inventory/Store.h"
+#include "Object/Inventory/Inventory.h"
 
 #include "Scenes/Homework/Homework221229/DataManager1229.h"
 #include "Scenes/Homework/Homework221229/Inventory1229.h"

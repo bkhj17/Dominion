@@ -1,4 +1,5 @@
 #pragma once
+class Line;
 class Circle : public GameObject {
 public:
 	Circle() = default;
@@ -10,9 +11,11 @@ public:
 	virtual bool IsPointCollision(const Vector2& point) const override;
 	bool IsCircleCollision(const Circle* circle) const;
 	bool IsRectCollision(const Rect* rect) const;
+	virtual bool IsLineCollision(const Line* line) const override;
 
 	float GetRadius() const { return radius; }
 
 protected:
 	float radius = 0.0f;
+
 };

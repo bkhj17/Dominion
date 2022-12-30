@@ -19,6 +19,9 @@ private:
     HBRUSH hRedBrush;
     HBRUSH hBlueBrush;
 
+    HPEN hRedPen;
+    HPEN hBluePen;
+
     bool isCollision = false;
 };
 

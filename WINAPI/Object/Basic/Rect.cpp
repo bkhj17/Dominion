@@ -51,6 +51,11 @@ bool Rect::IsCircleCollision(const Circle* circle) const
 	return circle->IsCollision(this);
 }
 
+bool Rect::IsLineCollision(const Line* line) const
+{
+	return false;
+}
+
 bool Rect::IsRectCollision(const Rect* rect) const
 {
 	if(!isActive || !rect->isActive)

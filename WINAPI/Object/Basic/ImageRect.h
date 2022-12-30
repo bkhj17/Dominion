@@ -1,6 +1,7 @@
 #pragma once
 class ImageRect : public Rect {
 public:
+	ImageRect();
 	ImageRect(wstring file, 
 		UINT frameX = 1, 
 		UINT frameY = 1, 
@@ -17,6 +18,7 @@ public:
 	void CamRender(HDC hdc, int alphaValue, POINT curFrame = {0,0}, bool isTrans = true);
 
 	Texture* GetTexture() { return texture; }
+	void SetTexture(Texture* texture);
 protected:
 	Texture* texture;
 	Rect* camRect;

@@ -49,10 +49,6 @@ struct Vector2
 		return sqrt(x * x + y * y);
 	}
 
-	float Dot(Vector2 value) {
-		return x* value.x + y * value.y;
-	}
-
 	float Cross(Vector2 value) {
 		return x * value.y - y * value.x;
 	}

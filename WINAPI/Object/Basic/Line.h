@@ -15,6 +15,11 @@ public:
 
 	virtual bool IsCircleCollision(const Circle* circle) const override;
 
+	virtual bool IsLineCollision(const Line* line) const override;
+	bool IsLineCollision(IN const Line* line, OUT Vector2& crossPoint);
+	bool IsCircleCollision(const Circle* circle, OUT Vector2& closestPoint) const;
+
+	bool IsBetweenLine(const Line* line) const;
 public:
 	Vector2 end;
 };

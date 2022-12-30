@@ -5,12 +5,16 @@ Button::Button(wstring file)
 	: ImageRect(file)
 {
 	normalTexture = texture;
+	overTexture = texture;
+	downTexture = texture;
 }
 
 Button::Button(Texture* texture)
 	: ImageRect(texture)
 {
 	normalTexture = texture;
+	overTexture = texture;
+	downTexture = texture;
 }
 
 Button::~Button()

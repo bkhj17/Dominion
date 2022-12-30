@@ -1,5 +1,22 @@
 #include "framework.h"
 
+string Utility::ToString(wstring wstr)
+{
+    string tmp; 
+    tmp.assign(wstr.begin(), wstr.end());
+    //wstring은 2바이트이므로 주의
+
+    return tmp;
+}
+
+wstring Utility::ToWString(string str)
+{
+    wstring tmp;
+    tmp.assign(str.begin(), str.end());
+
+    return tmp;
+}
+
 vector<string> Utility::SplitString(string origin, const string& tok)
 {
     vector<string> result;

@@ -67,3 +67,8 @@ bool Circle::IsRectCollision(const Rect* rect) const
 	}
 	return false;
 }
+
+bool Circle::IsLineCollision(const Line* line) const
+{
+	return false;
+}

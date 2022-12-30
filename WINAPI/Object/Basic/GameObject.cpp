@@ -14,5 +14,9 @@ bool GameObject::IsCollision(const GameObject* object) const
 	if (rect != nullptr)
 		return IsRectCollision(rect);
 
+	const Line* line = dynamic_cast<const Line*>(object);
+	if (line != nullptr)
+		return IsLineCollision(line);
+
 	return false;
 }

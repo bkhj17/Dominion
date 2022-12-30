@@ -2,6 +2,7 @@
 
 class Rect;
 class Circle;
+class Line;
 
 class GameObject
 {
@@ -20,6 +21,7 @@ public:
 	virtual bool IsRectCollision(IN const Rect* rect, OUT Vector2* overlapRect) { return false; }
 	virtual bool IsCircleCollision(const Circle* circle) const = 0;
 
+	virtual bool IsLineCollision(const Line* line) const = 0;
 public:
 	string tag;
 	bool isActive = true;

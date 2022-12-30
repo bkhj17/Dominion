@@ -40,3 +40,13 @@ Vector2 GameMath::SLerp(const Vector2& start, const Vector2& end, float t)
 	t = GameMath::Clamp(0.0f, 1.0f, t);
 	return start + (end - start) * t*t;
 }
+
+float GameMath::Cross(const Vector2& vec1, const Vector2 vec2)
+{
+	return vec1.x * vec2.y - vec2.x * vec1.y;
+}
+
+float GameMath::Dot(const Vector2& vec1, const Vector2 vec2)
+{
+	return vec1.x * vec2.x + vec1.y * vec2.y;
+}
