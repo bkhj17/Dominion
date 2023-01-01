@@ -131,9 +131,9 @@
 행동 {
 	int 행동종류
 
-	bool 완료 여부
+	bool 종료 여부
 	list<행동*> 하위 행동 목록 
-	int 현재 행동
+	int 현재 행동 : 하위 행동이 전부 종료되었을 때 
 	
 	Update();
 	Render();
