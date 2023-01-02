@@ -22,18 +22,19 @@
 //#include "Scenes/BattleScene.h"
 //#include "Scenes/PixelCollisionScene.h"
 //#include "Scenes/DigGameScene.h"
-//#include "Scenes/ButtonScene.h"
+#include "Scenes/ButtonScene.h"
 #include "Scenes/InventoryScene.h"
 //#include "MyFramework/TestScene.h"
+#include "Dominion/DominionScene.h"
 
 GameManager::GameManager()
 {
 	//Timer::Get()->SetLockFPS(1000);
 
 	Start();
-	SceneManager::Get()->Add("InventoryScene", new InventoryScene);
-	SceneManager::Get()->Add("CollisionScene", new CollisionScene);
-	SceneManager::Get()->ChangeScene("CollisionScene");
+	//SceneManager::Get()->Add("InventoryScene", new InventoryScene);
+	SceneManager::Get()->Add("DominionScene", new DominionScene);
+	SceneManager::Get()->ChangeScene("DominionScene");
 }
 
 GameManager::~GameManager()

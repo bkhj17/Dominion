@@ -6,6 +6,7 @@ ButtonScene::ButtonScene()
 	hFont = CreateFont(40, 0, 0, 0, 1, false, false, false, HANGUL_CHARSET,
 		100,0,0,0,L"배달의 민족 한나체");
 	//HANGEUL_CHARSET도 같은거
+	LoadFile();
 
 	Texture* normal = Texture::Add(L"Textures/UI/NormalButton.bmp");
 	Texture* over = Texture::Add(L"Textures/UI/OverButton.bmp");
@@ -57,4 +58,18 @@ void ButtonScene::StartBattleScene()
 void ButtonScene::StartDigScene()
 {
 	SceneManager::Get()->ChangeScene("DigGame");
+}
+
+void ButtonScene::LoadFile()
+{
+	HANDLE handle;
+	WIN32_FIND_DATA findData;
+	handle = FindFirstFile(L"Textures/UI/Item/*.bmp", &findData);
+
+	bool result = true;
+	vector<wstring> fileList;
+	while (result) {
+		fileList.push_back(findData.cFileName);
+		result = FindNextFile(handle, &findData);
+	}
 }

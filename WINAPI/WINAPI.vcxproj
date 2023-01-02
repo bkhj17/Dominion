@@ -130,6 +130,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Dominion\CardDataManager.h" />
+    <ClInclude Include="Dominion\CardManager.h" />
+    <ClInclude Include="Dominion\DominionPositions.h" />
+    <ClInclude Include="Dominion\DominionScene.h" />
+    <ClInclude Include="Dominion\CardSupplier.h" />
+    <ClInclude Include="Dominion\Card.h" />
+    <ClInclude Include="Dominion\DominionPlayer.h" />
+    <ClInclude Include="Dominion\Act.h" />
+    <ClInclude Include="Dominion\GameMaster.h" />
     <ClInclude Include="Object\Inventory\Inventory.h" />
     <ClInclude Include="Object\Inventory\Item.h" />
     <ClInclude Include="Object\Manager\DataManager.h" />
@@ -159,13 +168,13 @@
     <ClInclude Include="Object\Character\Character.h" />
     <ClInclude Include="Object\Character\Fighter.h" />
     <ClInclude Include="Scenes\BattleScene.h" />
-    <ClInclude Include="MyFramework\TestDeck.h" />
+    <ClInclude Include="Dominion\TestDeck.h" />
     <ClInclude Include="Scenes\Homework\Homework221226.h" />
     <ClInclude Include="Object\CookieRun\Cookie.h" />
     <ClInclude Include="Framework\Render\Animation.h" />
-    <ClInclude Include="MyFramework\MyMovement.h" />
-    <ClInclude Include="MyFramework\TestRect.h" />
-    <ClInclude Include="MyFramework\TestScene.h" />
+    <ClInclude Include="Dominion\MyMovement.h" />
+    <ClInclude Include="Dominion\TestRect.h" />
+    <ClInclude Include="Dominion\TestScene.h" />
     <ClInclude Include="Object\Character\Megaman.h" />
     <ClInclude Include="Object\CookieRun\Coin.h" />
     <ClInclude Include="Object\CookieRun\StageManager.h" />
@@ -225,6 +234,14 @@
     <ClInclude Include="WINAPI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Dominion\CardDataManager.cpp" />
+    <ClCompile Include="Dominion\CardManager.cpp" />
+    <ClCompile Include="Dominion\DominionScene.cpp" />
+    <ClCompile Include="Dominion\CardSupplier.cpp" />
+    <ClCompile Include="Dominion\Card.cpp" />
+    <ClCompile Include="Dominion\DominionPlayer.cpp" />
+    <ClCompile Include="Dominion\Act.cpp" />
+    <ClCompile Include="Dominion\GameMaster.cpp" />
     <ClCompile Include="Object\Inventory\Inventory.cpp" />
     <ClCompile Include="Object\Inventory\Item.cpp" />
     <ClCompile Include="Object\Manager\DataManager.cpp" />
@@ -256,9 +273,9 @@
     <ClCompile Include="Scenes\Homework\Homework221226.cpp" />
     <ClCompile Include="Object\CookieRun\Cookie.cpp" />
     <ClCompile Include="Framework\Render\Animation.cpp" />
-    <ClCompile Include="MyFramework\MyMovement.cpp" />
-    <ClCompile Include="MyFramework\TestRect.cpp" />
-    <ClCompile Include="MyFramework\TestScene.cpp" />
+    <ClCompile Include="Dominion\MyMovement.cpp" />
+    <ClCompile Include="Dominion\TestRect.cpp" />
+    <ClCompile Include="Dominion\TestScene.cpp" />
     <ClCompile Include="Object\Character\Megaman.cpp" />
     <ClCompile Include="Object\CookieRun\Coin.cpp" />
     <ClCompile Include="Object\CookieRun\StageManager.cpp" />

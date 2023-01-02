@@ -5,4 +5,6 @@ namespace Utility {
 	wstring ToWString(string str);
 
 	vector<string> SplitString(string origin, const string& tok);
+
+
 }

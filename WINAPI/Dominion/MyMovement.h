@@ -6,9 +6,8 @@ public:
 
 	void Update();
 
-	void SetTargetPos(Vector2 vec, float tolerance = 10.0f);
-	void SetTargetPos(Vector2 target, float speed = 10.0f, float tolerance = 10.0f);
-	void SetTargetPosByTime(Vector2 target, float time, float tolerance = 10.0f);
+	void SetTargetPos(Vector2 target, float speed = 100.0f, float tolerance = 10.0f);
+	void SetTargetPosByTime(Vector2 target, float time = 1.0f, float tolerance = 10.0f);
 	
 	void Teleport(Vector2 target);
 
@@ -20,7 +19,7 @@ private:
 	bool isMoving = false;
 
 	Vector2 targetPos;
-	float tolerance = 10.0f;
+	float tolerance = 10.0f;	//오차범위
 
 	float speed = 10.0f;
 };

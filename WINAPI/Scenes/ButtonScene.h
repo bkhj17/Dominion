@@ -12,6 +12,8 @@ public:
 
     void StartBattleScene();
     void StartDigScene();
+
+    void LoadFile();
 private:
     HFONT hFont;
 

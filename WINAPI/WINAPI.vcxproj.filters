@@ -165,13 +165,13 @@
     <ClInclude Include="Scenes\AnimationScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="MyFramework\MyMovement.h">
+    <ClInclude Include="Dominion\MyMovement.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="MyFramework\TestScene.h">
+    <ClInclude Include="Dominion\TestScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="MyFramework\TestRect.h">
+    <ClInclude Include="Dominion\TestRect.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\CookieRunScene.h">
@@ -189,7 +189,7 @@
     <ClInclude Include="Scenes\Homework\Homework221226.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="MyFramework\TestDeck.h">
+    <ClInclude Include="Dominion\TestDeck.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\BattleScene.h">
@@ -292,6 +292,33 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Object\Inventory\Inventory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Dominion\Act.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Dominion\DominionPlayer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Dominion\Card.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Dominion\CardSupplier.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Dominion\DominionScene.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Dominion\GameMaster.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Dominion\DominionPositions.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Dominion\CardManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Dominion\CardDataManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -437,13 +464,13 @@
     <ClCompile Include="Scenes\AnimationScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="MyFramework\MyMovement.cpp">
+    <ClCompile Include="Dominion\MyMovement.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="MyFramework\TestScene.cpp">
+    <ClCompile Include="Dominion\TestScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="MyFramework\TestRect.cpp">
+    <ClCompile Include="Dominion\TestRect.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\CookieRunScene.cpp">
@@ -561,6 +588,30 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Object\Inventory\Inventory.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Dominion\Act.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Dominion\DominionPlayer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Dominion\Card.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Dominion\CardSupplier.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Dominion\DominionScene.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Dominion\GameMaster.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Dominion\CardManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Dominion\CardDataManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

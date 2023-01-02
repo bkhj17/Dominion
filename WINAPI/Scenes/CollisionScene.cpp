@@ -10,8 +10,7 @@ CollisionScene::CollisionScene()
 
 	//objects.push_back(new Rect(center, { 50.0f, 50.0f }));
 	objects.push_back(new Line(Vector2(50.0f, 50.0f), Vector2()));
-	objects.push_back(new Circle(Vector2(700.0f, 50.0f), 360.0f));
-	objects.push_back(new Circle({}, 10.0f));
+	objects.push_back(new Rect(Vector2(700.0f, 50.0f), Vector2(100.0f, 100.0f)));
 
 	hRedPen = CreatePen(PS_SOLID, 5, RED);
 	hBluePen = CreatePen(PS_SOLID, 5, BLUE);
@@ -35,7 +34,10 @@ void CollisionScene::Start()
 
 void CollisionScene::Update()
 {
-	isCollision = objects[0]->IsCollision(objects[1]);
+	((Line*)objects[0])->end = mousePos;
+
+
+	isCollision = ((Line*)objects[0])->IsRectCollision((Rect*)objects[1]);
 }
 
 void CollisionScene::Render(HDC hdc)
