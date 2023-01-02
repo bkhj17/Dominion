@@ -14,6 +14,5 @@ public:
 private:
 	Rect* infoBox;
 	class CardData* dataInfo = nullptr;
-
 };
 

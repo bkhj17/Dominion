@@ -10,14 +10,8 @@
 
 GameMaster::GameMaster()
 {	
-
-
 	CardDataManager::Get()->LoadData();
-
-	players.resize(2);
-	players[0] = new DominionPlayer();
-	players[1] = new DominionPlayer();
-
+	MakePlayers();
 	MakeSuppliers();
 }
 
@@ -45,7 +39,7 @@ void GameMaster::Update()
 	}
 	else if(test) {
 		test = false;
-		curAct = new TestAct;
+		curAct = new BuyCardAct(nullptr, players[0]);
 	}
 
 	CardManager::Get()->Update();
@@ -55,6 +49,9 @@ void GameMaster::Update()
 
 void GameMaster::Render(HDC hdc)
 {
+	players[control]->Render(hdc);
+	players[side]->Render(hdc);
+
 	for (auto& supplier : suppliers) {
 		supplier->Render(hdc);
 	}
@@ -73,6 +70,18 @@ bool GameMaster::IsGameEnd()
 	return cnt >= 3;
 }
 
+void GameMaster::MakePlayers()
+{
+	players.resize(2);
+	//È­¸é º¸´Â ³ð
+	players[0] = new DominionPlayer(true);
+	control = 0;
+
+	//È­¸é ¾È º¸´Â ³ð. AI·Î µ¹¸±²¨´Ù
+	players[1] = new DominionPlayer(false);
+	side = 1;
+}
+
 void GameMaster::MakeSuppliers( )
 {
 	int numSuppliers = 3 + 4 + 10;
@@ -81,19 +90,20 @@ void GameMaster::MakeSuppliers( )
 	auto& datas = CardDataManager::Get()->datas;
 	for (int i = 0; i < 3; i++) {
 		CardManager::Get()->CreateObjects(datas[i].key, 10);
-		
 		auto coin = new CardSupplier();
-		
-
-		
 		coin->Init(&datas[i]);
 		coin->size = { 60.0f, 90.0f };
-		coin->pos = { WIN_WIDTH * 0.2f + 260.0f, 150.0f+i*90.0f };
-
-
-
-
+		coin->pos = { WIN_WIDTH * 0.2f + 260.0f, 200.0f+i*90.0f };
 		suppliers.push_back(coin);
+	}
+
+	for (int i = 3; i < 7; i++) {
+		CardManager::Get()->CreateObjects(datas[i].key, 10);
+		auto victory = new CardSupplier();
+		victory->Init(&datas[i]);
+		victory->size = { 60.0f, 90.0f };
+		victory->pos = { WIN_WIDTH * 0.2f + 200.0f, 200.0f + (i-3) * 90.0f };
+		suppliers.push_back(victory);
 	}
 }
 

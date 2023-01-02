@@ -15,20 +15,26 @@ private:
 public:
 	void Update();
 	void Render(HDC hdc);
-
+	
 	bool IsGameEnd();
 
+	void MakePlayers();
 	void MakeSuppliers();
 
 	CardData* GetMouseOn();
 
+	DominionPlayer* GetTurnPlayer() { return players[turnPlayer]; }
+	DominionPlayer* GetControlPlayer() { return players[control]; }
+	DominionPlayer* GetSidePlayer() { return players[side]; }
+	
 public:
+	int turnPlayer;
+	int control, side;
 	vector<DominionPlayer*> players;
 	vector<CardSupplier*> suppliers;
 
 	bool test = true;
 	Act* curAct = nullptr;
-	int curPlayer = 0;
 private:
 	Act* mainAct = nullptr;
 };

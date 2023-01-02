@@ -59,13 +59,15 @@ public:
 
 	virtual void Update() {};
 	void Done();
+	void CrearData();
+
+	void Loop();
 	//자신의 실행 결과 반환
 	ActResult* ReturnResult() { return result; }
 	
 	bool isDone = false;
-
-	string tag;
 protected:
+
 	int subActNum = 0;
 	Act* parent;
 	DominionPlayer* player;
@@ -73,7 +75,7 @@ protected:
 
 	bool waiting = true;
 	
-	ActData* data;
+	ActData* data = nullptr;
 	ActResult* requested = nullptr;
 	ActResult* result = nullptr;
 };
@@ -86,6 +88,20 @@ class ActionPhaseAct : public Act {
 class BuyPhaseAct : public Act {
 	// Act을(를) 통해 상속됨
 	virtual void Update() override;
+};
+
+class UseCardFromHandAct : public Act {
+public:
+	UseCardFromHandAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
+	virtual void Update() override;
+
+	function<bool(Card*)> condition;
+};
+
+class BuyCardAct : public Act {
+public:
+	BuyCardAct(Act* parent, DominionPlayer* player);
+	void Update();
 };
 
 class TurnEndAct : public Act {
@@ -104,7 +120,7 @@ public:
 	virtual void Update() override;
 };
 
-//공급처 데이터 지정
+//공급처 받기
 class GetSupplierAct : public Act {
 public:
 	GetSupplierAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
@@ -119,9 +135,11 @@ public:
 
 class GetCardResult : public ActResult {
 public:
-	Card* card;
+	vector<Card*> cards;
 };
 
+
+//공급처에서 카드 꺼내기
 class SupplyCardAct : public Act {
 public:
 	SupplyCardAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
@@ -132,20 +150,11 @@ public:
 class CardMoveAct : public Act {
 public:
 	CardMoveAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
-	
 	void Init();
 	void Update();
 
 	Card* card = nullptr;
-	Vector2 pos;
 };
-
-class TestAct : public Act {
-public:
-	TestAct();
-	void Update();
-};
-
 
 class DeckOutAct {
 
@@ -159,3 +168,6 @@ class DrawCardAct {
 
 };
 
+class GameStartAct {
+
+};

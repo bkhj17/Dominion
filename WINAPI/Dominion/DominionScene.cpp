@@ -2,14 +2,15 @@
 #include "DominionScene.h"
 #include "GameMaster.h"
 #include "CardManager.h"
+#include "CardDataManager.h"
 #include "Card.h"
+#include "DominionPlayer.h"
 
 DominionScene::DominionScene()
 {
 	CardManager::Get();
 	GameMaster::Get();
 	infoBox = new Rect(100.0f, 260.0f, 220.0f, 440.0f);
-
 }
 
 DominionScene::~DominionScene()

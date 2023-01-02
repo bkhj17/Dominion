@@ -37,6 +37,9 @@ void Card::Update()
 
 void Card::Render(HDC hdc)
 {
+	if (!isVisible)
+		return;
+
 	__super::Render(hdc, isCovered ? data->covered : data->frame);
 
 	if (isSelectable) {

@@ -6,7 +6,7 @@ class CardDataManager : public Singleton<CardDataManager>
 	friend class Singleton;
 public:
 	unordered_map<int, CardData> datas;
-	Texture* texture;
+	Texture* texture = nullptr;
 
 	void LoadData();
 

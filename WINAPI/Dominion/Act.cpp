@@ -4,6 +4,7 @@
 #include "MyMovement.h"
 #include "CardSupplier.h"
 #include "GameMaster.h"
+#include "DominionPlayer.h"
 
 Act::Act(Act* parent, DominionPlayer* player)
 	: parent(parent), player(player)
@@ -19,6 +20,7 @@ Act::~Act()
 
 void Act::Init()
 {
+	subActNum = 0;
 }
 
 void Act::SetRequested(ActResult* request)
@@ -29,7 +31,22 @@ void Act::SetRequested(ActResult* request)
 void Act::Done()
 {
 	isDone = true;
+	requested = nullptr;
 	GameMaster::Get()->curAct = parent;
+}
+
+void Act::CrearData()
+{
+	delete result;
+}
+
+void Act::Loop()
+{
+	for (auto sub : subActs) {
+		sub->Loop();
+		sub->isDone = false;
+
+	}
 }
 
 void WaitCardMoveAct::Update()
@@ -55,21 +72,23 @@ void ActionPhaseAct::Update()
 
 void BuyPhaseAct::Update()
 {
+
+
 }
 
 void TurnEndAct::Update()
 {
 }
 
-TestAct::TestAct()
-	: Act(nullptr, nullptr)
+BuyCardAct::BuyCardAct(Act* parent, DominionPlayer* player)
+	: Act(parent, player)
 {
 	subActs.push_back(new GetSupplierAct(this, nullptr));
 	subActs.push_back(new SupplyCardAct(this, nullptr));
 	subActs.push_back(new CardMoveAct(this, nullptr));
 }
 
-void TestAct::Update()
+void BuyCardAct::Update()
 {
 	if (subActNum == 0) {
 		if (subActs[subActNum]->isDone) {
@@ -97,13 +116,16 @@ void TestAct::Update()
 			return;
 		}
 
-		((CardMoveAct*)subActs[2])->card = ((GetCardResult*)subActs[1]->ReturnResult())->card;
-		((CardMoveAct*)subActs[2])->card->size = { 100.0f, 150.0f };
-		((CardMoveAct*)subActs[2])->pos = { 100.0f, WIN_HEIGHT - 60.0f };
+		Card* card = ((GetCardResult*)subActs[1]->ReturnResult())->cards[0];
+		card->size = { 100.0f, 150.0f };
+		card->movement->SetTargetPosByTime(player->deckRect->pos, 0.3f);
+		((CardMoveAct*)subActs[2])->SetRequested(subActs[1]->ReturnResult());
 		subActs[2]->Init();
 		GameMaster::Get()->curAct = subActs[2];
 	}
 	else {
+		auto cardResult = (GetCardResult*)subActs[2]->ReturnResult();
+		player->InsertToDiscard(cardResult->cards[0]);
 		Done();
 	}
 }
@@ -135,18 +157,41 @@ void SupplyCardAct::Update()
 		card->isCovered = false;
 	}
 	result = new GetCardResult();
-	((GetCardResult*)result)->card = card;
+	((GetCardResult*)result)->cards.push_back(card);
 	Done();
 }
 
-
 void CardMoveAct::Init()
-{
-	card->movement->SetTargetPosByTime(pos);
+{ 
+	card = ((GetCardResult*)requested)->cards[0];
 }
 
 void CardMoveAct::Update()
 {
-	if (!card->movement->IsMoving())
+	if (!card->movement->IsMoving()) {
+		auto result = new GetCardResult();
+		result->cards.push_back(card);
+		this->result = result;
 		Done();
+	}
+}
+
+void UseCardFromHandAct::Update()
+{
+	for (int i = 0; i < player->hand.size(); i++) {
+		if(player->hand[i]->IsPointCollision(mousePos) && condition(player->hand[i])) {
+			player->hand[i]->isSelectable = true;
+			if (KEY_DOWN(VK_LBUTTON)) {
+				//카드 넘겨야지
+				auto result = new GetCardResult();
+				
+				result->cards.push_back(player->hand[i]);
+				player->hand.erase(player->hand.begin()+i);
+
+				this->result = result;
+				
+				Done();
+			}
+		}
+	}
 }
