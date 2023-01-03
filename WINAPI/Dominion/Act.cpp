@@ -32,6 +32,7 @@ void Act::SetRequested(ActResult* request)
 
 void Act::Done()
 {
+	isDoing = false;
 	isDone = true;
 	requested = nullptr;
 }
@@ -79,19 +80,18 @@ BuyPhaseAct::BuyPhaseAct(Act* parent, DominionPlayer* player)
 void BuyPhaseAct::Update()
 {
 	//하위 Act 병렬 처리 
-	subActs[0]->Update();
-	if (subActs[0]->isDone) {
-		subActs[0]->Loop();
-		return;
+	for (auto subAct : subActs) {
+		subAct->Update();
+		if (subAct->isDoing)
+			return;
+		else if (subAct->isDone) {
+			subAct->Loop();
+			return;
+		}
 	}
-
-	subActs[1]->Update();
-	if (subActs[1]->isDone) {
-		subActs[1]->Loop();
-		return;
+	if (player->numBuy == 0 /* || EndButton이 눌렸을 때 */) {
+		Done();
 	}
-
-	//	Done();
 }
 
 void TurnEndAct::Update()
@@ -127,15 +127,19 @@ void BuyCardAct::Update()
 			subActs[0]->isReady = true;
 		}
 		else if (curSubAct == 1) {
+			isDoing = true;
 			auto r0 = (GetSupplierResult*)subActs[0]->ReturnResult();
 			int cost = r0->supplier->data->cost;
 			if (player->gold < cost) {
 				curSubAct = 0;
 				subActs[curSubAct]->Loop();
+				isDoing = false;
 				return;
 			}
 			else {
-				player->gold -= cost;
+				player->gold -= cost;	//구매비용 지출
+				player->numBuy--;		//구매횟수 저하
+
 				subActs[1]->SetRequested(r0);
 				subActs[1]->Init();
 				subActs[1]->isReady = true;
@@ -258,6 +262,7 @@ void UseCardFromHandAct::Update()
 			subAct->Init(player->hand, 1, condition);
 		}
 		else if (curSubAct == 1) {
+			isDoing = true;
 			auto preAct = (SelectFromHandAct*)subActs[0];
 			auto subAct = (CardMoveAct*)subActs[1];
 
@@ -369,12 +374,6 @@ void SelectFromHandAct::Update()
 ////////////////////////////////////////////////////////////////////////
 /// </summary>
 
-GainGoldAct::GainGoldAct(Act* parent, DominionPlayer* player)
-	: Act(parent, player)
-{
-
-}
-
 void GainGoldAct::Init(int n)
 {
 	num = n;
@@ -390,11 +389,6 @@ void GainGoldAct::Update()
 /// <summary>
 ////////////////////////////////////////////////////////////////////////
 /// </summary>
-
-ActiveCardAct::ActiveCardAct(Act* parent, DominionPlayer* player)
-	: Act(parent, player)
-{
-}
 
 void ActiveCardAct::Init(int key)
 {

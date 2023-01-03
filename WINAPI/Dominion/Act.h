@@ -68,9 +68,9 @@ protected:
 
 public:
 	bool isReady = false;
+	bool isDoing = false;
 	bool isDone = false;
 protected:
-
 	int curSubAct = 0;
 	Act* parent;
 	DominionPlayer* player;
@@ -200,7 +200,7 @@ private:
 
 class GainGoldAct : public Act {
 public:
-	GainGoldAct(Act* parent, DominionPlayer* player);
+	GainGoldAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
 
 	void Init(int n);
 	void Update();
@@ -211,7 +211,7 @@ private:
 //카드 효과 발동 시키는 놈. 우선 동, 은, 금만 하자
 class ActiveCardAct : public Act {
 public:
-	ActiveCardAct(Act* parent, DominionPlayer* player);
+	ActiveCardAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
 
 	void Init(int key);
 	void Update();
