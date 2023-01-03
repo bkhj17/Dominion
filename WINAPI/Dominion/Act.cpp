@@ -194,7 +194,7 @@ void BuyCardAct::Update()
 		}
 		else if (curSubAct == 2) {
 			Card* card = ((GetCardResult*)subActs[1]->ReturnResult())->cards[0];
-			card->size = { 100.0f, 150.0f };
+			card->size = { 60.0f, 90.0f };
 
 			auto act2 = ((CardMoveAct*)subActs[2]);
 			act2->SetRequested(subActs[1]->ReturnResult());
@@ -248,25 +248,33 @@ void CardMoveAct::Init(Vector2 pos)
 	cards = ((GetCardResult*)requested)->cards;
 	curCard = 0;
 	time = timeRate;
+
+	isReady = true;
 }
 
 void CardMoveAct::Update()
 {
 	if (curCard == cards.size()) {
+		bool yet = false;
 		for (auto card : cards) {
-			if (!card->movement->IsMoving()) {
-				DeleteResult();
-				auto result = new GetCardResult();
+			yet |= card->movement->IsMoving();
+		}
+
+		if (!yet) {
+			DeleteResult();
+			auto result = new GetCardResult();
+			for(auto card : cards)
 				result->cards.push_back(card);
-				this->result = result;
-				Done();
-			}
+			this->result = result;
+			Done();
 		}
 	}
 	else {
 		time += DELTA;
 		if (time >= timeRate) {
 			time = 0.0f;
+			cards[curCard]->isVisible = true;
+			cards[curCard]->size = { 60.0f, 90.0f };
 			cards[curCard++]->movement->SetTargetPosByTime(pos, 0.3f);
 		}
 	}
@@ -498,7 +506,6 @@ void ActiveCardAct::Init(int key)
 	case CardKey::REMODEL:
 		effectAct = new RemodelAct;
 		break;
-		break;
 	case CardKey::BUREAUCRAT:
 		effectAct = new BureaucratAct;
 		break;
@@ -508,9 +515,15 @@ void ActiveCardAct::Init(int key)
 	case CardKey::MONEYLENDER:
 		effectAct = new MoneylenderAct;
 		break;
+		*/
 	case CardKey::SMITHY:
-		effectAct = new SmithyAct;
+	{
+		auto act = new DrawCardAct(this, player);
+		act->Init(3);
+		subActs.push_back(act);
+	}
 		break;
+		/*
 	case CardKey::LIBRARY:
 		effectAct = new LibraryAct;
 		break;
@@ -608,4 +621,72 @@ void ActiveCardAct::Update()
 
 	if(subActs[curSubAct]->isReady)
 		subActs[curSubAct]->Update();
+}
+
+
+DrawCardAct::DrawCardAct(Act* parent, DominionPlayer* player)
+	: Act(parent, player)
+{
+	subActs.push_back(new CardFromDeckAct(this, player));
+	subActs.push_back(new CardMoveAct(this, player));
+	subActs.push_back(new InputCardAct(this, player));
+}
+
+void DrawCardAct::Init(int num)
+{
+	this->num = num;
+	isReady = true;
+}
+
+void DrawCardAct::Update()
+{
+	if (curSubAct == subActs.size()) {
+		Done();
+		return;
+	}
+	if (subActs[curSubAct]->isDone) {
+		curSubAct++;
+		return;
+	}
+	if (subActs[curSubAct]->isReady) {
+		subActs[curSubAct]->Update();
+	}
+	else {
+		if (curSubAct == 0) {
+			auto a0 = (CardFromDeckAct*)subActs[0];
+			a0->Init(num);
+		}
+		else if (curSubAct == 1) {
+			auto r1 = (GetCardResult*)subActs[0]->ReturnResult();
+			auto a1 = (CardMoveAct*)subActs[1];
+			a1->SetRequested(r1);
+			a1->Init(player->handRect->pos);
+		}
+		else if (curSubAct == 2) {
+			auto r1 = (GetCardResult*)subActs[1]->ReturnResult();
+			auto a2 = (InputCardAct*)subActs[2];
+			a2->Init(player->hand, r1->cards, true);
+		}
+	}
+}
+
+void CardFromDeckAct::Init(int num)
+{
+	//버린 카드에서 덱 보충
+	if (player->deck.size() < num)
+		player->ReloadDeck();
+
+	GetCardResult* result = new GetCardResult;
+
+	//보충했는데도 덱이 적다면 더 드로우 못 함
+	for (int i = 0; i < min(num, player->deck.size()); i++)
+		result->cards.push_back(player->deck[i]);
+
+	this->result = result;
+	isReady = true;
+}
+
+void CardFromDeckAct::Update()
+{
+	Done();
 }

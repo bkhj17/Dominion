@@ -247,9 +247,23 @@ public:
 	void Update();
 };
 
-class DrawCard : public Act {
+class CardFromDeckAct : public Act 
+{
 public:
-	DrawCard(Act* parent, DominionPlayer* player) : Act(parent, player) {}
+	CardFromDeckAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
 
+	void Init(int num);
 	void Update();
 };
+
+class DrawCardAct : public Act {
+public:
+	DrawCardAct(Act* parent, DominionPlayer* player);
+
+	void Init(int num);
+	void Update();
+private:
+	int num;
+};
+
+

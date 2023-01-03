@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "DominionPlayer.h"
 #include "Card.h"
+#include "MyMovement.h"
 #include "CardDataManager.h"
 
 
@@ -30,7 +31,14 @@ DominionPlayer::DominionPlayer(bool isControl, bool isAi)
 
 DominionPlayer::~DominionPlayer()
 {
+	deck.clear();
+	hand.clear();
+	used.clear();
+	discard.clear();
+
 	delete deckRect;
+	delete handRect;
+	delete usedRect;
 }
 
 void DominionPlayer::ReloadDeck()
@@ -44,12 +52,6 @@ void DominionPlayer::ReloadDeck()
 		deck.push_back(discard.back());
 		discard.pop_back();
 	}
-}
-
-void DominionPlayer::InsertToDiscard(Card* card)
-{
-	card->isVisible = false;
-	discard.push_back(card);
 }
 
 void DominionPlayer::Render(HDC hdc)

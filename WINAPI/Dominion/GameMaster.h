@@ -13,6 +13,7 @@ private:
 	~GameMaster();
 
 public:
+	void GameStart();
 	void Update();
 	void Render(HDC hdc);
 	

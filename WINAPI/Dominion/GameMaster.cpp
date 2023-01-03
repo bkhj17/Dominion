@@ -11,18 +11,6 @@
 GameMaster::GameMaster()
 {	
 	MakePlayers();
-	MakeSuppliers();
-	turnPlayer = 0;
-
-	players[turnPlayer]->TurnStart();
-	for (int i = 0; i < 3; i++) {
-		Card* testCard = suppliers[i]->SupplyCard();
-		testCard->isActive = true;
-
-		players[0]->hand.push_back(testCard);
-		testCard->size = { 60.0f, 90.0f };
-		testCard->pos = players[0]->handRect->pos + Vector2(testCard->size.x * (0.5f + i), 0.0f);
-	}
 
 	Texture* normal = Texture::Add(L"Textures/UI/NormalButton.bmp");
 	Texture* over = Texture::Add(L"Textures/UI/OverButton.bmp");
@@ -34,16 +22,6 @@ GameMaster::GameMaster()
 	endButton->size = { 150.0f, 50.0f };
 	endButton->pos = { WIN_WIDTH - endButton->size.x, 500.0f };
 	endButton->isActive = false;
-
-
-	{
-		Card* testCard = suppliers[7]->SupplyCard();
-		testCard->isActive = true;
-
-		players[0]->hand.push_back(testCard);
-		testCard->size = { 60.0f, 90.0f };
-		testCard->pos = players[0]->handRect->pos + Vector2(testCard->size.x * (0.5f + 3), 0.0f);
-	}
 }
 
 GameMaster::~GameMaster()
@@ -62,22 +40,45 @@ GameMaster::~GameMaster()
 	delete endButton;
 }
 
+void GameMaster::GameStart()
+{
+	MakeSuppliers();
+
+	turnPlayer = 0;
+	players[turnPlayer]->TurnStart();
+	for (int i = 0; i < 7; i++) {
+		for (int j = 0; j < 2; j++) {
+			Card* testCard = suppliers[0]->SupplyCard();
+			testCard->pos = players[j]->deckRect->pos;
+			testCard->isVisible = false;
+			players[j]->deck.push_back(testCard);
+		}
+	}
+
+	auto testCard = suppliers[7]->SupplyCard();
+	testCard->pos = players[0]->handRect->pos;
+	testCard->size = { 60.0f, 90.0f };
+	testCard->isVisible = true;
+	players[0]->hand.push_back(testCard);
+
+	auto testAct = new ActionPhaseAct(nullptr, players[turnPlayer]);
+
+	mainAct = testAct;
+	curAct = mainAct;
+	curAct->Init();
+}
+
 void GameMaster::Update()
 {
 	if (test) {
-		auto testAct = new ActionPhaseAct(nullptr, players[turnPlayer]);
-
-		mainAct = testAct;
-		curAct = mainAct;
-		curAct->Init();
 		test = false;
+		GameStart();
 	}
-
 	if (!mainAct->isDone) {
 		mainAct->Update();
 	}
 	else {
-
+		//
 	}
 
 	CardManager::Get()->Update();
@@ -177,7 +178,7 @@ vector<int> GameMaster::GetRandomSupplierKey(int num)
 	for (int i = 0; i < num; i++) {
 		int p = Random(i, (int)v.size()-1);
 		if (i == 0) {
-			p = 16;
+			p = (int)CardKey::SMITHY-7;
 		}
 		swap(v[i], v[p]);
 	}

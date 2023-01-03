@@ -16,6 +16,7 @@ Card::Card(CardData data)
 	movement = new MyPointMovement(this);
 	this->data = new CardData(data);
 	isActive = false;
+	size = { 60.0f, 90.0f };
 
 	ImageRect::SetTexture(data.texture);
 }

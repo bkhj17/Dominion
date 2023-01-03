@@ -12,6 +12,7 @@ public:
 	void Render(HDC hdc);
 
 	void TurnStart();
+	wstring GetInfo();
 
 	bool isController = false;
 
@@ -25,8 +26,6 @@ public:
 	Rect* usedRect;
 
 	vector<Card*> discard;	//¾È º¸¿©ÁÜ, deckÀÌ¶û pos °øÀ¯
-
-	wstring GetInfo();
 
 	bool isAi = false;
 	int numAction = 0;

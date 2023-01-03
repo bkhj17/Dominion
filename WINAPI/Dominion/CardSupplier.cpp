@@ -32,5 +32,6 @@ Card* CardSupplier::SupplyCard()
 
 	num--;
 	Card* card = (Card*)CardManager::Get()->Pop(data->name);
+	card->isActive = true;
 	return card;
 }
