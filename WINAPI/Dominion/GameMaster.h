@@ -20,6 +20,8 @@ public:
 
 	void MakePlayers();
 	void MakeSuppliers();
+	vector<int> GetRandomSupplierKey(int num = 10);
+
 
 	CardData* GetMouseOn();
 
@@ -34,8 +36,8 @@ public:
 	vector<CardSupplier*> suppliers;
 
 	bool test = true;
-	Act* curAct = nullptr;
 private:
 	Act* mainAct = nullptr;
+	Act* curAct = nullptr;
 };
 

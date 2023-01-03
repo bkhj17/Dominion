@@ -4,8 +4,8 @@
 #include "CardDataManager.h"
 
 
-DominionPlayer::DominionPlayer(bool isControl)
-	: isController(isControl)
+DominionPlayer::DominionPlayer(bool isControl, bool isAi)
+	: isController(isControl), isAi(isAi)
 {
 	deckRect = new Rect();
 	handRect = new Rect();
@@ -65,4 +65,19 @@ void DominionPlayer::Render(HDC hdc)
 
 	for (auto uCard : used)
 		uCard->Render(hdc);
+}
+
+//턴 시작 시
+void DominionPlayer::TurnStart()
+{
+	numAction = 1;
+	numBuy = 1;
+	gold = 0;
+}
+
+wstring DominionPlayer::GetInfo()
+{
+	return L"Action " + to_wstring(numAction)
+		+ L" Buy " + to_wstring(numBuy) 
+		+ L" Gold " + to_wstring(gold);
 }

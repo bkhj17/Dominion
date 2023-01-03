@@ -13,13 +13,13 @@ void KeyBoard::Update()
 		curState[i] = key ? 1 : 0;
 
 		BYTE old = oldState[i];
-		BYTE cur = curState[i];
+		BYTE curCard = curState[i];
 
-		if (old == 0 && cur == 1)
+		if (old == 0 && curCard == 1)
 			mapState[i] = DOWN;
-		else if (old == 1 && cur == 0)
+		else if (old == 1 && curCard == 0)
 			mapState[i] = UP;
-		else if (old == 1 && cur == 1)
+		else if (old == 1 && curCard == 1)
 			mapState[i] = PRESS;
 		else
 			mapState[i] = NONE;

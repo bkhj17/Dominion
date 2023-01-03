@@ -189,9 +189,6 @@
     <ClInclude Include="Scenes\Homework\Homework221226.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Dominion\TestDeck.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Scenes\BattleScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>

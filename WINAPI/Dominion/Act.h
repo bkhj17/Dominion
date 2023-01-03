@@ -53,22 +53,25 @@ public:
 	Act(Act* parent, DominionPlayer* player);
 	~Act();
 
-	virtual void Init();
 	//자신을 실행하는데에 필요한 데이터 입력
+	void Init();
 	void SetRequested(ActResult* request);	//앞의 act가 끝나야 쓸 수 있기 때문에 Init이랑 별개로
 
-	virtual void Update() {};
-	void Done();
-	void CrearData();
-
+	virtual void Update() = 0;
 	void Loop();
+
 	//자신의 실행 결과 반환
 	ActResult* ReturnResult() { return result; }
-	
+protected:
+	void Done();
+	void DeleteResult();
+
+public:
+	bool isReady = false;
 	bool isDone = false;
 protected:
 
-	int subActNum = 0;
+	int curSubAct = 0;
 	Act* parent;
 	DominionPlayer* player;
 	vector<Act*> subActs;
@@ -86,13 +89,16 @@ class ActionPhaseAct : public Act {
 };
 
 class BuyPhaseAct : public Act {
+public:
+	BuyPhaseAct(Act* parent, DominionPlayer* player);
 	// Act을(를) 통해 상속됨
 	virtual void Update() override;
 };
 
 class UseCardFromHandAct : public Act {
 public:
-	UseCardFromHandAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
+	UseCardFromHandAct(Act* parent, DominionPlayer* player);
+	void Init(function<bool(Card*)>);
 	virtual void Update() override;
 
 	function<bool(Card*)> condition;
@@ -114,12 +120,6 @@ public:
 	virtual void Update() override;;
 };
 
-class WaitCardMoveAct : public Act {
-public:
-	// Act을(를) 통해 상속됨
-	virtual void Update() override;
-};
-
 //공급처 받기
 class GetSupplierAct : public Act {
 public:
@@ -128,11 +128,13 @@ public:
 	void Update();
 };
 
+//선택된 공급처
 class GetSupplierResult : public ActResult {
 public:
 	CardSupplier* supplier;
 };
 
+//선택된 카드들 목록
 class GetCardResult : public ActResult {
 public:
 	vector<Card*> cards;
@@ -150,24 +152,67 @@ public:
 class CardMoveAct : public Act {
 public:
 	CardMoveAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
-	void Init();
+	void Init(Vector2 pos);
 	void Update();
 
-	Card* card = nullptr;
+private:
+	int curCard = 0;
+	vector<Card*> cards;
+	
+	Vector2 pos;
+
+	float time = 0.0f;
+	float timeRate = 0.3f;
 };
 
-class DeckOutAct {
-
+class CardToHandAct : public Act 
+{
+public:
+	CardToHandAct(Act* parent, DominionPlayer* player);
+	void SetRequested(ActResult* request);
+	void Update();
 };
 
-class HandOutAct {
+class InputCardAct : public Act
+{
+public:
+	InputCardAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
 
+	//카드 셋으로 클래스 정의?
+	void Init(vector<Card*>& cardSet, vector<Card*> input, bool visible = true);
+	void Update();
 };
 
-class DrawCardAct {
+class SelectFromHandAct : public Act 
+{
+public:
+	SelectFromHandAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
 
+	void Init(vector<Card*>& cardSet, int num, function<bool(Card*)> condition);
+	void Update();
+
+private:
+	vector<Card*> hand;
+	int selectNum = 0;
+	vector<Card*> selected;
+	function<bool(Card*)> condition;
 };
 
-class GameStartAct {
+class GainGoldAct : public Act {
+public:
+	GainGoldAct(Act* parent, DominionPlayer* player);
 
+	void Init(int n);
+	void Update();
+private:
+	int num = 0;
+};
+
+//카드 효과 발동 시키는 놈. 우선 동, 은, 금만 하자
+class ActiveCardAct : public Act {
+public:
+	ActiveCardAct(Act* parent, DominionPlayer* player);
+
+	void Init(int key);
+	void Update();
 };

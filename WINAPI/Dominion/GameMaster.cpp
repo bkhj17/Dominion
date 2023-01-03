@@ -11,8 +11,25 @@
 GameMaster::GameMaster()
 {	
 	CardDataManager::Get()->LoadData();
+	CardManager::Get();
 	MakePlayers();
 	MakeSuppliers();
+	turnPlayer = 0;
+
+	players[turnPlayer]->TurnStart();
+	for (int i = 0; i < 3; i++) {
+		Card* testCard = suppliers[i]->SupplyCard();
+		testCard->isActive = true;
+
+		players[0]->hand.push_back(testCard);
+		testCard->size = { 60.0f, 90.0f };
+		testCard->pos = players[0]->handRect->pos + Vector2(testCard->size.x * (0.5f + i), 0.0f);
+	}
+
+	auto testAct = new BuyPhaseAct(nullptr, players[turnPlayer]);
+
+	mainAct = testAct;
+	curAct = mainAct;
 }
 
 GameMaster::~GameMaster()
@@ -28,23 +45,18 @@ GameMaster::~GameMaster()
 	if (mainAct != nullptr)
 		delete mainAct;
 
+	CardManager::Delete();
 	CardDataManager::Delete();
 }
 
 void GameMaster::Update()
 {
 
-	if (curAct != nullptr) {
-		curAct->Update();
-	}
-	else if(test) {
-		test = false;
-		curAct = new BuyCardAct(nullptr, players[0]);
+	if (!mainAct->isDone) {
+		mainAct->Update();
 	}
 
 	CardManager::Get()->Update();
-
-
 }
 
 void GameMaster::Render(HDC hdc)
@@ -74,11 +86,11 @@ void GameMaster::MakePlayers()
 {
 	players.resize(2);
 	//화면 보는 놈
-	players[0] = new DominionPlayer(true);
+	players[0] = new DominionPlayer(true, false);
 	control = 0;
 
 	//화면 안 보는 놈. AI로 돌릴꺼다
-	players[1] = new DominionPlayer(false);
+	players[1] = new DominionPlayer(false, true);
 	side = 1;
 }
 
@@ -88,10 +100,14 @@ void GameMaster::MakeSuppliers( )
 	suppliers.reserve(numSuppliers);
 
 	auto& datas = CardDataManager::Get()->datas;
+
+	//재물, 기본 승점 공급처
+	int defaultCardNum[] = { 60, 40, 30, 8, 8, 8, 10 };
+
 	for (int i = 0; i < 3; i++) {
 		CardManager::Get()->CreateObjects(datas[i].key, 10);
 		auto coin = new CardSupplier();
-		coin->Init(&datas[i]);
+		coin->Init(&datas[i], defaultCardNum[i]);
 		coin->size = { 60.0f, 90.0f };
 		coin->pos = { WIN_WIDTH * 0.2f + 260.0f, 200.0f+i*90.0f };
 		suppliers.push_back(coin);
@@ -100,11 +116,45 @@ void GameMaster::MakeSuppliers( )
 	for (int i = 3; i < 7; i++) {
 		CardManager::Get()->CreateObjects(datas[i].key, 10);
 		auto victory = new CardSupplier();
-		victory->Init(&datas[i]);
+		victory->Init(&datas[i], defaultCardNum[i]);
 		victory->size = { 60.0f, 90.0f };
 		victory->pos = { WIN_WIDTH * 0.2f + 200.0f, 200.0f + (i-3) * 90.0f };
 		suppliers.push_back(victory);
 	}
+
+	const int KINGDOM_NUM = 10;
+	auto kingdomKey = GetRandomSupplierKey(KINGDOM_NUM);
+	int kingdomCol = 5;
+	for (int i = 0; i < KINGDOM_NUM; i++) {
+		int row = i / kingdomCol;
+		int col = i % kingdomCol;
+		
+		auto kingdom = new CardSupplier();
+		kingdom->Init(&datas[kingdomKey[row * kingdomCol + col]], 10);
+		kingdom->size = { 60.0f, 90.0f };
+		kingdom->pos = {
+			WIN_WIDTH * 0.2f + 380.0f + col * kingdom->size.x,
+			240.0f + row * kingdom->size.y
+		};
+		suppliers.push_back(kingdom);
+	}
+
+}
+
+vector<int> GameMaster::GetRandomSupplierKey(int num)
+{
+	//0부터 6은 기본 재물, 승점, 저주
+	vector<int> v(CardDataManager::Get()->datas.size() - 7);
+	for (int i = 7; i < CardDataManager::Get()->datas.size(); i++) {
+		v[i-7] = i;
+	}
+
+	for (int i = 0; i < num; i++) {
+		int p = Random(i, v.size() - 1);
+		swap(v[i], v[p]);
+	}
+
+	return v;
 }
 
 CardData* GameMaster::GetMouseOn()
@@ -115,7 +165,11 @@ CardData* GameMaster::GetMouseOn()
 		}
 	}
 
+	for (auto card : players[turnPlayer]->hand) {
+		if (card->IsPointCollision(mousePos)) {
+			return card->data;
+		}
+	}
+
 	return nullptr;
 }
-
-

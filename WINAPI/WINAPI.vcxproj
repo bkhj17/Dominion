@@ -168,7 +168,6 @@
     <ClInclude Include="Object\Character\Character.h" />
     <ClInclude Include="Object\Character\Fighter.h" />
     <ClInclude Include="Scenes\BattleScene.h" />
-    <ClInclude Include="Dominion\TestDeck.h" />
     <ClInclude Include="Scenes\Homework\Homework221226.h" />
     <ClInclude Include="Object\CookieRun\Cookie.h" />
     <ClInclude Include="Framework\Render\Animation.h" />

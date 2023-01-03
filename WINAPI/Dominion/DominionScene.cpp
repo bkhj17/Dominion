@@ -42,4 +42,12 @@ void DominionScene::Render(HDC hdc)
 		dataInfo->texture->Render(hdc, infoBox, dataInfo->frame);
 
 	CardManager::Get()->Render(hdc);
+
+	auto turnPlayer = GameMaster::Get()->GetTurnPlayer();
+	wstring wstr = turnPlayer->GetInfo();
+	TextOut(hdc, (int)(CENTER_X - 100.0f), (int)(CENTER_Y + 200.0f), wstr.c_str(), (int)wstr.size());
+	if (turnPlayer != GameMaster::Get()->GetControlPlayer()) {
+		wstr = L"Player" + to_wstring(GameMaster::Get()->turnPlayer) + L" 진행 중. 기다리시오.";
+		TextOut(hdc, (int)(CENTER_X - 100.0f), (int)(CENTER_Y + 200.0f), wstr.c_str(), (int)wstr.size());
+	}
 }

@@ -9,7 +9,32 @@ enum class CardKey : int {
 	PROVINCE,
 	CURSE,
 	REMODEL,
-
+	BUREAUCRAT,
+	MINE,
+	MONEYLENDER,
+	SMITHY,
+	LIBRARY,
+	WITCH,
+	VILLAGE,
+	MILITIA,
+	MARKET,
+	LABORATORY,
+	THRONE_ROOM,
+	CHAPEL,
+	CELLAR,
+	GARDENS,
+	WORKSHOP,
+	FESTIVAL,
+	MOAT,
+	COUNCILROOM,
+	ARTISAN,
+	BANDIT,
+	HARBINGER,
+	MERCHANT,
+	POACHER,
+	SENTRY,
+	VASSAL,
+	SIZE
 };
 
 enum class CardType : int {
@@ -50,6 +75,8 @@ public:
 	void Render(HDC hdc) override;
 
 	int GetVictory();
+
+	bool IsType(CardType type) { return data->type[(int)type]; }
 
 	bool isVisible = true;
 	bool isCovered = false;

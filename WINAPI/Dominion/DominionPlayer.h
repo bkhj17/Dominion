@@ -4,11 +4,17 @@ class Card;
 class DominionPlayer
 {
 public:
-	DominionPlayer(bool isControl);
+	DominionPlayer(bool isControl, bool isAi);
 	~DominionPlayer();
 
+	void ReloadDeck();
+	void InsertToDiscard(Card* card);
+	void Render(HDC hdc);
+
+	void TurnStart();
+
 	bool isController = false;
-	
+
 	vector<Card*> deck;
 	Rect* deckRect;
 
@@ -20,11 +26,11 @@ public:
 
 	vector<Card*> discard;	//¾È º¸¿©ÁÜ, deckÀÌ¶û pos °øÀ¯
 
+	wstring GetInfo();
 
-	void ReloadDeck();
-
-	void InsertToDiscard(Card* card);
-
-	void Render(HDC hdc);
+	bool isAi = false;
+	int numAction = 0;
+	int numBuy = 0;
+	int gold = 0;
 };
 
