@@ -2,6 +2,11 @@
 #include "Card.h"
 #include "CardDataManager.h"
 
+CardDataManager::CardDataManager()
+{
+	LoadData();
+}
+
 void CardDataManager::LoadData()
 {
 	texture = Texture::Add(L"Textures/Dominion/Texture/CardTexture.bmp", 9, 4);
@@ -20,12 +25,13 @@ void CardDataManager::LoadData()
 	while (!ifs.eof()) {
 		str = "";
 		ifs.getline(buffer, sizeof(buffer), '\n');
+		
 		str = buffer;
 		if (str.empty())
 			continue;
 
-		CardData data;
 		vector<string> vs = SplitString(str, ",");
+		CardData data;
 		data.key = stoi(vs[0]);
 		data.name = vs[1];
 

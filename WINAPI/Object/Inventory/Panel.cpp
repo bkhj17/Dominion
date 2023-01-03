@@ -35,7 +35,7 @@ void Panel::Render(HDC hdc)
 	}
 	thumbnailImage->Render(hdc);
 	Vector2 descPos = pos + Vector2(-100, -85);
-	TextOutA(hdc, descPos.x, descPos.y, descStr.c_str(), descStr.size());
+	TextOutA(hdc, (int)descPos.x, (int)descPos.y, descStr.c_str(), (int)descStr.size());
 }
 
 void Panel::SelectItem(void* item)

@@ -10,8 +10,6 @@
 
 GameMaster::GameMaster()
 {	
-	CardDataManager::Get()->LoadData();
-	CardManager::Get();
 	MakePlayers();
 	MakeSuppliers();
 	turnPlayer = 0;
@@ -26,10 +24,26 @@ GameMaster::GameMaster()
 		testCard->pos = players[0]->handRect->pos + Vector2(testCard->size.x * (0.5f + i), 0.0f);
 	}
 
-	auto testAct = new BuyPhaseAct(nullptr, players[turnPlayer]);
+	Texture* normal = Texture::Add(L"Textures/UI/NormalButton.bmp");
+	Texture* over = Texture::Add(L"Textures/UI/OverButton.bmp");
+	Texture* down = Texture::Add(L"Textures/UI/DownButton.bmp");
 
-	mainAct = testAct;
-	curAct = mainAct;
+	endButton = new Button(normal);
+	endButton->SetOverTexture(over);
+	endButton->SetDownTexture(down);
+	endButton->size = { 150.0f, 50.0f };
+	endButton->pos = { WIN_WIDTH - endButton->size.x, 500.0f };
+	endButton->isActive = false;
+
+
+	{
+		Card* testCard = suppliers[7]->SupplyCard();
+		testCard->isActive = true;
+
+		players[0]->hand.push_back(testCard);
+		testCard->size = { 60.0f, 90.0f };
+		testCard->pos = players[0]->handRect->pos + Vector2(testCard->size.x * (0.5f + 3), 0.0f);
+	}
 }
 
 GameMaster::~GameMaster()
@@ -45,18 +59,30 @@ GameMaster::~GameMaster()
 	if (mainAct != nullptr)
 		delete mainAct;
 
-	CardManager::Delete();
-	CardDataManager::Delete();
+	delete endButton;
 }
 
 void GameMaster::Update()
 {
+	if (test) {
+		auto testAct = new ActionPhaseAct(nullptr, players[turnPlayer]);
+
+		mainAct = testAct;
+		curAct = mainAct;
+		curAct->Init();
+		test = false;
+	}
 
 	if (!mainAct->isDone) {
 		mainAct->Update();
 	}
+	else {
+
+	}
 
 	CardManager::Get()->Update();
+
+	endButton->Update();
 }
 
 void GameMaster::Render(HDC hdc)
@@ -67,6 +93,8 @@ void GameMaster::Render(HDC hdc)
 	for (auto& supplier : suppliers) {
 		supplier->Render(hdc);
 	}
+
+	endButton->Render(hdc);
 }
 
 bool GameMaster::IsGameEnd()
@@ -105,18 +133,16 @@ void GameMaster::MakeSuppliers( )
 	int defaultCardNum[] = { 60, 40, 30, 8, 8, 8, 10 };
 
 	for (int i = 0; i < 3; i++) {
-		CardManager::Get()->CreateObjects(datas[i].key, 10);
 		auto coin = new CardSupplier();
-		coin->Init(&datas[i], defaultCardNum[i]);
+		coin->Init(i, defaultCardNum[i]);
 		coin->size = { 60.0f, 90.0f };
 		coin->pos = { WIN_WIDTH * 0.2f + 260.0f, 200.0f+i*90.0f };
 		suppliers.push_back(coin);
 	}
 
 	for (int i = 3; i < 7; i++) {
-		CardManager::Get()->CreateObjects(datas[i].key, 10);
 		auto victory = new CardSupplier();
-		victory->Init(&datas[i], defaultCardNum[i]);
+		victory->Init(i, defaultCardNum[i]);
 		victory->size = { 60.0f, 90.0f };
 		victory->pos = { WIN_WIDTH * 0.2f + 200.0f, 200.0f + (i-3) * 90.0f };
 		suppliers.push_back(victory);
@@ -128,9 +154,9 @@ void GameMaster::MakeSuppliers( )
 	for (int i = 0; i < KINGDOM_NUM; i++) {
 		int row = i / kingdomCol;
 		int col = i % kingdomCol;
-		
+
 		auto kingdom = new CardSupplier();
-		kingdom->Init(&datas[kingdomKey[row * kingdomCol + col]], 10);
+		kingdom->Init(kingdomKey[i], 10);
 		kingdom->size = { 60.0f, 90.0f };
 		kingdom->pos = {
 			WIN_WIDTH * 0.2f + 380.0f + col * kingdom->size.x,
@@ -138,7 +164,6 @@ void GameMaster::MakeSuppliers( )
 		};
 		suppliers.push_back(kingdom);
 	}
-
 }
 
 vector<int> GameMaster::GetRandomSupplierKey(int num)
@@ -150,7 +175,10 @@ vector<int> GameMaster::GetRandomSupplierKey(int num)
 	}
 
 	for (int i = 0; i < num; i++) {
-		int p = Random(i, v.size() - 1);
+		int p = Random(i, (int)v.size()-1);
+		if (i == 0) {
+			p = 16;
+		}
 		swap(v[i], v[p]);
 	}
 

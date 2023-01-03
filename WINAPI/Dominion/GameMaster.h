@@ -36,6 +36,8 @@ public:
 	vector<CardSupplier*> suppliers;
 
 	bool test = true;
+
+	Button* endButton;
 private:
 	Act* mainAct = nullptr;
 	Act* curAct = nullptr;

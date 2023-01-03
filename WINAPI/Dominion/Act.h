@@ -54,7 +54,7 @@ public:
 	~Act();
 
 	//자신을 실행하는데에 필요한 데이터 입력
-	void Init();
+	virtual void Init();
 	void SetRequested(ActResult* request);	//앞의 act가 끝나야 쓸 수 있기 때문에 Init이랑 별개로
 
 	virtual void Update() = 0;
@@ -65,7 +65,7 @@ public:
 protected:
 	void Done();
 	void DeleteResult();
-
+	void DeleteSubAct();
 public:
 	bool isReady = false;
 	bool isDoing = false;
@@ -84,8 +84,17 @@ protected:
 };
 
 class ActionPhaseAct : public Act {
+public:
+	ActionPhaseAct(Act* parent, DominionPlayer* player);
+
 	// Act을(를) 통해 상속됨
+	virtual void Init() override;
 	virtual void Update() override;
+
+	void EndCall() { endCall = true; }
+private:
+	// EndButton이 눌렸는가?
+	bool endCall = false;
 };
 
 class BuyPhaseAct : public Act {
@@ -208,11 +217,39 @@ private:
 	int num = 0;
 };
 
+
+class GainActionAct : public Act {
+public:
+	GainActionAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
+
+	void Init(int n);
+	void Update();
+private:
+	int num = 0;
+};
+
+class GainBuyAct : public Act {
+public:
+	GainBuyAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
+
+	void Init(int n);
+	void Update();
+private:
+	int num = 0;
+};
+
 //카드 효과 발동 시키는 놈. 우선 동, 은, 금만 하자
 class ActiveCardAct : public Act {
 public:
 	ActiveCardAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
 
 	void Init(int key);
+	void Update();
+};
+
+class DrawCard : public Act {
+public:
+	DrawCard(Act* parent, DominionPlayer* player) : Act(parent, player) {}
+
 	void Update();
 };

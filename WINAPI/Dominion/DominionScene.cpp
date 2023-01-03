@@ -8,6 +8,7 @@
 
 DominionScene::DominionScene()
 {
+	CardDataManager::Get();
 	CardManager::Get();
 	GameMaster::Get();
 	infoBox = new Rect(100.0f, 260.0f, 220.0f, 440.0f);
@@ -16,6 +17,8 @@ DominionScene::DominionScene()
 DominionScene::~DominionScene()
 {
 	GameMaster::Delete();
+	CardManager::Delete();
+	CardDataManager::Delete();
 }
 
 void DominionScene::Start()

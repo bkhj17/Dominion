@@ -7,6 +7,5 @@ private:
 public:
 	void CreateObjects(int key, UINT poolSize);
 	GameObject* PopByIntKey(int key);
-
 };
 

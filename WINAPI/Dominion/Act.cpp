@@ -14,15 +14,15 @@ Act::Act(Act* parent, DominionPlayer* player)
 
 Act::~Act()
 {
-	for (auto sub : subActs) {
-		delete sub;
-	}
+	DeleteSubAct();
 	DeleteResult();
 }
 
 void Act::Init()
 {
 	curSubAct = 0;
+	isDoing = false;
+	isDone = false;
 }
 
 void Act::SetRequested(ActResult* request)
@@ -43,6 +43,13 @@ void Act::DeleteResult()
 		delete result;
 }
 
+void Act::DeleteSubAct()
+{
+	for (auto sub : subActs) {
+		delete sub;
+	}
+}
+
 void Act::Loop()
 {
 	for (auto sub : subActs) {
@@ -60,10 +67,50 @@ void TurnAct::Update()
 {
 }
 
-void ActionPhaseAct::Update()
+ActionPhaseAct::ActionPhaseAct(Act* parent, DominionPlayer* player)
+	: Act(parent, player)
 {
+	auto a0 = new UseCardFromHandAct(this, player);
+	a0->Init([](Card* card) -> bool {
+		return card->IsType(CardType::ACTION);
+		});
+	subActs.push_back(a0);
+
 }
 
+void ActionPhaseAct::Init()
+{
+	Act::Init();
+
+	auto endButton = GameMaster::Get()->endButton;
+	endButton->SetText("Action Phase End");
+	endButton->SetEvent(bind(&ActionPhaseAct::EndCall, this));
+
+	subActs[0]->Init();
+}
+
+void ActionPhaseAct::Update()
+{
+	auto subAct = subActs[0];
+	auto endButton = GameMaster::Get()->endButton;
+
+	//여기 병렬 안 하더라. 있으면 알아서 해라 내일의 나
+	subAct->Update();
+	if (subAct->isDoing) {
+		endButton->isActive = false;
+		return;
+	} if (subAct->isDone) {
+		player->numAction--;
+		subAct->Loop();
+		return;
+	}
+
+	endButton->isActive = true;
+	if (player->numAction == 0 || endCall) {
+		endButton->isActive = false;
+		Done();
+	}
+}
 
 BuyPhaseAct::BuyPhaseAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
@@ -71,7 +118,7 @@ BuyPhaseAct::BuyPhaseAct(Act* parent, DominionPlayer* player)
 	auto a0 = new UseCardFromHandAct(this, player);
 	a0->Init([](Card* card) -> bool {
 		return card->IsType(CardType::TREASURE);
-		});
+	});
 	subActs.push_back(a0);
 
 	subActs.push_back(new BuyCardAct(this, player));
@@ -386,6 +433,29 @@ void GainGoldAct::Update()
 	Done();
 }
 
+void GainActionAct::Init(int n)
+{
+	num = n;
+	isReady = true;
+}
+
+void GainActionAct::Update()
+{
+	player->numAction += num;
+	Done();
+}
+
+void GainBuyAct::Init(int n)
+{
+	num = n;
+	isReady = true;
+}
+
+void GainBuyAct::Update()
+{
+	player->numBuy += num;
+	Done();
+}
 /// <summary>
 ////////////////////////////////////////////////////////////////////////
 /// </summary>
@@ -474,9 +544,22 @@ void ActiveCardAct::Init(int key)
 		case CardKey::WORKSHOP:
 			effectAct = new WorkShopAct;
 			break;
-		case CardKey::FESTIVAL:
-			effectAct = new FestivalAct;
-			break;
+			*/
+	case CardKey::FESTIVAL:
+	{
+		auto a0 = new GainActionAct(this, player);
+		a0->Init(2);
+		auto a1 = new GainBuyAct(this, player);
+		a1->Init(1);
+		auto a2 = new GainGoldAct(this, player);
+		a2->Init(2);
+
+		subActs.push_back(a0);
+		subActs.push_back(a1);
+		subActs.push_back(a2);
+	}
+		break;
+	/*
 		case CardKey::MOAT:
 			effectAct = new MoatAct;
 			break;

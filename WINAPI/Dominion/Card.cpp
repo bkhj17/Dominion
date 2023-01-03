@@ -5,14 +5,10 @@
 
 CardData::CardData()
 {
-	type.resize((int)(CardType::END) - 1);
 }
 
 CardData::~CardData()
 {
-	type.clear();
-	text.clear();
-	acts.clear();
 }
 
 Card::Card(CardData data)

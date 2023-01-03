@@ -1,5 +1,6 @@
 #include "framework.h"
 #include "Card.h"
+#include "CardDataManager.h"
 #include "CardManager.h"
 #include "CardSupplier.h"
 
@@ -7,13 +8,13 @@ CardSupplier::CardSupplier()
 {
 }
 
-void CardSupplier::Init(CardData* data, int num)
+void CardSupplier::Init(int key, int num)
 {
 	this->num = num;
-	this->data = data;
+	this->data = &CardDataManager::Get()->datas[key];
 	SetTexture(data->texture);
 
-	CardManager::Get()->CreateObjects(data->key, num);
+	CardManager::Get()->CreateObjects(key, num);
 }
 
 void CardSupplier::Render(HDC hdc)
@@ -21,7 +22,7 @@ void CardSupplier::Render(HDC hdc)
 	__super::Render(hdc, data->frame);
 
 	wstring str = to_wstring(num);
-	TextOut(hdc, Left(), Top(), str.c_str(), str.size());
+	TextOut(hdc, (int)Left(), (int)Top(), str.c_str(), (int)str.size());
 }
 
 Card* CardSupplier::SupplyCard()

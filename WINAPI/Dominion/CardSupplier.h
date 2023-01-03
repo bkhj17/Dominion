@@ -9,7 +9,7 @@ public:
 
 	CardData* data = nullptr;
 
-	void Init(CardData* data, int num = 10);
+	void Init(int key, int num = 10);
 	void Render(HDC hdc);
 
 	Card* SupplyCard();

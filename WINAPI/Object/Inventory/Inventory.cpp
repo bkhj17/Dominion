@@ -32,7 +32,7 @@ void Inventory::Render(HDC hdc)
 
 	Vector2 goldTextPos = pos + goldPos;
 	auto str = to_wstring(gold);
-	TextOut(hdc, goldTextPos.x, goldTextPos.y, str.c_str(), str.size());
+	TextOut(hdc, (int)goldTextPos.x, (int)goldTextPos.y, str.c_str(), (int)str.size());
 }
 
 void Inventory::PurchaseItem(void* item)
@@ -54,7 +54,7 @@ void Inventory::PurchaseItem(void* item)
 		newItem->size = { 75, 75 };
 		newItem->SetEvent(bind(&Item::ClickInventoryItem, newItem));
 		items.push_back(newItem);
-		SetItemPos(items.size() - 1);
+		SetItemPos((int)items.size() - 1);
 	}
 }
 
@@ -79,8 +79,8 @@ void Inventory::SetItemPos(int i) {
 	Vector2 startOffset(-255, 40);
 
 	Vector2 coord = Vector2(
-		i % colCount,
-		i / colCount
+		(float)(i % colCount),
+		(float)(i / colCount)
 	);
 
 	items[i]->LocalPos() = startOffset + offset + coord * interval;
