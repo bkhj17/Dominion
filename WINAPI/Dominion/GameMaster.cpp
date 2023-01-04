@@ -184,6 +184,9 @@ vector<int> DominionGameMaster::GetRandomSupplierKey(int num)
 		if (i == 0) {
 			p = (int)CardKey::SMITHY-7;
 		}
+		else if (i == 1) {
+			p = (int)CardKey::ARTISAN-7;
+		}
 		swap(v[i], v[p]);
 	}
 
@@ -218,7 +221,6 @@ CardData* DominionGameMaster::GetMouseOn()
 			if (mouseOn != nullptr)
 				return mouseOn->data;
 		}
-
 	}
 
 	return nullptr;

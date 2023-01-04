@@ -203,10 +203,9 @@ public:
 //공급처에서 카드 꺼내기
 class SupplyCardAct : public Act {
 public:
-	SupplyCardAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
+	SupplyCardAct(Act* parent, DominionPlayer* player); 
 	// Act을(를) 통해 상속됨
 	virtual void Update() override;
-
 };
 
 class CardMoveAct : public Act {
@@ -243,11 +242,6 @@ protected:
 
 	float time = 0.0f;
 	float timeRate = 0.1f;
-};
-
-class InputCardTopAct : public InputCardAct
-{
-
 };
 
 class SelectFromHandAct : public Act 
@@ -324,5 +318,35 @@ public:
 private:
 	int num = 0;
 };
+
+class TrashCardAct : public Act {
+public:
+	TrashCardAct(Act* parent, DominionPlayer* player);
+
+	void Init(CardSet* cardSet, GetCardResult* request);
+};
+
+class AttackAct : public Act {
+	//상대방 공격하는 카드
+	//공격 효과만 안 들어가는 경우가 있다 - 해자
+};
+
+class ReaterCardAct : public Act {
+	//기본 Act에 더해 반응 효과가 따로 붙은 카드(해자)
+public:
+	virtual void Init(function<bool(void*)>) = 0;
+
+	vector<Act*> ReactSubActs;
+
+	function<bool(void*)> reactTrigger = nullptr;
+
+	int curReactSub = 0;
+};
+
+//Reactable 함수가 Effect에 들어간다 치자
+//curAct 뺏고 인터셉트 해서 발동 여부 확인하고
+//
+
+
 
 

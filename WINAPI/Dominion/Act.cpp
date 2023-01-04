@@ -23,7 +23,7 @@ Act::~Act()
 
 void Act::Init()
 {
-	if(result != nullptr)
+	if (result != nullptr)
 		result->Clear();
 	curSubAct = 0;
 	isDoing = false;
@@ -50,12 +50,14 @@ bool Act::DefaultUpdate()
 		Done();
 		return true;
 	}
-	
+
 	if (subActs[curSubAct]->isDone) {
 		curSubAct++;
-	} else if (subActs[curSubAct]->isReady) {
+	}
+	else if (subActs[curSubAct]->isReady) {
 		subActs[curSubAct]->Update();
-	} else {
+	}
+	else {
 		return false;
 	}
 	return true;
@@ -78,7 +80,7 @@ void Act::ChangePlayer(DominionPlayer* newPlayer)
 }
 
 int Act::GetPlayerGold()
-{ 
+{
 	return player == nullptr ? 0 : player->gold;
 }
 
@@ -138,7 +140,7 @@ void ActionPhaseAct::Init()
 	auto a0 = (UseCardFromHandAct*)subActs[0];
 	a0->Init([](Card* card) -> bool {
 		return card->IsType(CardType::ACTION);
-	});
+		});
 	auto endButton = DominionGameMaster::Get()->endButton;
 	endButton->SetText("Action Phase End");
 	endButton->SetEvent(bind(&ActionPhaseAct::EndCall, this));
@@ -163,7 +165,7 @@ void ActionPhaseAct::Update()
 	else {
 		endButton->isActive = true;
 	}
-	
+
 	if (subAct->isDone) {
 		player->numAction--;
 		subAct->Loop();
@@ -183,7 +185,7 @@ BuyPhaseAct::BuyPhaseAct(Act* parent, DominionPlayer* player)
 	auto a0 = new UseCardFromHandAct(this, player);
 	a0->Init([](Card* card) -> bool {
 		return card->IsType(CardType::TREASURE);
-	});
+		});
 	subActs.push_back(a0);
 
 	subActs.push_back(new BuyCardAct(this, player));
@@ -192,7 +194,7 @@ BuyPhaseAct::BuyPhaseAct(Act* parent, DominionPlayer* player)
 void BuyPhaseAct::Init()
 {
 	Act::Init();
-	
+
 	auto endButton = DominionGameMaster::Get()->endButton;
 	endButton->SetText("Buy Phase End");
 	endButton->SetEvent(bind(&BuyPhaseAct::EndCall, this));
@@ -242,13 +244,14 @@ void BuyCardAct::Update()
 
 	if (subActs[curSubAct]->isReady) {
 		subActs[curSubAct]->Update();
-	} else {
+	}
+	else {
 		if (curSubAct == 0) {
 			auto a0 = (GetSupplierAct*)subActs[0];
 			//구매 조건을 충족함
 			a0->Init([this](CardData* data) -> bool {
 				return CostLimit(*data, this->GetPlayerGold());
-			});
+				});
 		}
 		else if (curSubAct == 1) {
 			isDoing = true;
@@ -273,7 +276,7 @@ void BuyCardAct::Update()
 }
 
 GetSupplierAct::GetSupplierAct(Act* parent, DominionPlayer* player)
-	: Act(parent, player) 
+	: Act(parent, player)
 {
 	result = new GetSupplierResult();
 }
@@ -313,11 +316,17 @@ void GetSupplierResult::Clear()
 	supplier = nullptr;
 }
 
+SupplyCardAct::SupplyCardAct(Act* parent, DominionPlayer* player)
+	: Act(parent, player)
+{
+	result = new GetCardResult();
+}
+
 void SupplyCardAct::Update()
 {
 	CardSupplier* supplier = ((GetSupplierResult*)requested)->supplier;
 	Card* card = supplier->SupplyCard();
-	
+
 	if (card != nullptr) {
 		card->pos = supplier->pos;
 		card->isActive = true;
@@ -325,8 +334,7 @@ void SupplyCardAct::Update()
 		card->isCovered = false;
 	}
 
-	DeleteResult();
-	result = new GetCardResult();
+	result->Clear();
 	((GetCardResult*)result)->cards.push_back(card);
 	Done();
 }
@@ -352,7 +360,7 @@ void CardMoveAct::Update()
 		if (!yet) {
 			DeleteResult();
 			auto result = new GetCardResult();
-			for(auto card : cards)
+			for (auto card : cards)
 				result->cards.push_back(card);
 			this->result = result;
 			Done();
@@ -399,7 +407,6 @@ void UseCardFromHandAct::NextSubAct()
 			Done();
 			return;
 		}
-
 
 		for (auto card : cards) {
 			player->hand->Out(card);
@@ -467,7 +474,6 @@ void InputCardAct::Update()
 SelectFromHandAct::SelectFromHandAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
 {
-
 	result = new GetCardResult;
 }
 
@@ -487,7 +493,6 @@ void SelectFromHandAct::Update()
 		result->Clear();
 		Done();
 	}
-	
 
 	if (KEY_DOWN(VK_LBUTTON)) {
 		clicked = hand->GetByPos(mousePos);
@@ -615,15 +620,15 @@ void ActiveCardAct::Init(int key)
 		act->Init(3);
 		subActs.push_back(act);
 	}
-		break;
-		/*
-	case CardKey::LIBRARY:
-		auto act = new LibraryAct;
-		break;
-	case CardKey::WITCH:
-		effectAct = new WitchAct;
-		break;
-		*/
+	break;
+	/*
+case CardKey::LIBRARY:
+	auto act = new LibraryAct;
+	break;
+case CardKey::WITCH:
+	effectAct = new WitchAct;
+	break;
+	*/
 	case CardKey::VILLAGE:
 	{
 		auto act0 = new DrawCardAct(this, player);
@@ -634,12 +639,12 @@ void ActiveCardAct::Init(int key)
 		act1->Init(2);
 		subActs.push_back(act1);
 	}
-		break;
-		/*
-	case CardKey::MILITIA:
-		effectAct = new MilitiaAct;
-		break;
-		*/
+	break;
+	/*
+case CardKey::MILITIA:
+	effectAct = new MilitiaAct;
+	break;
+	*/
 	case CardKey::MARKET:
 	{
 		auto act0 = new DrawCardAct(this, player);
@@ -655,27 +660,27 @@ void ActiveCardAct::Init(int key)
 		act3->Init(1);
 		subActs.push_back(act3);
 	}
-		break;
-		/*
-	case CardKey::LABORATORY:
-		effectAct = new LaboratoryAct;
-		break;
-	case CardKey::THRONE_ROOM:
-		effectAct = new ThroneRoomAct;
-		break;
-	case CardKey::CHAPEL:
-		effectAct = new ChapelAct;
-		break;
-	case CardKey::CELLAR:
-		effectAct = new CellalAct;
-		break;
-	case CardKey::GARDENS:
-		effectAct = nullptr;
-		break;
-	case CardKey::WORKSHOP:
-		effectAct = new WorkShopAct;
-		break;
-		*/
+	break;
+	/*
+case CardKey::LABORATORY:
+	effectAct = new LaboratoryAct;
+	break;
+case CardKey::THRONE_ROOM:
+	effectAct = new ThroneRoomAct;
+	break;
+case CardKey::CHAPEL:
+	effectAct = new ChapelAct;
+	break;
+case CardKey::CELLAR:
+	effectAct = new CellalAct;
+	break;
+case CardKey::GARDENS:
+	effectAct = nullptr;
+	break;
+case CardKey::WORKSHOP:
+	effectAct = new WorkShopAct;
+	break;
+	*/
 	case CardKey::FESTIVAL:
 	{
 		auto a0 = new GainActionAct(this, player);
@@ -689,50 +694,69 @@ void ActiveCardAct::Init(int key)
 		subActs.push_back(a1);
 		subActs.push_back(a2);
 	}
-		break;
-	/*
-		case CardKey::MOAT:
-			effectAct = new MoatAct;
-			break;
-		case CardKey::COUNCILROOM:
-			effectAct = new CouncilRoomAct;
-			break;
+	break;
 
-	*/
-		case CardKey::ARTISAN:
-		{
-			auto a0 = new GetSupplierAct(this, player);
-			a0->Init([](CardData* data) -> bool {
-				return CostLimit(*data, 5);
-			});
-			subActs.push_back(a0);
+	case CardKey::MOAT:
+	{
+		//
+	}
+	break;
 
-			//auto a1 = new SupplyCardAct();
-			
-
-
+	case CardKey::COUNCILROOM:
+	{
+		auto a0 = new DrawCardAct(this, player);
+		a0->Init(4);
+		subActs.push_back(a0);
+		auto a1 = new GainBuyAct(this, player);
+		a1->Init(1);
+		subActs.push_back(a1);
+		for (auto otherPlayer : DominionGameMaster::Get()->players) {
+			if (otherPlayer == player)
+				continue;
+			auto a = new DrawCardAct(this, player);
+			subActs.push_back(a);
 		}
-			break;
+	}
+	break;
+	case CardKey::ARTISAN:
+	{
+		auto a0 = new GetSupplierAct(this, player);
+		a0->Init([](CardData* data) -> bool {
+			return CostLimit(*data, 5);
+		});
+		subActs.push_back(a0);
 
+		auto a1 = new SupplyCardAct(this, player);
+		a1->SetRequested(a0->ReturnResult());
+		a1->Init();
+		subActs.push_back(a1);
+
+		auto a2 = new InputCardAct(this, player);
+		a2->Init(player->hand, (GetCardResult*)a1->ReturnResult());
+		subActs.push_back(a2);
+		//Result가 이미 선언되어 있으니 잘만 된다
+	}
+	break;
 	/*
-		case CardKey::BANDIT:
-			effectAct = new BanditAct;
-			break;
-		case CardKey::HARBINGER:
-			effectAct = new HarbingerAct;
-			break;
-		case CardKey::MERCHANT:
-			effectAct = new MerchantAct;
-			break;
-		case CardKey::POACHER:
-			effectAct = new PoacherAct;
-			break;
-		case CardKey::SENTRY:
-			effectAct = new SentryAct;
-			break;
-		case CardKey::VASSAL:
-			effectAct = new VassalAct;
-			break;
+	case CardKey::BANDIT:
+		effectAct = new BanditAct;
+		//선택
+		break;
+	case CardKey::HARBINGER:
+		effectAct = new HarbingerAct;
+		break;
+	case CardKey::MERCHANT:
+		effectAct = new MerchantAct;
+		break;
+	case CardKey::POACHER:
+		effectAct = new PoacherAct;
+		break;
+	case CardKey::SENTRY:
+		effectAct = new SentryAct;
+		break;
+	case CardKey::VASSAL:
+		effectAct = new VassalAct;
+		break;
 	*/
 	default:
 		break;
@@ -740,23 +764,6 @@ void ActiveCardAct::Init(int key)
 
 	isReady = true;
 }
-
-/*
-void ActiveCardAct::Update()
-{
-	if (curSubAct == subActs.size()) {
-		Done();
-		return;
-	}
-	if (subActs[curSubAct]->isDone) {
-		curSubAct++;
-		return;
-	}
-
-	if(subActs[curSubAct]->isReady)
-		subActs[curSubAct]->Update();
-}
-*/
 
 DrawCardAct::DrawCardAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
@@ -783,7 +790,7 @@ void DrawCardAct::NextSubAct()
 		a2->Init(player->hand, r1, true);
 	}
 }
-CardFromDeckAct::CardFromDeckAct(Act* parent, DominionPlayer* player) 
+CardFromDeckAct::CardFromDeckAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
 {
 	result = new GetCardResult;
@@ -874,7 +881,7 @@ void MainGameAct::Update()
 			subActs[0]->ChangePlayer(DominionGameMaster::Get()->GetTurnPlayer());
 			subActs[0]->Init();
 		}
-		
+
 		subActs[0]->Update();
 
 		if (subActs[0]->isDone) {
@@ -885,4 +892,24 @@ void MainGameAct::Update()
 		//DominionGameMaster::Get()->NextTurn();
 		Loop();
 	}
+}
+
+TrashCardAct::TrashCardAct(Act* parent, DominionPlayer* player)
+	: Act(parent, player)
+{
+	result = new GetCardResult();
+}
+
+void TrashCardAct::Init(CardSet* cardSet, GetCardResult* request)
+{
+	auto& trash = DominionGameMaster::Get()->trash;
+
+	result->Clear();
+	for (auto card : request->cards) {
+		cardSet->Out(card);
+		trash->InputCard(card, false, true);
+		((GetCardResult*)result)->cards.push_back(card);
+	}
+	request->Clear();
+	Done();
 }

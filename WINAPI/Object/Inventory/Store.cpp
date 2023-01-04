@@ -47,10 +47,7 @@ void Store::CreateItems()
 		item->size = { 75, 75 };
 		item->SetEvent(bind(&Item::ClickStoreItem, item));
 
-		Vector2 coord = Vector2(
-			i%colCount,
-			i/colCount
-		);
+		Vector2 coord(float(i % colCount), float(i / colCount));
 		i++;
 
 		item->LocalPos() = startOffset + offset + coord * interval;

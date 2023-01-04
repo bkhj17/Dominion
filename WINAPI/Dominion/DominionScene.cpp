@@ -11,7 +11,7 @@ DominionScene::DominionScene()
 	CardDataManager::Get();
 	CardManager::Get();
 	DominionGameMaster::Get();
-	infoBox = new Rect(100.0f, 260.0f, 220.0f, 440.0f);
+	infoBox = new Rect({ 180.0f, 370.0f }, { 200.0f, 300.0f });
 }
 
 DominionScene::~DominionScene()

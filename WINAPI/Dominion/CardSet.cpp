@@ -53,9 +53,9 @@ void CardSet::InputCard(Card* input, bool toTop, bool teleport)
 	input->isVisible = isVisible;
 	input->isCovered = isCovered;
 
+	SetCardPos(input, (int)cards.size(), teleport);
 	cards.push_back(input);
 
-	SetCardPos(input, cards.size()-1, teleport);
 }
 
 void CardSet::InputCard(vector<Card*>& inputs, bool toTop, bool teleport)
@@ -199,7 +199,6 @@ bool CardSet::FindSelectable(function<bool(Card*)> condition)
 
 void CardSet::SetUnselectable()
 {
-	for (auto card : cards) {
+	for (auto card : cards)
 		card->isSelectable = false;
-	}
 }

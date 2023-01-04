@@ -44,6 +44,7 @@ void Card::Render(HDC hdc)
 
 	if (isSelectable) {
 		//선택 가능한 카드 표시
+
 	}
 }
 
