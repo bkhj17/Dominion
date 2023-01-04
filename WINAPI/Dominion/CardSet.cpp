@@ -2,11 +2,12 @@
 #include "MyMovement.h"
 #include "Card.h"
 #include "CardSet.h"
+#include "CardDataManager.h"
 
 CardSet::CardSet(bool isCovered, bool isOneSet)
 	: isCovered(isCovered), isOneSet(isOneSet)
 {
-	size = Card::DEFAULT_SIZE;
+	cardSize = Card::DEFAULT_SIZE;
 }
 
 CardSet::~CardSet()
@@ -19,10 +20,26 @@ void CardSet::Render(HDC hdc)
 	if (!isVisible)
 		return;
 
+	if (isOneSet && isCovered) {
+		CardDataManager::Get()->RenderCovered(hdc, this);
+		return;
+	}
+
+	if (cards.empty()) {
+		return;
+	}
+
 	if (isOneSet) {
-		cards.front()->Render(hdc);
-		wstring str = to_wstring(cards.size());
-		TextOut(hdc, (int)Left(), (int)Top(), str.c_str(), (int)str.size());
+		if (frontRender) {
+			cards.front()->Render(hdc);
+			wstring str = to_wstring(cards.size());
+			TextOut(hdc, (int)Left(), (int)Top(), str.c_str(), (int)str.size());
+		}
+		else {
+			cards.back()->Render(hdc);
+			wstring str = to_wstring(cards.size());
+			TextOut(hdc, (int)Left(), (int)Top(), str.c_str(), (int)str.size());
+		}
 	}
 	else {
 		for (auto card : cards)
@@ -30,7 +47,7 @@ void CardSet::Render(HDC hdc)
 	}
 }
 
-void CardSet::InputCard(Card* input, bool teleport)
+void CardSet::InputCard(Card* input, bool toTop, bool teleport)
 {
 	input->size = size;
 	input->isVisible = isVisible;
@@ -41,45 +58,67 @@ void CardSet::InputCard(Card* input, bool teleport)
 	SetCardPos(input, cards.size()-1, teleport);
 }
 
-void CardSet::InputCard(vector<Card*>& inputs, bool teleport)
+void CardSet::InputCard(vector<Card*>& inputs, bool toTop, bool teleport)
 {
 	for (auto input : inputs) {
 		SetCardPos(input, cards.size(), teleport);
-		cards.push_back(input);
+		if (toTop)
+			cards.push_front(input);
+		else
+			cards.push_back(input);
 	}
 	inputs.clear();
 }
 
-void CardSet::InputCard(deque<Card*>& inputs, bool teleport)
+void CardSet::InputCard(deque<Card*>& inputs, bool toTop, bool teleport)
 {
 	while (!inputs.empty()) {
 		Card* input = inputs.front();
 		inputs.pop_front();
 		SetCardPos(input, cards.size(), teleport);
-		cards.push_back(input);
-
+		if (toTop)
+			cards.push_front(input);
+		else
+			cards.push_back(input);
 	}
 }
 
-void CardSet::InputCard(queue<Card*>& inputs, bool teleport)
+void CardSet::InputCard(queue<Card*>& inputs, bool toTop, bool teleport)
 {
 	while (!inputs.empty()) {
 		Card* input = inputs.front();
 		inputs.pop();
 		input->isVisible = isVisible;
 		SetCardPos(input, cards.size(), teleport);
-		cards.push_back(input);
+
+		if (toTop)
+			cards.push_front(input);
+		else
+			cards.push_back(input);
 	}
 }
 
 void CardSet::SetCardPos(Card* card, int index, bool teleport)
 {	
-	Vector2 newPos = (isOneSet) ? pos : Vector2(Left() + card->size.x * (0.5f + index), pos.y);
+	Vector2 newPos;
+	if (isOneSet) {
+		newPos = pos;
+	}
+	else {
+		newPos = { Left() + card->size.x * (0.5f + index), pos.y };
+	}
 
 	if (teleport)
 		card->movement->Teleport(newPos);
 	else
 		card->movement->SetTargetPosByTime(newPos, 0.2f);
+}
+
+void CardSet::SortCardPos()
+{
+	for (int i = 0; i < cards.size(); i++) {
+		SetCardPos(cards[i], i, false);
+	}
 }
 
 void CardSet::Shuffle()
@@ -114,6 +153,7 @@ Card* CardSet::Pop()
 	Card* out = cards.front();
 	cards.pop_front();
 
+	SortCardPos();
 	return out;
 }
 
@@ -123,6 +163,7 @@ Card* CardSet::Out(Card* out)
 		if (out == *it) {
 			Card* result = *it;
 			cards.erase(it);
+			SortCardPos();
 			return result;
 		}
 	}
@@ -137,5 +178,28 @@ Card* CardSet::Out(int n)
 
 	Card* out = cards[n];
 	cards.erase(cards.begin() + n);
+	SortCardPos();
 	return out;
+}
+
+bool CardSet::FindSelectable(function<bool(Card*)> condition)
+{
+	bool result = false;
+
+	for (auto card : cards) {
+		bool b = condition(card);
+		result |= b;
+		if (b) {
+			card->isSelectable = true;
+		}
+	}
+
+	return result;
+}
+
+void CardSet::SetUnselectable()
+{
+	for (auto card : cards) {
+		card->isSelectable = false;
+	}
 }

@@ -30,5 +30,7 @@ public:
 	int numAction = 0;
 	int numBuy = 0;
 	int gold = 0;
+
+	string name;
 };
 

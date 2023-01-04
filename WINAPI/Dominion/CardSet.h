@@ -9,12 +9,13 @@ public:
 	
 	void Render(HDC hdc);
 
-	void InputCard(Card* input, bool teleport = false);
-	void InputCard(vector<Card*>& inputs, bool teleport = false);
-	void InputCard(deque<Card*>& inputs, bool teleport = false);
-	void InputCard(queue<Card*>& inputs, bool teleport = false);
+	void InputCard(Card* input, bool toTop = false, bool teleport = false);
+	void InputCard(vector<Card*>& inputs, bool toTop = false, bool teleport = false);
+	void InputCard(deque<Card*>& inputs, bool toTop = false, bool teleport = false);
+	void InputCard(queue<Card*>& inputs, bool toTop = false, bool teleport = false);
 
 	void SetCardPos(Card* card, int index, bool teleport);
+	void SortCardPos();
 
 	void Shuffle();
 
@@ -24,10 +25,15 @@ public:
 	Card* Out(Card* out);
 	Card* Out(int n);
 
+	bool FindSelectable(function<bool(Card*)> condition);
+	void SetUnselectable();
+
 	deque<Card*> cards;
 
 	bool isVisible = true;		//보임 여부
 	bool isCovered;		//카드 공개여부
 	bool isOneSet;		//묶음인지 아닌지 여부
+	bool frontRender = true;
+	Vector2 cardSize;
 };
 

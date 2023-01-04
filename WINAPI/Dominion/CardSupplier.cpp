@@ -12,7 +12,10 @@ void CardSupplier::Init(int key, int num)
 {
 	this->num = num;
 	this->data = &CardDataManager::Get()->datas[key];
+
+	auto originSize = size;
 	SetTexture(data->texture);
+	size = originSize;
 
 	CardManager::Get()->CreateObjects(key, num);
 }
@@ -32,6 +35,7 @@ Card* CardSupplier::SupplyCard()
 
 	num--;
 	Card* card = (Card*)CardManager::Get()->Pop(data->name);
+	card->size = size;
 	card->isActive = true;
 	return card;
 }
