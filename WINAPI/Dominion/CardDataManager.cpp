@@ -7,6 +7,11 @@ CardDataManager::CardDataManager()
 	LoadData();
 }
 
+void CardDataManager::RenderCovered(HDC hdc, Rect* rect)
+{
+	texture->Render(hdc, rect);
+}
+
 void CardDataManager::LoadData()
 {
 	texture = Texture::Add(L"Textures/Dominion/Texture/CardTexture.bmp", 9, 4);

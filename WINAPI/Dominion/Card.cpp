@@ -3,6 +3,9 @@
 #include "MyMovement.h"
 #include "Card.h"
 
+const Vector2 Card::DEFAULT_SIZE = { 60, 90 };
+
+
 CardData::CardData()
 {
 }

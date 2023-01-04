@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "DominionPlayer.h"
 #include "Card.h"
+#include "CardSet.h"
 #include "MyMovement.h"
 #include "CardDataManager.h"
 
@@ -8,65 +9,64 @@
 DominionPlayer::DominionPlayer(bool isControl, bool isAi)
 	: isController(isControl), isAi(isAi)
 {
-	deckRect = new Rect();
-	handRect = new Rect();
-	usedRect = new Rect();
+	Vector2 size = { 80.0f, 120.0f };
 	if (isController) {
-		deckRect->pos = { 400.0f, WIN_HEIGHT - 60.0f };
-		deckRect->size = { 80.0f, 120.0f };
-		handRect->pos = { 700.0f, WIN_HEIGHT - 60.0f };
-		handRect->size = {};
-		usedRect->pos = { 700.0f, WIN_HEIGHT - 180.0f };
-		usedRect->size = handRect->size;
+		deck = new CardSet(true, true);
+		deck->pos = { 400.0f, WIN_HEIGHT - 60.0f };
+		deck->size = size;
+
+		hand = new CardSet(false, false);
+		hand->pos = { 700.0f, WIN_HEIGHT - 60.0f };
+		hand->size = size;
+
+		used = new CardSet(false, false);
+		used->pos = { 700.0f, WIN_HEIGHT - 180.0f };
+		used->size = size;
+
+		discard = new CardSet(true, true);
+		discard->pos = deck->pos;
+		discard->size = size;
 	}
 	else {
-		deckRect->pos = { 400.0f, 60.0f };
-		deckRect->size = { 80.0f, 120.0f };
-		handRect->pos = { 700.0f, 60.0f };
-		handRect->size = { 800.0f, 120.0f};
-		usedRect->pos = { 700.0f, 180.0f };
-		usedRect->size = handRect->size;
+		deck = new CardSet(true, true);
+		deck->pos = { 400.0f, 60.0f };
+		deck->size = size;
+
+		hand = new CardSet(true, false);
+		hand->pos = { 700.0f, 60.0f };
+		hand->size = size;
+
+		used = new CardSet(false, false);
+		used->pos = { 700.0f, 180.0f };
+		used->size = size;
+
+		discard = new CardSet(true, true);
+		discard->pos = deck->pos;
+		discard->size = size;
 	}
 }
 
 DominionPlayer::~DominionPlayer()
 {
-	deck.clear();
-	hand.clear();
-	used.clear();
-	discard.clear();
-
-	delete deckRect;
-	delete handRect;
-	delete usedRect;
+	delete deck;
+	delete hand;
+	delete used;
+	delete discard;
 }
 
 void DominionPlayer::ReloadDeck()
 {
-	for (int i = 0; i < discard.size() - 1; i++) {
-		int p = Random(i, (int)discard.size() - 1);
-		swap(discard[i], discard[p]);
-	}
-
-	while (!discard.empty()) {
-		deck.push_back(discard.back());
-		discard.pop_back();
-	}
+	discard->Shuffle();
+	deck->InputCard(discard->cards);
 }
 
 void DominionPlayer::Render(HDC hdc)
 {
+	deck->Render(hdc);
 
-	auto texture = CardDataManager::Get()->texture;
-	texture->Render(hdc, deckRect);
-	wstring str = to_wstring(deck.size());
-	TextOut(hdc, (int)deckRect->Left(), (int)deckRect->Top(), str.c_str(), (int)str.size());
+	hand->Render(hdc);
 
-	for (auto hCard : hand)
-		hCard->Render(hdc);
-
-	for (auto uCard : used)
-		uCard->Render(hdc);
+	used->Render(hdc);
 }
 
 //턴 시작 시

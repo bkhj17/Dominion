@@ -1,5 +1,6 @@
 #pragma once
 class Card;
+class CardSet;
 
 class DominionPlayer
 {
@@ -16,16 +17,14 @@ public:
 
 	bool isController = false;
 
-	vector<Card*> deck;
-	Rect* deckRect;
+	CardSet* deck;
 
-	vector<Card*> hand;
-	Rect* handRect;
+	CardSet* hand;
 
-	vector<Card*> used;
-	Rect* usedRect;
-
-	vector<Card*> discard;	//¾È º¸¿©ÁÜ, deckÀÌ¶û pos °øÀ¯
+	CardSet* used;
+//	vector<Card*> used;
+//	Rect* usedRect;
+	CardSet* discard;
 
 	bool isAi = false;
 	int numAction = 0;

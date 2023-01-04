@@ -1,6 +1,7 @@
 #pragma once
 
 class Card;
+class CardSet;
 class CardSupplier;
 class DominionPlayer;
 
@@ -40,6 +41,8 @@ struct ActData {
 };
 
 class ActResult {
+public:
+	virtual void Clear() {}
 };
 
 class CardListData {
@@ -57,7 +60,10 @@ public:
 	virtual void Init();
 	void SetRequested(ActResult* request);	//앞의 act가 끝나야 쓸 수 있기 때문에 Init이랑 별개로
 
-	virtual void Update() = 0;
+	virtual void Update();
+	bool DefaultUpdate();
+	virtual void NextSubAct() {};
+
 	void Loop();
 
 	//자신의 실행 결과 반환
@@ -132,7 +138,8 @@ public:
 //공급처 받기
 class GetSupplierAct : public Act {
 public:
-	GetSupplierAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
+	GetSupplierAct(Act* parent, DominionPlayer* player);
+		//
 
 	void Update();
 };
@@ -140,13 +147,17 @@ public:
 //선택된 공급처
 class GetSupplierResult : public ActResult {
 public:
-	CardSupplier* supplier;
+	CardSupplier* supplier = nullptr;
+
+	void Clear() override;
 };
 
 //선택된 카드들 목록
 class GetCardResult : public ActResult {
 public:
 	vector<Card*> cards;
+
+	void Clear() override;
 };
 
 
@@ -161,7 +172,7 @@ public:
 class CardMoveAct : public Act {
 public:
 	CardMoveAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
-	void Init(Vector2 pos);
+	void Init(Vector2 pos, bool isCovered);
 	void Update();
 
 private:
@@ -174,22 +185,22 @@ private:
 	float timeRate = 0.3f;
 };
 
-class CardToHandAct : public Act 
-{
-public:
-	CardToHandAct(Act* parent, DominionPlayer* player);
-	void SetRequested(ActResult* request);
-	void Update();
-};
-
 class InputCardAct : public Act
 {
 public:
-	InputCardAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
+	InputCardAct(Act* parent, DominionPlayer* player);
+	~InputCardAct();
 
 	//카드 셋으로 클래스 정의?
-	void Init(vector<Card*>& cardSet, vector<Card*> input, bool visible = true);
+	void Init(CardSet* cardSet, GetCardResult* requested, bool visible = true);
 	void Update();
+
+private:
+	CardSet* cardSet = nullptr;
+	int curCard = 0;
+
+	float time = 0.0f;
+	float timeRate = 0.3f;
 };
 
 class SelectFromHandAct : public Act 
@@ -197,11 +208,11 @@ class SelectFromHandAct : public Act
 public:
 	SelectFromHandAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
 
-	void Init(vector<Card*>& cardSet, int num, function<bool(Card*)> condition);
+	void Init(CardSet* hand, int num, function<bool(Card*)> condition);
 	void Update();
 
 private:
-	vector<Card*> hand;
+	CardSet* hand;
 	int selectNum = 0;
 	vector<Card*> selected;
 	function<bool(Card*)> condition;
@@ -250,10 +261,11 @@ public:
 class CardFromDeckAct : public Act 
 {
 public:
-	CardFromDeckAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
+	CardFromDeckAct(Act* parent, DominionPlayer* player);
+	//;
 
 	void Init(int num);
-	void Update();
+	void Update() { Done(); }
 };
 
 class DrawCardAct : public Act {
@@ -261,9 +273,9 @@ public:
 	DrawCardAct(Act* parent, DominionPlayer* player);
 
 	void Init(int num);
-	void Update();
+	void NextSubAct();
 private:
-	int num;
+	int num = 0;
 };
 
 

@@ -65,7 +65,7 @@ void Button::Render(HDC hdc)
 		return;
 
 	ImageRect::Render(hdc);
-	SetBkMode(hdc, 0);
+	int originBkMode = SetBkMode(hdc, 0);
 	if (font) {
 		oldFont = (HFONT)SelectObject(hdc, font);
 	}
@@ -78,6 +78,7 @@ void Button::Render(HDC hdc)
 	if (font) {
 		SelectObject(hdc, oldFont);
 	}
+	SetBkMode(hdc, originBkMode);
 }
 
 void Button::SetFont(HFONT font, int fontSize, COLORREF fontColor)

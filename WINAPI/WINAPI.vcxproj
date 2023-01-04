@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Dominion\CardSet.h" />
     <ClInclude Include="Dominion\CardDataManager.h" />
     <ClInclude Include="Dominion\CardManager.h" />
     <ClInclude Include="Dominion\DominionPositions.h" />
@@ -233,6 +234,7 @@
     <ClInclude Include="WINAPI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Dominion\CardSet.cpp" />
     <ClCompile Include="Dominion\CardDataManager.cpp" />
     <ClCompile Include="Dominion\CardManager.cpp" />
     <ClCompile Include="Dominion\DominionScene.cpp" />

@@ -68,6 +68,9 @@ public:
 class Card : public ImageRect
 {
 public:
+	static const Vector2 DEFAULT_SIZE;
+
+public:
 	Card(CardData data);
 	~Card();
 

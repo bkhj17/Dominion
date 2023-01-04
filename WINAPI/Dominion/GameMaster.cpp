@@ -4,6 +4,7 @@
 #include "CardSupplier.h"
 #include "Act.h"
 #include "Card.h"
+#include "CardSet.h"
 #include "CardDataManager.h"
 #include "CardManager.h"
 #include "GameMaster.h"
@@ -49,17 +50,15 @@ void GameMaster::GameStart()
 	for (int i = 0; i < 7; i++) {
 		for (int j = 0; j < 2; j++) {
 			Card* testCard = suppliers[0]->SupplyCard();
-			testCard->pos = players[j]->deckRect->pos;
-			testCard->isVisible = false;
-			players[j]->deck.push_back(testCard);
+			players[j]->deck->InputCard(testCard, true);
 		}
 	}
 
 	auto testCard = suppliers[7]->SupplyCard();
-	testCard->pos = players[0]->handRect->pos;
+	testCard->pos = players[0]->hand->pos;
 	testCard->size = { 60.0f, 90.0f };
 	testCard->isVisible = true;
-	players[0]->hand.push_back(testCard);
+	players[0]->hand->InputCard(testCard);
 
 	auto testAct = new ActionPhaseAct(nullptr, players[turnPlayer]);
 
@@ -194,10 +193,27 @@ CardData* GameMaster::GetMouseOn()
 		}
 	}
 
-	for (auto card : players[turnPlayer]->hand) {
-		if (card->IsPointCollision(mousePos)) {
-			return card->data;
+	Card* mouseOn = nullptr;
+	for (auto player : players) {
+		//패 정보
+		mouseOn = player->hand->GetByPos(mousePos);
+
+		if (mouseOn != nullptr) {
+			if (!mouseOn->isActive || !mouseOn->isVisible || mouseOn->isCovered)
+				mouseOn = nullptr;
+			if (mouseOn != nullptr)
+				return mouseOn->data;
 		}
+		//사용한 카드 정보
+		mouseOn = player->used->GetByPos(mousePos);
+
+		if (mouseOn != nullptr) {
+			if (!mouseOn->isActive || !mouseOn->isVisible || mouseOn->isCovered)
+				mouseOn = nullptr;
+			if (mouseOn != nullptr)
+				return mouseOn->data;
+		}
+
 	}
 
 	return nullptr;

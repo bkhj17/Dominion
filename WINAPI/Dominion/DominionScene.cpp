@@ -41,8 +41,10 @@ void DominionScene::Render(HDC hdc)
 {
 	GameMaster::Get()->Render(hdc);
 
-	if(dataInfo != nullptr)
+	if (dataInfo != nullptr)
 		dataInfo->texture->Render(hdc, infoBox, dataInfo->frame);
+	else
+		CardDataManager::Get()->RenderCovered(hdc, infoBox);
 
 	CardManager::Get()->Render(hdc);
 
