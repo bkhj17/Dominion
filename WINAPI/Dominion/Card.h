@@ -70,13 +70,14 @@ class Card : public ImageRect
 	friend class CardManager;
 public:
 	static const Vector2 DEFAULT_SIZE;
-
+	
 public:
 	Card(CardData data);
 	~Card();
 
 	void Update() override;
 	void Render(HDC hdc) override;
+	void Render(HDC hdc, Rect* renderPos, bool covered);
 
 	int GetVictory();
 
@@ -98,7 +99,8 @@ public:
 private:
 	bool isSelectable = false;
 	HPEN selectablePen = nullptr;
-	HPEN selectedPen = nullptr;
+
 	bool isSelected = false;
+	HPEN selectedPen = nullptr;
 };
 

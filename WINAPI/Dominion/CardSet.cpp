@@ -54,6 +54,7 @@ void CardSet::InputCard(Card* input, bool toTop, bool teleport)
 	input->isCovered = isCovered;
 
 	SetCardPos(input, (int)cards.size(), teleport);
+	input->SetSelectable(nullptr);
 	cards.push_back(input);
 
 }
@@ -62,6 +63,7 @@ void CardSet::InputCard(vector<Card*>& inputs, bool toTop, bool teleport)
 {
 	for (auto input : inputs) {
 		SetCardPos(input, cards.size(), teleport);
+		input->SetSelectable(nullptr);
 		if (toTop)
 			cards.push_front(input);
 		else
@@ -74,6 +76,7 @@ void CardSet::InputCard(deque<Card*>& inputs, bool toTop, bool teleport)
 {
 	while (!inputs.empty()) {
 		Card* input = inputs.front();
+		input->SetSelectable(nullptr);
 		inputs.pop_front();
 		SetCardPos(input, cards.size(), teleport);
 		if (toTop)
@@ -89,6 +92,7 @@ void CardSet::InputCard(queue<Card*>& inputs, bool toTop, bool teleport)
 		Card* input = inputs.front();
 		inputs.pop();
 		input->isVisible = isVisible;
+		input->SetSelectable(nullptr);
 		SetCardPos(input, cards.size(), teleport);
 
 		if (toTop)

@@ -385,8 +385,10 @@ public:
 //
 
 class SelectFromWindow : public Act {
+	SelectFromWindow(Act* parent, DominionPlayer* player);
 
-
+	void Init(GetCardResult* request);
+	void Update();
 
 	//전용 창
 	//설명

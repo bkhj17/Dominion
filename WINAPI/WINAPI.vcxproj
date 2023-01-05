@@ -228,6 +228,7 @@
     <ClInclude Include="Scenes\Homework\Homework221229\ShopScene1229.h" />
     <ClInclude Include="Scenes\Homework\Homework221229\SellScene1229.h" />
     <ClInclude Include="Object\Inventory\Store.h" />
+    <ClInclude Include="Dominion\SelectWindow.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Scenes\TutorialScene.h" />
     <ClInclude Include="Framework\Utilities\Timer.h" />
@@ -336,6 +337,7 @@
     <ClCompile Include="Scenes\Homework\Homework221229\ShopScene1229.cpp" />
     <ClCompile Include="Scenes\Homework\Homework221229\SellScene1229.cpp" />
     <ClCompile Include="Object\Inventory\Store.cpp" />
+    <ClCompile Include="Dominion\SelectWindow.cpp" />
     <ClCompile Include="WINAPI.cpp" />
   </ItemGroup>
   <ItemGroup>

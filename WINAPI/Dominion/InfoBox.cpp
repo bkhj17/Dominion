@@ -47,9 +47,9 @@ void InfoBox::Render(HDC hdc)
 			while (spos < str.size()) {
 				int next = spos;
 				while (spos + 15 > next) {
-					next = str.find(' ', next);
+					next = (int)str.find(' ', next);
 					if (next == string::npos) {
-						next = str.size();
+						next = (int)str.size();
 						break;
 					}
 					else
