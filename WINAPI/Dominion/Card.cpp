@@ -5,15 +5,6 @@
 
 const Vector2 Card::DEFAULT_SIZE = { 60, 90 };
 
-
-CardData::CardData()
-{
-}
-
-CardData::~CardData()
-{
-}
-
 Card::Card(CardData data)
 {
 	movement = new MyPointMovement(this);
@@ -42,9 +33,15 @@ void Card::Render(HDC hdc)
 
 	__super::Render(hdc, isCovered ? data->covered : data->frame);
 
-	if (isSelectable) {
+	if (isSelected) {
+		auto post = SelectObject(hdc, selectedPen);
+		LineRender(hdc);
+		SelectObject(hdc, post);
+	} else if (isSelectable) {
 		//선택 가능한 카드 표시
-
+		auto post = SelectObject(hdc, selectablePen);
+		LineRender(hdc);
+		SelectObject(hdc, post);
 	}
 }
 
@@ -56,4 +53,9 @@ int Card::GetVictory()
 	else {
 		return data->victory;
 	}
+}
+
+void Card::SetSelectable(function<bool(CardData*)> condition)
+{
+	isSelectable = condition ? condition(data) : false;
 }

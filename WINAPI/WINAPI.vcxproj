@@ -140,6 +140,7 @@
     <ClInclude Include="Dominion\DominionPlayer.h" />
     <ClInclude Include="Dominion\Act.h" />
     <ClInclude Include="Dominion\GameMaster.h" />
+    <ClInclude Include="Dominion\InfoBox.h" />
     <ClInclude Include="Object\Inventory\Inventory.h" />
     <ClInclude Include="Object\Inventory\Item.h" />
     <ClInclude Include="Object\Manager\DataManager.h" />
@@ -243,6 +244,7 @@
     <ClCompile Include="Dominion\DominionPlayer.cpp" />
     <ClCompile Include="Dominion\Act.cpp" />
     <ClCompile Include="Dominion\GameMaster.cpp" />
+    <ClCompile Include="Dominion\InfoBox.cpp" />
     <ClCompile Include="Object\Inventory\Inventory.cpp" />
     <ClCompile Include="Object\Inventory\Item.cpp" />
     <ClCompile Include="Object\Manager\DataManager.cpp" />

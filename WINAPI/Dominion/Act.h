@@ -11,8 +11,11 @@ namespace ActCondition {
 	bool CostLimit(const CardData&, int);
 };
 
-/*
+
 enum class ActType {
+	ACT,
+	MAIN_GAME,
+	//
 	TURN,
 	//턴 진행 관련
 	TURN_START,			//턴 시작. 플레이어 Action 1회, buy 1회, 재물 0
@@ -23,7 +26,7 @@ enum class ActType {
 	//카드 제어 관련
 	MOVE_CARD,			//카드 이동
 
-	GET_CARD_LIST,		
+	GET_CARD_LIST,
 	SELECT_CARD,		//플레이어가 카드 선택
 
 	DRAW_CARD,			//덱에서 패로 카드 집기
@@ -40,8 +43,8 @@ enum class ActType {
 	//반응카드 관련
 	CHECK_REACT,
 	COMMAND_REACT_CARD,
-}
-*/
+};
+
 class ActResult {
 public:
 	virtual void Clear() = 0;
@@ -69,22 +72,35 @@ public:
 
 	void Loop();
 
+	virtual void Render(HDC hdc) {};
+
 	//자신의 실행 결과 반환
 	ActResult* ReturnResult() { return result; }
 
 	void ChangePlayer(DominionPlayer* newPlayer);
 	int GetPlayerGold();
+	bool GetShutDown() { return shutDown; }
+
+
 protected:
 	virtual void Done();
 	void DeleteResult();
 	void DeleteSubAct();
+
+	//주의! 둘은 세트여야 한다
+	void SetCurActThis();
+	void ReturnCurAct();
 public:
+	ActType actType = ActType::ACT;
+
+	bool shutDown = false;
 	bool isReady = false;
 	bool isDoing = false;
 	bool isDone = false;
 protected:
 	int curSubAct = 0;
 	Act* parent;
+	
 	DominionPlayer* player;
 	deque<Act*> subActs;
 
@@ -93,7 +109,7 @@ protected:
 	ActResult* requested = nullptr;
 	ActResult* result = nullptr;
 };
-
+ 
 class MainGameAct : public Act {
 public:
 	MainGameAct();
@@ -167,16 +183,18 @@ private:
 class UseCardFromHandAct : public Act {
 public:
 	UseCardFromHandAct(Act* parent, DominionPlayer* player);
-	void Init(function<bool(Card*)>);
+	void Init(function<bool(CardData*)>);
 	virtual void NextSubAct();
 
-	function<bool(Card*)> condition;
+	function<bool(CardData*)> condition;
 };
 
 class BuyCardAct : public Act {
 public:
 	BuyCardAct(Act* parent, DominionPlayer* player);
-	void Update();
+
+	void Init() override;
+	void NextSubAct() override;
 };
 
 //공급처 받기
@@ -185,11 +203,12 @@ public:
 	GetSupplierAct(Act* parent, DominionPlayer* player);
 		//
 	virtual void Init() override;
-	void Init(function<bool(CardData*)> condition);
+	void Init(function<bool(CardSupplier*)> condition);
 	void Update();
 
+	void Done() override;
 private:
-	function<bool(CardData*)> condition;
+	function<bool(CardSupplier*)> condition;
 };
 
 //선택된 공급처
@@ -227,12 +246,12 @@ class InputCardAct : public Act
 {
 public:
 	InputCardAct(Act* parent, DominionPlayer* player);
-	~InputCardAct();
 
 	//카드 셋으로 클래스 정의?
 	void Init(CardSet* cardSet, GetCardResult* requested, bool toTop = false, bool visible = true);
 	void SetTimeRate(float timeRate) { this->timeRate = timeRate; }
 	void Update();
+	void Done() override;
 
 protected:
 	CardSet* cardSet = nullptr;
@@ -249,15 +268,33 @@ class SelectFromHandAct : public Act
 public:
 	SelectFromHandAct(Act* parent, DominionPlayer* player);
 
-	void Init(CardSet* hand, int num, function<bool(Card*)> condition);
-	void Update();
-
-private:
-	CardSet* hand = nullptr;
+	void Init(int num, function<bool(CardData*)> condition);
+	virtual void Update() override;
+	virtual void Done() override;
+protected:
 	int selectNum = 0;
 	deque<Card*> selected;
-	function<bool(Card*)> condition;
+	function<bool(CardData*)> condition;
+
 };
+
+class SelectRangeFromHandAct : public SelectFromHandAct
+{
+public:
+	SelectRangeFromHandAct(Act* parent, DominionPlayer* player);
+	virtual void Init(int minNum, int maxNum, function<bool(CardData*)> condition);
+	virtual void Update() override;
+	virtual void Done() override;
+protected:
+	void SetEnd(bool end) { 
+		if(selected.size() >= minNum)
+			isEnd = end; 
+	}
+protected:
+	int minNum = 0;
+	bool isEnd = false;
+};
+
 
 class GainGoldAct : public Act {
 public:
@@ -347,6 +384,27 @@ public:
 //curAct 뺏고 인터셉트 해서 발동 여부 확인하고
 //
 
+class SelectFromWindow : public Act {
 
 
 
+	//전용 창
+	//설명
+	//endbutton
+};
+
+
+/////////////////////////////////////////////////////////////
+//카드 효과 전용 Act
+
+
+class PoacherEffectAct : public Act{
+public:
+	PoacherEffectAct(Act* parent, DominionPlayer* player);
+
+	void Init() override;
+	void Update() override;
+	void NextSubAct() override;
+	void Done() override;
+private:
+};

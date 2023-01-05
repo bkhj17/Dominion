@@ -49,8 +49,8 @@ enum class CardType : int {
 
 class CardData {
 public:
-	CardData();
-	~CardData();
+	CardData() = default;
+	~CardData() = default;
 
 	int key = 0;
 	string name = "";
@@ -67,6 +67,7 @@ public:
 
 class Card : public ImageRect
 {
+	friend class CardManager;
 public:
 	static const Vector2 DEFAULT_SIZE;
 
@@ -83,10 +84,21 @@ public:
 
 	bool isVisible = true;
 	bool isCovered = false;
-	bool isSelectable = false;
 	class MyPointMovement* movement;
 	CardData* data;
 
 	function<int(int)> SpecialVictory = nullptr;
+
+	void SetSelectable(function<bool(CardData*)> condition);
+	bool IsSelectable() { return isSelectable; }
+
+	void SetSelected(bool select) { isSelected = select; }
+	
+
+private:
+	bool isSelectable = false;
+	HPEN selectablePen = nullptr;
+	HPEN selectedPen = nullptr;
+	bool isSelected = false;
 };
 

@@ -32,6 +32,7 @@ DominionGameMaster::DominionGameMaster()
 		supplier = new CardSupplier();
 		supplier->size = { 60.0f, 90.0f };
 	}
+
 }
 
 DominionGameMaster::~DominionGameMaster()
@@ -49,25 +50,31 @@ DominionGameMaster::~DominionGameMaster()
 
 	delete trash;
 	delete endButton;
-
 }
 
 void DominionGameMaster::GameStart()
 {
 	MakeSuppliers();
 
-	for (int i = 0; i < 7; i++) {
-		for (int j = 0; j < 2; j++) {
-			Card* testCard = suppliers[0]->SupplyCard();
-			players[j]->deck->InputCard(testCard, false, true);
+	for (int i = 0; i < players.size(); i++) {
+		for (int j = 0; j < 7; j++) {
+			Card* copper = suppliers[0]->SupplyCard();
+			players[i]->deck->InputCard(copper, false, true);
 		}
-	}
+		for (int j = 0; j < 3; j++) {
+			Card* estate = suppliers[3]->SupplyCard();
+			players[i]->deck->InputCard(estate, false, true);
+		}
+		players[i]->deck->Shuffle();
 
-	auto testCard = suppliers[7]->SupplyCard();
-	players[0]->hand->InputCard(testCard, false, true);
+		for(int j = 0; j < 5; j++)
+			players[i]->hand->InputCard(players[i]->deck->Pop());
+	}
 
 	turnPlayer = -1;
 	NextTurn();
+
+
 
 	auto testAct = new MainGameAct();
 
@@ -78,10 +85,11 @@ void DominionGameMaster::GameStart()
 
 void DominionGameMaster::Update()
 {
-	if (test) {
-		test = false;
+	if (start) {
+		start = false;
 		GameStart();
 	}
+
 	if (!curAct->isDone) {
 		curAct->Update();
 	}
@@ -143,14 +151,22 @@ void DominionGameMaster::MakeSuppliers( )
 	for (int i = 0; i < 3; i++) {
 		auto& coin = suppliers[i];
 		coin->Init(i, defaultCardNum[i]);
-		coin->pos = { WIN_WIDTH * 0.2f + 260.0f, 200.0f+i*90.0f };
+		coin->pos = { WIN_WIDTH * 0.2f + 260.0f, 200.0f+(2-i)*coin->size.y };
 	}
 
-	for (int i = 3; i < 7; i++) {
-		auto& victory = suppliers[i];
-		victory->Init(i, defaultCardNum[i]);
-		victory->pos = { WIN_WIDTH * 0.2f + 200.0f, 200.0f + (i-3) * 90.0f };
+	for (int i = 0; i < 2; i++) {
+		auto& victory = suppliers[i+4];
+		victory->Init(i+4, defaultCardNum[i+4]);
+		victory->pos = { WIN_WIDTH * 0.2f + 200.0f, 200.0f + (1-i) * victory->size.y };
 	}
+	//사유지. 플레이어한테 나눠줄 것도 미리 만들자
+	auto& estate = suppliers[(int)CardKey::ESTATE];
+	estate->Init((int)CardKey::ESTATE, defaultCardNum[3]+ 3 * (int)players.size());
+	estate->pos = { WIN_WIDTH * 0.2f + 200.0f, suppliers[4]->pos.y + estate->size.y};
+	//저주. 사유지 아래
+	auto& curse = suppliers[(int)CardKey::CURSE];
+	curse->Init((int)CardKey::CURSE, defaultCardNum[3] + 3 * (int)players.size());
+	curse->pos = { WIN_WIDTH * 0.2f + 200.0f, estate->pos.y + curse->size.y };
 
 	const int KINGDOM_NUM = 10;
 	auto kingdomKey = GetRandomSupplierKey(KINGDOM_NUM);
@@ -162,12 +178,16 @@ void DominionGameMaster::MakeSuppliers( )
 		int col = kingdomIndex % kingdomCol;
 
 		auto& kingdom = suppliers[i];
+		kingdom->size = { 80.0f, 120.0f };
 		kingdom->pos = {
 			WIN_WIDTH * 0.2f + 380.0f + col * kingdom->size.x,
 			240.0f + row * kingdom->size.y
 		};
 
-		kingdom->Init(kingdomKey[kingdomIndex], 10);
+		if(CardDataManager::Get()->datas[kingdomKey[kingdomIndex]].type[(int)CardType::VICTORY])
+			kingdom->Init(kingdomKey[kingdomIndex], 8);
+		else 
+			kingdom->Init(kingdomKey[kingdomIndex], 10);
 	}
 }
 
@@ -186,6 +206,9 @@ vector<int> DominionGameMaster::GetRandomSupplierKey(int num)
 		}
 		else if (i == 1) {
 			p = (int)CardKey::ARTISAN-7;
+		}
+		else if (i == 2) {
+			p = (int)CardKey::POACHER-7;
 		}
 		swap(v[i], v[p]);
 	}

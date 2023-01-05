@@ -15,7 +15,12 @@ public:
 	Card* SupplyCard();
 	bool Empty() { return num <= 0; }
 
+	void SetSelectable(function<bool(CardSupplier*)> condition);
+	bool IsSelectable() { return selectable; }
 private:
 	int num = 0;
+
+	bool selectable = false;
+	HPEN selectablePen = nullptr;
 };
 

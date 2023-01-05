@@ -2,6 +2,19 @@
 #include "CardManager.h"
 #include "Card.h"
 #include "CardDataManager.h"
+#include "GameMaster.h"
+
+CardManager::CardManager()
+{
+	selectablePen = CreatePen(PS_SOLID, 3, GREEN);
+	selectedPen = CreatePen(PS_SOLID, 3, YELLOW);
+}
+
+CardManager::~CardManager()
+{
+	DeleteObject(selectablePen);
+	DeleteObject(selectedPen);
+}
 
 void CardManager::CreateObjects(int key, UINT poolSize)
 {
@@ -16,5 +29,8 @@ void CardManager::CreateObjects(int key, UINT poolSize)
 
 GameObject* CardManager::PopByIntKey(int key)
 {
-	return Pop(CardDataManager::Get()->datas[key].name);
+	auto card = (Card*)Pop(CardDataManager::Get()->datas[key].name);
+	card->selectablePen = selectablePen;
+	card->selectedPen = selectedPen;
+	return card;
 }

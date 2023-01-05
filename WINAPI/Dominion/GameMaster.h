@@ -4,6 +4,7 @@ class Act;
 class DominionPlayer;
 class CardSupplier;
 class CardSet;
+class CardData;
 
 class DominionGameMaster : public Singleton<DominionGameMaster>
 {
@@ -14,6 +15,7 @@ private:
 	~DominionGameMaster();
 
 public:
+	void GameSetUp();
 	void GameStart();
 	void Update();
 	void Render(HDC hdc);
@@ -45,9 +47,11 @@ public:
 
 	CardSet* trash;
 
-	bool test = true;
+	bool start = true;
 
 	Button* endButton;
+
+
 private:
 	Act* mainAct = nullptr;
 	Act* curAct = nullptr;

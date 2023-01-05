@@ -182,16 +182,13 @@ Card* CardSet::Out(int n)
 	return out;
 }
 
-bool CardSet::FindSelectable(function<bool(Card*)> condition)
+bool CardSet::FindSelectable(function<bool(CardData*)> condition)
 {
 	bool result = false;
 
 	for (auto card : cards) {
-		bool b = condition(card);
-		result |= b;
-		if (b) {
-			card->isSelectable = true;
-		}
+		card->SetSelectable(condition);
+		result |= card->IsSelectable();
 	}
 
 	return result;
@@ -199,6 +196,8 @@ bool CardSet::FindSelectable(function<bool(Card*)> condition)
 
 void CardSet::SetUnselectable()
 {
-	for (auto card : cards)
-		card->isSelectable = false;
+	for (auto card : cards) {
+		card->SetSelected(false);
+		card->SetSelectable(nullptr);
+	}
 }

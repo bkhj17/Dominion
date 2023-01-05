@@ -28,7 +28,6 @@ void Rect::Render(HDC hdc)
 
 void Rect::LineRender(HDC hdc)
 {
-
 	if (!isActive)
 		return;
 

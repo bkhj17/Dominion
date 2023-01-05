@@ -25,7 +25,7 @@ public:
 	Card* Out(Card* out);
 	Card* Out(int n);
 
-	bool FindSelectable(function<bool(Card*)> condition);
+	bool FindSelectable(function<bool(CardData*)> condition);
 	void SetUnselectable();
 
 	deque<Card*> cards;

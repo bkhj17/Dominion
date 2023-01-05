@@ -11,8 +11,8 @@ public:
 	virtual void Update() override;
 	virtual void Render(HDC hdc) override;
 	
+	void RenderInfo(HDC hdc);
 private:
-	Rect* infoBox;
-	class CardData* dataInfo = nullptr;
+	class InfoBox* infoBox;
 };
 
