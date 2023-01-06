@@ -24,10 +24,12 @@ void CardSupplier::Init(int key, int num)
 
 void CardSupplier::Render(HDC hdc)
 {
-	__super::Render(hdc, data->frame);
-
+	if (num == 0)
+		__super::Render(hdc, 125, data->frame);
+	else
+		__super::Render(hdc, data->frame);
+	
 	if (selectablePen && selectable) {
-
 		auto post = SelectObject(hdc, selectablePen);
 		LineRender(hdc);
 		SelectObject(hdc, post);

@@ -1,6 +1,8 @@
 #include "framework.h"
 #include "Card.h"
 #include "CardDataManager.h"
+#include "CardSet.h"
+#include "DominionPlayer.h"
 
 CardDataManager::CardDataManager()
 {
@@ -72,4 +74,21 @@ void CardDataManager::LoadData()
 
 		datas[data.key] = data;
 	}
+
+	sVictoryFunc[(int)CardKey::GARDENS] = bind(&SpecialVictory::GardenVictory, placeholders::_1);
+}
+
+int SpecialVictory::GardenVictory(void* player)
+{
+	auto p = (DominionPlayer*)player;
+	if (p == nullptr)
+		return 0;
+
+	int count = 0;
+	count += (int)p->deck->cards.size();
+	count += (int)p->hand->cards.size();
+	count += (int)p->used->cards.size();
+	count += (int)p->discard->cards.size();
+
+	return count / 10;
 }

@@ -9,6 +9,8 @@ private:
 
 public:
 	unordered_map<int, CardData> datas;
+	unordered_map<int, function<int(void*)>> sVictoryFunc;
+
 	Texture* texture = nullptr;
 
 	void RenderCovered(HDC hdc, Rect* rect);
@@ -16,3 +18,6 @@ private:
 	void LoadData();
 };
 
+namespace SpecialVictory {
+	int GardenVictory(void* player);
+};

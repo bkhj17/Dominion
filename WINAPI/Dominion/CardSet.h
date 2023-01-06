@@ -25,9 +25,10 @@ public:
 	Card* Out(Card* out);
 	Card* Out(int n);
 
-	bool FindSelectable(function<bool(CardData*)> condition);
+	bool FindSelectable(function<bool(Card*)> condition);
 	void SetUnselectable();
 
+public:
 	deque<Card*> cards;
 
 	bool isVisible = true;		//보임 여부

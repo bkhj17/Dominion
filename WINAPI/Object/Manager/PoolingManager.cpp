@@ -23,8 +23,9 @@ void PoolingManager::Update()
 void PoolingManager::Render(HDC hdc)
 {
 	for (pair<string, Objects> objects : totalObjects) {
-		for (GameObject* object : objects.second)
+		for (GameObject* object : objects.second) {
 			object->Render(hdc);
+		}
 	}
 }
 

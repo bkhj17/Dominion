@@ -22,23 +22,23 @@ float GameMath::Clamp(const float& min, const float& max, float value)
 	return value;
 }
 
-float GameMath::Lerp(const float& start, const float& end, float t)
+float GameMath::Lerp(const float& state, const float& end, float t)
 {
 	t = Clamp(0.0f, 1.0f, t);
 
-	return start + t * (end - start);
+	return state + t * (end - state);
 }
 
-Vector2 GameMath::Lerp(const Vector2& start, const Vector2& end, float t)
+Vector2 GameMath::Lerp(const Vector2& state, const Vector2& end, float t)
 {
 	t = GameMath::Clamp(0.0f, 1.0f, t);
-	return start + (end - start) * t;
+	return state + (end - state) * t;
 }
 
-Vector2 GameMath::SLerp(const Vector2& start, const Vector2& end, float t)
+Vector2 GameMath::SLerp(const Vector2& state, const Vector2& end, float t)
 {
 	t = GameMath::Clamp(0.0f, 1.0f, t);
-	return start + (end - start) * t*t;
+	return state + (end - state) * t*t;
 }
 
 float GameMath::Cross(const Vector2& vec1, const Vector2 vec2)

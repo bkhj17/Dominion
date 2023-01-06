@@ -5,7 +5,6 @@
 #include "MyMovement.h"
 #include "CardDataManager.h"
 
-
 DominionPlayer::DominionPlayer(bool isControl, bool isAi)
 	: isController(isControl), isAi(isAi)
 {
@@ -23,9 +22,11 @@ DominionPlayer::DominionPlayer(bool isControl, bool isAi)
 		used->pos = { 700.0f, WIN_HEIGHT - 180.0f };
 		used->size = size;
 
-		discard = new CardSet(true, true);
+		discard = new CardSet(false, true);
 		discard->pos = deck->pos;
+		discard->pos.x += size.x;
 		discard->size = size;
+		discard->frontRender = false;
 	}
 	else {
 		deck = new CardSet(true, true);
@@ -40,9 +41,11 @@ DominionPlayer::DominionPlayer(bool isControl, bool isAi)
 		used->pos = { 700.0f, 180.0f };
 		used->size = size;
 
-		discard = new CardSet(true, true);
+		discard = new CardSet(false, true);
 		discard->pos = deck->pos;
+		discard->pos.x += size.x;
 		discard->size = size;
+		discard->frontRender = false;
 	}
 }
 
@@ -63,10 +66,9 @@ void DominionPlayer::ReloadDeck()
 void DominionPlayer::Render(HDC hdc)
 {
 	deck->Render(hdc);
-
 	hand->Render(hdc);
-
 	used->Render(hdc);
+	discard->Render(hdc);
 }
 
 //턴 시작 시
@@ -80,6 +82,38 @@ void DominionPlayer::TurnStart()
 wstring DominionPlayer::GetInfo()
 {
 	return L"Action " + to_wstring(numAction)
-		+ L" Buy " + to_wstring(numBuy) 
+		+ L" Buy " + to_wstring(numBuy)
 		+ L" Gold " + to_wstring(gold);
+}
+
+void DominionPlayer::CalcScore()
+{
+	score = 0;
+	for (auto card : deck->cards) {
+		if (card->data->sVictory)
+			score += CardDataManager::Get()->sVictoryFunc[card->data->key](this);
+		else 
+			score += card->data->victory;
+	}
+
+	for (auto card : hand->cards) {
+		if (card->data->sVictory)
+			score += CardDataManager::Get()->sVictoryFunc[card->data->key](this);
+		else
+			score += card->data->victory;
+	}
+
+	for (auto card : used->cards) {
+		if (card->data->sVictory)
+			score += CardDataManager::Get()->sVictoryFunc[card->data->key](this);
+		else
+			score += card->data->victory;
+	}
+
+	for (auto card : discard->cards) {
+		if (card->data->sVictory)
+			score += CardDataManager::Get()->sVictoryFunc[card->data->key](this);
+		else
+			score += card->data->victory;
+	}
 }

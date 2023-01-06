@@ -17,7 +17,9 @@ public:
     }
 
 private:
-    void RenderText(HDC hdc, string str, Vector2 startPos, int& cnt);
+    void RenderText(HDC hdc);
+    void RenderOneLine(HDC hdc, string str, Vector2 startPos, int& cnt);
+    void RenderScore(HDC hdc);
 private:
     Vector2 imagePos;
     Rect* image;

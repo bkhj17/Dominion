@@ -51,12 +51,12 @@ void Animation::SetDefault(bool loop, bool pingpong)
 		SetPingpong();
 }
 
-void Animation::SetPart(UINT start, UINT end, bool loop, bool pingpong)
+void Animation::SetPart(UINT state, UINT end, bool loop, bool pingpong)
 {
 	isLoop = loop;
 	action.clear();
 
-	for (UINT i = start; i <= end; i++) {
+	for (UINT i = state; i <= end; i++) {
 		action.push_back(i);
 	}
 

@@ -7,13 +7,9 @@
 #include "CardSupplier.h"
 #include "GameMaster.h"
 #include "DominionPlayer.h"
+#include "SelectWindow.h"
 
 using namespace ActCondition;
-
-Act::Act(Act* parent, DominionPlayer* player)
-	: parent(parent), player(player)
-{
-}
 
 Act::~Act()
 {
@@ -41,24 +37,30 @@ void Act::SetRequested(ActResult* request)
 void Act::Update()
 {
 	if (!DefaultUpdate()) {
+		//현재 서브 액트가 대기 상태인가?
+		//맞으면 준비
 		NextSubAct();
 	}
 }
 
+//서브액트가 일 안 하고 대기중인지 판단
 bool Act::DefaultUpdate()
 {
 	if (curSubAct == subActs.size()) {
 		Done();
 		return true;
 	}
-
+	//현재 서브 액트는 완료된 상황이다
 	if (subActs[curSubAct]->isDone) {
 		curSubAct++;
 	}
+	//작업은 가능한 상황
 	else if (subActs[curSubAct]->isReady) {
+		//작업해
 		subActs[curSubAct]->Update();
 	}
 	else {
+		//아니야
 		return false;
 	}
 	return true;
@@ -66,14 +68,19 @@ bool Act::DefaultUpdate()
 
 void Act::NextSubAct()
 {
+	//통상 매뉴얼
 	if (curSubAct >= subActs.size())
 		return;
 
+	//준비
 	subActs[curSubAct]->Init();
 }
 
 void Act::ChangePlayer(DominionPlayer* newPlayer)
 {
+	//액트에 있는 플레이어 죄다 바꾸기
+	//턴 바꿀때 사용
+	//카드 효과 발동은 할때마다 서브 액트 새로 만드므로 영향 없음
 	player = newPlayer;
 	for (auto subAct : subActs) {
 		subAct->ChangePlayer(newPlayer);
@@ -82,6 +89,7 @@ void Act::ChangePlayer(DominionPlayer* newPlayer)
 
 int Act::GetPlayerGold()
 {
+	//플레이어 돈
 	return player == nullptr ? 0 : player->gold;
 }
 
@@ -100,6 +108,7 @@ void Act::DeleteResult()
 
 void Act::DeleteSubAct()
 {
+
 	for (auto sub : subActs) {
 		delete sub;
 	}
@@ -154,46 +163,51 @@ void ActionPhaseAct::Init()
 	Act::Init();
 
 	auto a0 = (UseCardFromHandAct*)subActs[0];
-	a0->Init([](CardData* cardData) -> bool {
-		return cardData->type[(int)CardType::ACTION];
-	});
-	auto endButton = DominionGameMaster::Get()->endButton;
-	endButton->SetText("Action Phase End");
-	endButton->SetEvent(bind(&ActionPhaseAct::EndCall, this));
-	endButton->isActive = true;
+	a0->Init(bind(&IsActionCard, placeholders::_1));
 	endCall = false;
 }
 
 void ActionPhaseAct::Update()
 {
-	auto subAct = subActs[0];
-	auto endButton = DominionGameMaster::Get()->endButton;
+	//여기 병렬 안 하더라. 문제 있으면 알아서 해라 내일의 나
+	//액션 안 썼는데 자꾸 numAction 깎인다....
+	//구조 바꿔서 이제 깎이진 않는데 Action카드 없어도 안 넘어가...
+	if (!subActs[0]->isReady) {
+		bool haveAction = player->hand->FindSelectable(&IsActionCard);
+		player->hand->SetUnselectable();
+		
+		if (!haveAction)
+			Done();
+		else
+			subActs[0]->Init();
+	}
 
-	//여기 병렬 안 하더라. 있으면 알아서 해라 내일의 나
-	if (!subAct->isReady)
-		subAct->Init();
-
-
+	auto subAct = (UseCardFromHandAct*)subActs[0];
 	subAct->Update();
 	if (subAct->isDoing) {
-		endButton->isActive = false;
 		return;
-	}
-	else {
-		endButton->isActive = true;
-	}
+	} 
 
 	if (subAct->isDone) {
-		player->numAction--;
+		if (subAct->used == UseCardFromHandAct::Result::USED)
+			player->numAction--;
 		subAct->Loop();
-		return;
 	}
 
-	endButton->isActive = true;
+	//엔드버튼 활성화
+	DominionGameMaster::Get()->SetEndButton(
+		"Action Phase End",
+		bind(&ActionPhaseAct::EndCall, this));
+
 	if (player->numAction == 0 || endCall) {
-		endButton->isActive = false;
 		Done();
 	}
+}
+
+void ActionPhaseAct::Done() { 
+	Act::Done();
+	DominionGameMaster::Get()->OffEndButton();
+	endCall = false; 
 }
 
 BuyPhaseAct::BuyPhaseAct(Act* parent, DominionPlayer* player)
@@ -202,9 +216,9 @@ BuyPhaseAct::BuyPhaseAct(Act* parent, DominionPlayer* player)
 	actType = ActType::BUY_PHASE;
 
 	auto a0 = new UseCardFromHandAct(this, player);
-	a0->Init([](CardData* cardData) -> bool {
-		return cardData->type[(int)CardType::TREASURE];
-		});
+	a0->Init([](Card* card) -> bool {
+		return card->data->type[(int)CardType::TREASURE];
+	});
 	subActs.push_back(a0);
 
 	subActs.push_back(new BuyCardAct(this, player));
@@ -214,15 +228,12 @@ void BuyPhaseAct::Init()
 {
 	Act::Init();
 
-	auto endButton = DominionGameMaster::Get()->endButton;
-	endButton->SetText("Buy Phase End");
-	endButton->SetEvent(bind(&BuyPhaseAct::EndCall, this));
 	endCall = false;
 }
 
 void BuyPhaseAct::Update()
 {
-
+	auto endButton = DominionGameMaster::Get()->endButton;
 	if (player->isAi) {
 		if (curSubAct == subActs.size()) {
 			endCall = true;
@@ -241,19 +252,24 @@ void BuyPhaseAct::Update()
 	}
 	else {
 		//하위 Act 병렬 처리
+		endButton->isActive = false;
 		for (auto subAct : subActs) {
 			subAct->Update();
-			if (subAct->isDoing)
-				return;
-			else if (subAct->isDone) {
-				subAct->Loop();
+			if (subAct->isDoing) {
+				
 				return;
 			}
+			else if (subAct->isDone) {
+				subAct->Loop();
+			}
 		}
+		endButton->isActive = true;
 	}
 
-	auto endButton = DominionGameMaster::Get()->endButton;
-	endButton->isActive = player->isController;
+	if (endButton->isActive) {
+		endButton->SetText("Buy Phase End");
+		endButton->SetEvent(bind(&BuyPhaseAct::EndCall, this));
+	}
 	if (player->numBuy == 0 || endCall) {
 		endButton->isActive = false;
 		Done();
@@ -280,7 +296,7 @@ void BuyCardAct::NextSubAct()
 		auto a0 = (GetSupplierAct*)subActs[0];
 		//구매 조건
 		a0->Init([this](CardSupplier* supplier) -> bool {
-			return CostLimit(*(supplier->data), player->gold);
+			return CostLimit(*(supplier->data), GetPlayerGold());
 			});
 	}
 	else if (curSubAct == 1) {
@@ -443,9 +459,10 @@ UseCardFromHandAct::UseCardFromHandAct(Act* parent, DominionPlayer* player)
 	subActs.push_back(new ActiveCardAct(this, player));
 }
 
-void UseCardFromHandAct::Init(function<bool(CardData*)> conditionFunc)
+void UseCardFromHandAct::Init(function<bool(Card*)> conditionFunc)
 {
 	Act::Init();
+	used = Result::NOT;
 	condition = conditionFunc;
 }
 
@@ -463,6 +480,7 @@ void UseCardFromHandAct::NextSubAct()
 		//선택된 카드를 손에서 제거
 		auto cards = ((GetCardResult*)preAct->ReturnResult())->cards;
 		if (cards.empty()) {
+			//카드 선택 안 함
 			shutDown = true;
 			Done();
 			return;
@@ -474,10 +492,11 @@ void UseCardFromHandAct::NextSubAct()
 
 		auto subAct = (InputCardAct*)subActs[1];
 		subAct->SetRequested(preAct->ReturnResult());
-		subAct->Init(player->used, (GetCardResult*)preAct->ReturnResult(), true);
+		subAct->Init(player->used, (GetCardResult*)preAct->ReturnResult());
 	}
 	else if (curSubAct == 2) {
 		//카드 효과 발동
+		used = Result::USED;
 		auto preAct = (InputCardAct*)subActs[1];
 		auto card = ((GetCardResult*)preAct->ReturnResult())->cards[0];
 
@@ -533,6 +552,7 @@ void InputCardAct::Update()
 
 void InputCardAct::Done()
 {
+	Observer::Get()->ExcuteParamEvents("CalcScore", player);
 	cardSet = nullptr;
 	Act::Done();
 }
@@ -543,10 +563,12 @@ SelectFromHandAct::SelectFromHandAct(Act* parent, DominionPlayer* player)
 	result = new GetCardResult;
 }
 
-void SelectFromHandAct::Init(int num, function<bool(CardData*)> condition)
+void SelectFromHandAct::Init(int num, function<bool(Card*)> condition)
 {
 	selectNum = num;
-	this->condition = condition;
+	this->condition = [this, condition](Card* data) -> bool {
+		return selected.size() < selectNum && condition(data); 
+	};
 	selected.clear();
 	result->Clear();
 
@@ -584,6 +606,7 @@ void SelectFromHandAct::Update()
 		for (int i = 0; i < selected.size(); i++) {
 			//누른걸 또 눌렀다
 			if (clicked == selected[i]) {
+				clicked->SetSelected(false);
 				selected.erase(selected.begin() + i);
 				clicked = nullptr;
 			}
@@ -621,7 +644,7 @@ SelectRangeFromHandAct::SelectRangeFromHandAct(Act* parent, DominionPlayer* play
 {
 }
 
-void SelectRangeFromHandAct::Init(int minNum, int maxNum, function<bool(CardData*)> condition)
+void SelectRangeFromHandAct::Init(int minNum, int maxNum, function<bool(Card*)> condition)
 {
 	if (maxNum == 0) {
 		isReady = true;
@@ -634,14 +657,6 @@ void SelectRangeFromHandAct::Init(int minNum, int maxNum, function<bool(CardData
 	this->minNum = minNum;
 	isEnd = false;
 
-	auto endButton = DominionGameMaster::Get()->endButton;
-	endButton->SetText("선택 완료");
-	endButton->SetEvent([this]() -> void {
-		if (selected.size() >= this->minNum) {
-			isEnd = true;
-		}
-	});
-	endButton->isActive = true;
 }
 
 void SelectRangeFromHandAct::Update()
@@ -650,9 +665,16 @@ void SelectRangeFromHandAct::Update()
 		return;
 
 	SelectFromHandAct::Update();
-	if (!isEnd) {
+	if (!player->isAi && !isEnd) {
 		isDone = false;
 	}
+	auto endButton = DominionGameMaster::Get()->endButton;
+	DominionGameMaster::Get()->SetEndButton(
+		END_BUTTON_TEXT, 
+		bind(&SelectRangeFromHandAct::EndCall, this), 
+		explain
+	);
+
 
 	if (isEnd) {
 		Done();
@@ -662,13 +684,15 @@ void SelectRangeFromHandAct::Update()
 void SelectRangeFromHandAct::Done()
 {
 	if (isEnd) {
-		auto endButton = DominionGameMaster::Get()->endButton;
-
-		endButton->isActive = false;
-		endButton->SetText("");
-		endButton->SetEvent(nullptr);
+		DominionGameMaster::Get()->OffEndButton();
 		SelectFromHandAct::Done();
 	}
+}
+
+void SelectRangeFromHandAct::EndCall()
+{
+	if (selected.size() >= minNum)
+		isEnd = true;
 }
 
 /// <summary>
@@ -760,7 +784,7 @@ void ActiveCardAct::Init(int key)
 		effectAct = new MoneylenderAct;
 		break;
 		*/
-	case CardKey::SMITHY:
+	case CardKey::SMITHY:	//완료
 	{
 		auto act = new DrawCardAct(this, player);
 		act->Init(3);
@@ -769,15 +793,18 @@ void ActiveCardAct::Init(int key)
 	break;
 	/*
 	case CardKey::LIBRARY:
-		//패가 7장이 될 때까지 드로우. 드로우 한게 액션카드라면 드로우 할지 안 할지 선택 가능
-		//선택 안 한것들은 버린다
+		//패가 7장이 될 때까지
+		//덱에서 카드 뽑기.
+		//뽑은게 액션카드라면 드로우 할지 안 할지 선택 가능
+		//선택 안 한 카드는 버린다
 		auto act = new LibraryAct;
 		break;
 	case CardKey::WITCH:
+		//저주 공격카드
 		effectAct = new WitchAct;
 		break;
 	*/
-	case CardKey::VILLAGE:
+	case CardKey::VILLAGE:	//완료
 	{
 		auto act0 = new DrawCardAct(this, player);
 		act0->Init(1);
@@ -789,11 +816,12 @@ void ActiveCardAct::Init(int key)
 	}
 	break;
 	/*
-case CardKey::MILITIA:
-	effectAct = new MilitiaAct;
-	break;
+	case CardKey::MILITIA:
+		//패 까기 공격카드
+		effectAct = new MilitiaAct;
+		break;
 	*/
-	case CardKey::MARKET:
+	case CardKey::MARKET:	//완료
 	{
 		auto act0 = new DrawCardAct(this, player);
 		act0->Init(1);
@@ -809,7 +837,7 @@ case CardKey::MILITIA:
 		subActs.push_back(act3);
 	}
 	break;
-	case CardKey::LABORATORY:
+	case CardKey::LABORATORY:	//완료
 	{
 		auto a0 = new DrawCardAct(this, player);
 		a0->Init(2);
@@ -819,7 +847,7 @@ case CardKey::MILITIA:
 		subActs.push_back(a1);
 	}
 		break;
-		/*
+	/*
 	case CardKey::THRONE_ROOM:
 		effectAct = new ThroneRoomAct;
 		break;
@@ -829,14 +857,15 @@ case CardKey::MILITIA:
 	case CardKey::CELLAR:
 		effectAct = new CellalAct;
 		break;
-	case CardKey::GARDENS:
-		effectAct = nullptr;
+	*/
+	case CardKey::GARDENS:	//완료(특수 점수)
 		break;
+		/*
 	case CardKey::WORKSHOP:
 		effectAct = new WorkShopAct;
 		break;
 		*/
-	case CardKey::FESTIVAL:
+	case CardKey::FESTIVAL:	//완료
 	{
 		auto a0 = new GainActionAct(this, player);
 		a0->Init(2);
@@ -850,8 +879,8 @@ case CardKey::MILITIA:
 		subActs.push_back(a2);
 	}
 	break;
-
-	case CardKey::MOAT:
+	/*
+	case CardKey::MOAT:	
 	{
 		//반응 효과는 따로 만들어야 함
 		auto a0 = new DrawCardAct(this, player);
@@ -859,8 +888,8 @@ case CardKey::MILITIA:
 		subActs.push_back(a0);
 	}
 	break;
-
-	case CardKey::COUNCILROOM:
+	*/
+	case CardKey::COUNCILROOM:	//완료
 	{
 		auto a0 = new DrawCardAct(this, player);
 		a0->Init(4);
@@ -871,13 +900,15 @@ case CardKey::MILITIA:
 		for (auto otherPlayer : DominionGameMaster::Get()->players) {
 			if (otherPlayer == player)
 				continue;
-			auto a = new DrawCardAct(this, player);
+			auto a = new DrawCardAct(this, otherPlayer);
+			a->Init(1);
 			subActs.push_back(a);
 		}
 	}
 	break;
-	case CardKey::ARTISAN:
+	case CardKey::ARTISAN:	//완료
 	{
+		//코스트 5 이하의 카드 1장을 공급처에서 가져온다
 		auto a0 = new GetSupplierAct(this, player);
 		a0->Init([](CardSupplier* supplier) -> bool {
 			return CostLimit(*supplier->data, 5);
@@ -892,30 +923,36 @@ case CardKey::MILITIA:
 		auto a2 = new InputCardAct(this, player);
 		a2->Init(player->hand, (GetCardResult*)a1->ReturnResult());
 		subActs.push_back(a2);
-		//Result가 이미 선언되어 있으니 잘만 된다
+		//Result가 이미 선언되어 있으니 연결하면 잘만 된다
 	}
 	break;
 	/*
 	case CardKey::BANDIT:
 		effectAct = new BanditAct;
 		//금 하나 버리는 카드에 넣기 
-		//공격-덱 선택....
+		//공격-덱 맨 위 두 장 중 선택....
 		break;
-	case CardKey::HARBINGER:
-		//버리는 카드 선택효과...
+	*/
+	case CardKey::HARBINGER:	//완료
+		//버리는 카드에서 선택효과...
+	{
+		auto a0 = new HarbingerEffectAct(this, player);
+		subActs.push_back(a0);
+	}
 		break;
+	/*
 	case CardKey::MERCHANT:
 		effectAct = new MerchantAct;
 		//시한형 상황 반응효과...
 		break;
-		*/
-	case CardKey::POACHER:
+	*/
+	case CardKey::POACHER:	//완료
 	{
 		auto a0 = new PoacherEffectAct(this, player);
 		subActs.push_back(a0);
 	}
 		break;
-		/*
+	/*
 	case CardKey::SENTRY:
 		effectAct = new SentryAct;
 		break;
@@ -952,7 +989,7 @@ void DrawCardAct::NextSubAct()
 	else if (curSubAct == 1) {
 		auto r1 = (GetCardResult*)subActs[0]->ReturnResult();
 		auto a2 = (InputCardAct*)subActs[1];
-		a2->Init(player->hand, r1, true);
+		a2->Init(player->hand, r1);
 	}
 }
 CardFromDeckAct::CardFromDeckAct(Act* parent, DominionPlayer* player)
@@ -1016,7 +1053,7 @@ void TurnEndAct::NextSubAct()
 
 		auto act0 = (InputCardAct*)subActs[0];
 		act0->SetTimeRate(0.0f);
-		act0->Init(player->discard, zeroRequest, false);
+		act0->Init(player->discard, zeroRequest);
 	}
 	else if (curSubAct == 1)
 		((DrawCardAct*)subActs[1])->Init(5);
@@ -1025,6 +1062,11 @@ void TurnEndAct::NextSubAct()
 bool ActCondition::CostLimit(const CardData& cardData, int limit)
 {
 	return cardData.cost <= limit;
+}
+
+bool ActCondition::IsActionCard(const Card* card)
+{
+	return card->data->type[(int)CardType::ACTION];
 }
 
 void TurnStartAct::Update()
@@ -1056,6 +1098,11 @@ void MainGameAct::Update()
 		}
 	}
 	else {
+		if (DominionGameMaster::Get()->GameEndTrigger()) {
+			Done();
+			return;
+		}
+
 		DominionGameMaster::Get()->NextTurn();
 		subActs[0]->ChangePlayer(DominionGameMaster::Get()->GetTurnPlayer());
 		Loop();
@@ -1080,6 +1127,45 @@ void TrashCardAct::Init(CardSet* cardSet, GetCardResult* request)
 	}
 	request->Clear();
 	Done();
+}
+
+SelectFromWindowAct::SelectFromWindowAct(Act* parent, DominionPlayer* player)
+	: Act(parent, player) 
+{
+	result = new GetCardResult();
+	unselected = new GetCardResult();
+}
+
+void SelectFromWindowAct::Init(GetCardResult* request,
+	int minNum, int maxNum,
+	function<bool(Card*)> selectableFunc,
+	function<void(Card*)> selectFunc,
+	function<void()> endFunc)
+{
+	//result와 unselected를 직접 연결
+	result->Clear();
+	unselected->Clear();
+
+	if (request == nullptr || request->cards.empty()) {
+		Done();
+		return;
+	}
+
+	SelectWindow::Get()->Init(player, request, (GetCardResult*)result, unselected, selectableFunc, selectFunc, endFunc, !player->IsController());
+	SelectWindow::Get()->minNum = minNum;
+	SelectWindow::Get()->maxNum = maxNum;
+
+	Act::Init();
+}
+
+void SelectFromWindowAct::Update()
+{
+	if (!SelectWindow::Get()->isActive) { 
+		Done();
+	}
+	else {
+		SelectWindow::Get()->Update();
+	}
 }
 
 PoacherEffectAct::PoacherEffectAct(Act* parent, DominionPlayer* player)
@@ -1107,12 +1193,6 @@ void PoacherEffectAct::Init()
 	Act::Init();
 }
 
-void PoacherEffectAct::Update()
-{
-	SetCurActThis();
-	Act::Update();
-}
-
 void PoacherEffectAct::NextSubAct()
 {
 	if (curSubAct == 3) {
@@ -1123,7 +1203,10 @@ void PoacherEffectAct::NextSubAct()
 		}
 
 		auto a3 = (SelectRangeFromHandAct*)subActs[3];
-		a3->Init(cnt, cnt, [](CardData*) -> bool { return true; });
+		a3->Init(cnt, cnt, [](Card*) -> bool { return true; });
+		string numText = a3->NumRangeText();
+		a3->SetExplain(
+			"버릴 카드를 선택하시오(" + a3->NumRangeText() + ")");
 	}
 	else if (curSubAct == 4) {
 		auto a3 = (SelectRangeFromHandAct*)subActs[3];
@@ -1134,6 +1217,9 @@ void PoacherEffectAct::NextSubAct()
 			return;
 		}
 
+		for (auto card : request->cards) {
+			player->hand->Out(card);
+		}
 		auto a4 = (InputCardAct*)subActs[4];
 		a4->Init(player->discard, request);
 	}
@@ -1144,6 +1230,90 @@ void PoacherEffectAct::NextSubAct()
 
 void PoacherEffectAct::Done()
 {
-	ReturnCurAct();
 	Act::Done();
+}
+
+HarbingerEffectAct::HarbingerEffectAct(Act* parent, DominionPlayer* player)
+	: Act(parent, player)
+{
+	auto a0 = new DrawCardAct(this, player);
+	a0->Init(1);
+	auto a1 = new GainActionAct(this, player);
+	a1->Init(1);
+
+	discards = new GetCardResult();
+	auto a2 = new SelectFromWindowAct(this, player);
+	auto a3 = new InputCardAct(this, player);
+
+	subActs.push_back(a0);
+	subActs.push_back(a1);
+	subActs.push_back(a2);
+	subActs.push_back(a3);
+}
+
+HarbingerEffectAct::~HarbingerEffectAct()
+{
+	delete discards;
+}
+
+void HarbingerEffectAct::NextSubAct()
+{
+	if (curSubAct == 2) {
+		//창에 버려진 카드 목록을 띄운다
+		auto a2 = (SelectFromWindowAct*)subActs[2];
+
+		discards->Clear();
+		for (auto card : player->discard->cards) {
+			discards->cards.push_back(card);
+		}
+
+		if (discards->cards.empty()) {
+			Done();
+			return;
+		}
+
+		auto window = SelectWindow::Get();
+		a2->Init(discards,
+			1, 1,
+			bind(&HarbingerEffectAct::Selectable, this, window, placeholders::_1),
+			bind(&HarbingerEffectAct::Select, this, placeholders::_1),
+			bind(&HarbingerEffectAct::EndSelect, this)			
+		);
+	}
+	else if(curSubAct == 3) {
+		auto a2 = (SelectFromWindowAct*)subActs[2];
+		auto r2 = (GetCardResult*)a2->ReturnResult();
+
+		for (auto card : r2->cards) {
+			player->discard->Out(card);
+		}
+		auto a3 = (InputCardAct*)subActs[3];
+		a3->Init(player->deck, r2, true, false);
+	}
+	else {
+		Act::NextSubAct();
+	}
+}
+
+bool HarbingerEffectAct::Selectable(SelectWindow* window, Card* card)
+{
+	if (window->GetSelected()->cards.size() >= window->maxNum)
+		return card->IsSelected();
+	else
+		return true;
+}
+
+void HarbingerEffectAct::Select(Card* card)
+{
+	card->SetSelected(!card->IsSelected());
+}
+
+void HarbingerEffectAct::EndSelect()
+{
+	auto a2 = (SelectFromWindowAct*)subActs[2];
+	auto r2 = (GetCardResult*)a2->ReturnResult();
+	for (auto card : discards->cards) {
+		if (card->IsSelected())
+			r2->cards.push_back(card);
+	}
 }

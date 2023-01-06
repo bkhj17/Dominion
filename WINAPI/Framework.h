@@ -76,7 +76,6 @@ using namespace GameMath;
 #include "Framework/Render/Animation.h"
 #include "Framework/Render/Camera.h"
 
-
 #include "Framework/Utilities/Utility.h"
 
 using namespace Utility;
@@ -99,14 +98,14 @@ using namespace Utility;
 #include "Object/UI/ProgressBar.h"
 #include "Object/UI/Button.h"
 
-#include "Object/Spawn/SpawnObject.h"
-#include "Object/Spawn/SpawnManager.h"
-
 #include "Object/Manager/PoolingManager.h"
 #include "Object/Manager/EffectManager.h"
 #include "Object/Manager/Observer.h"
 #include "Object/Manager/PipeManager.h"
 #include "Object/Manager/DataManager.h"
+
+#include "Object/Spawn/SpawnObject.h"
+#include "Object/Spawn/SpawnManager.h"
 
 #include "Object/Shooting/Bullet.h"
 #include "Object/Shooting/BulletManager.h"
@@ -115,7 +114,6 @@ using namespace Utility;
 #include "Object/Shooting/EnemyManager.h"
 #include "Object/Shooting/Cannon.h"
 
-
 #include "Object/Character/Character.h"
 #include "Object/Character/PixelCharacter.h"
 #include "Object/Character/Megaman.h"
@@ -123,8 +121,6 @@ using namespace Utility;
 #include "Object/Character/BattleCharacter.h"
 #include "Object/Character/Fighter.h"
 #include "Object/Character/Monster.h"
-
-
 
 #include "Object/BrickOut/BrickManager.h"
 #include "Object/BrickOut/ControlBar.h"

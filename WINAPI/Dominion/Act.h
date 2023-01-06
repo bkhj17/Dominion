@@ -9,8 +9,9 @@ class DominionPlayer;
 namespace ActCondition {
 	//카드 데이터 상의 비용이 int 보다 적으면 true
 	bool CostLimit(const CardData&, int);
+	inline bool IsTrue(const Card* card) { return true; }
+	bool IsActionCard(const Card* card);
 };
-
 
 enum class ActType {
 	ACT,
@@ -59,7 +60,7 @@ class Act
 {
 	friend class MainGameAct;
 public:
-	Act(Act* parent, DominionPlayer* player);
+	Act(Act* parent, DominionPlayer* player) : parent(parent), player(player) {}
 	~Act();
 
 	//자신을 실행하는데에 필요한 데이터 입력
@@ -141,6 +142,7 @@ public:
 	virtual void Update() override;
 
 	void EndCall() { endCall = true; }
+	void Done();
 private:
 	// EndButton이 눌렸는가?
 	bool endCall = false;
@@ -182,11 +184,19 @@ private:
 
 class UseCardFromHandAct : public Act {
 public:
+	enum class Result {
+		NOT,
+		USED,
+		NO_SELECTABLE
+	};
+
 	UseCardFromHandAct(Act* parent, DominionPlayer* player);
-	void Init(function<bool(CardData*)>);
+	void Init(function<bool(Card*)>);
 	virtual void NextSubAct();
 
-	function<bool(CardData*)> condition;
+	function<bool(Card*)> condition;
+
+	Result used = Result::NOT;
 };
 
 class BuyCardAct : public Act {
@@ -268,31 +278,44 @@ class SelectFromHandAct : public Act
 public:
 	SelectFromHandAct(Act* parent, DominionPlayer* player);
 
-	void Init(int num, function<bool(CardData*)> condition);
+	void Init(int num, function<bool(Card*)> condition);
 	virtual void Update() override;
 	virtual void Done() override;
+	int GetSelectNum() { return selectNum; }
 protected:
 	int selectNum = 0;
 	deque<Card*> selected;
-	function<bool(CardData*)> condition;
-
+	function<bool(Card*)> condition;
 };
 
 class SelectRangeFromHandAct : public SelectFromHandAct
 {
 public:
 	SelectRangeFromHandAct(Act* parent, DominionPlayer* player);
-	virtual void Init(int minNum, int maxNum, function<bool(CardData*)> condition);
+	virtual void Init(int minNum, int maxNum, function<bool(Card*)> condition);
 	virtual void Update() override;
 	virtual void Done() override;
+
+	void SetExplain(string str) { explain = str; }
+	int GetMinNum() { return minNum; }
+
+	string NumRangeText() { 
+		return minNum == selectNum ? to_string(selectNum)
+			: to_string(minNum) + "~" + to_string(selectNum);
+	}
+
+	void EndCall();
 protected:
 	void SetEnd(bool end) { 
 		if(selected.size() >= minNum)
 			isEnd = end; 
 	}
 protected:
+	const string END_BUTTON_TEXT = "선택 완료";
+
 	int minNum = 0;
 	bool isEnd = false;
+	string explain = "";
 };
 
 
@@ -384,15 +407,19 @@ public:
 //curAct 뺏고 인터셉트 해서 발동 여부 확인하고
 //
 
-class SelectFromWindow : public Act {
-	SelectFromWindow(Act* parent, DominionPlayer* player);
+class SelectFromWindowAct : public Act {
+public:	
+	SelectFromWindowAct(Act* parent, DominionPlayer* player);
 
-	void Init(GetCardResult* request);
+	void Init(GetCardResult* request,
+		int minNum, int maxNum,
+		function<bool(Card*)> selectableFunc,
+		function<void(Card*)> selectFunc,
+		function<void()> endFunc);
 	void Update();
 
-	//전용 창
-	//설명
-	//endbutton
+public:
+	GetCardResult* unselected;
 };
 
 
@@ -400,12 +427,31 @@ class SelectFromWindow : public Act {
 //카드 효과 전용 Act
 
 
-class PoacherEffectAct : public Act{
+//선구자
+class SelectWindow;
+class HarbingerEffectAct : public Act
+{
+public:
+	HarbingerEffectAct(Act* parent, DominionPlayer* player);
+	~HarbingerEffectAct();
+	void NextSubAct();
+	
+private:
+	GetCardResult* discards;
+	
+	bool Selectable(class SelectWindow* window, Card* card);
+	void Select(Card* card);
+	void EndSelect();
+};
+
+
+//POACHER
+class PoacherEffectAct : public Act
+{
 public:
 	PoacherEffectAct(Act* parent, DominionPlayer* player);
 
 	void Init() override;
-	void Update() override;
 	void NextSubAct() override;
 	void Done() override;
 private:

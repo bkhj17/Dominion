@@ -9,21 +9,23 @@ public:
 	~DominionPlayer();
 
 	void ReloadDeck();
-	void InsertToDiscard(Card* card);
 	void Render(HDC hdc);
 
 	void TurnStart();
 	wstring GetInfo();
 
-	bool isController = false;
+	bool IsController() { return isController; }
 
+	void CalcScore();
+	int GetScore() { return score; }
+	
+public:
 	CardSet* deck;
 
 	CardSet* hand;
 
 	CardSet* used;
-//	vector<Card*> used;
-//	Rect* usedRect;
+
 	CardSet* discard;
 
 	bool isAi = false;
@@ -32,5 +34,9 @@ public:
 	int gold = 0;
 
 	string name;
+
+private:
+	bool isController = false;
+	int score = 0;
 };
 

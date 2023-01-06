@@ -133,7 +133,6 @@
     <ClInclude Include="Dominion\CardSet.h" />
     <ClInclude Include="Dominion\CardDataManager.h" />
     <ClInclude Include="Dominion\CardManager.h" />
-    <ClInclude Include="Dominion\DominionPositions.h" />
     <ClInclude Include="Dominion\DominionScene.h" />
     <ClInclude Include="Dominion\CardSupplier.h" />
     <ClInclude Include="Dominion\Card.h" />

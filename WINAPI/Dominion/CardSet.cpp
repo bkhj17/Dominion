@@ -25,6 +25,7 @@ void CardSet::Render(HDC hdc)
 		return;
 	}
 
+	
 	if (cards.empty()) {
 		return;
 	}
@@ -44,7 +45,7 @@ void CardSet::Render(HDC hdc)
 	else {
 		for (auto card : cards)
 			card->Render(hdc);
-	}
+	}	
 }
 
 void CardSet::InputCard(Card* input, bool toTop, bool teleport)
@@ -53,37 +54,47 @@ void CardSet::InputCard(Card* input, bool toTop, bool teleport)
 	input->isVisible = isVisible;
 	input->isCovered = isCovered;
 
-	SetCardPos(input, (int)cards.size(), teleport);
 	input->SetSelectable(nullptr);
-	cards.push_back(input);
-
+	if (toTop) {
+		cards.push_front(input);
+	} else
+		cards.push_back(input);
+	SortCardPos();
 }
 
 void CardSet::InputCard(vector<Card*>& inputs, bool toTop, bool teleport)
 {
 	for (auto input : inputs) {
-		SetCardPos(input, cards.size(), teleport);
+		input->size = size;
+		input->isVisible = isVisible;
+		input->isCovered = isCovered;
+
 		input->SetSelectable(nullptr);
 		if (toTop)
 			cards.push_front(input);
 		else
 			cards.push_back(input);
+
 	}
 	inputs.clear();
+	SortCardPos();
 }
 
 void CardSet::InputCard(deque<Card*>& inputs, bool toTop, bool teleport)
 {
 	while (!inputs.empty()) {
 		Card* input = inputs.front();
+		input->size = size;
+		input->isVisible = isVisible;
+		input->isCovered = isCovered;
 		input->SetSelectable(nullptr);
 		inputs.pop_front();
-		SetCardPos(input, cards.size(), teleport);
 		if (toTop)
 			cards.push_front(input);
 		else
 			cards.push_back(input);
 	}
+	SortCardPos();
 }
 
 void CardSet::InputCard(queue<Card*>& inputs, bool toTop, bool teleport)
@@ -91,15 +102,17 @@ void CardSet::InputCard(queue<Card*>& inputs, bool toTop, bool teleport)
 	while (!inputs.empty()) {
 		Card* input = inputs.front();
 		inputs.pop();
+		input->size = size;
 		input->isVisible = isVisible;
+		input->isCovered = isCovered;
 		input->SetSelectable(nullptr);
-		SetCardPos(input, cards.size(), teleport);
-
 		if (toTop)
 			cards.push_front(input);
 		else
 			cards.push_back(input);
+
 	}
+	SortCardPos();
 }
 
 void CardSet::SetCardPos(Card* card, int index, bool teleport)
@@ -163,16 +176,17 @@ Card* CardSet::Pop()
 
 Card* CardSet::Out(Card* out)
 {
+	Card* result = nullptr;
 	for (auto it = cards.begin(); it != cards.end(); it++) {
 		if (out == *it) {
-			Card* result = *it;
+			result = *it;
 			cards.erase(it);
-			SortCardPos();
-			return result;
+			break;
 		}
 	}
 
-	return nullptr;
+	SortCardPos();
+	return result;
 }
 
 Card* CardSet::Out(int n)
@@ -186,7 +200,7 @@ Card* CardSet::Out(int n)
 	return out;
 }
 
-bool CardSet::FindSelectable(function<bool(CardData*)> condition)
+bool CardSet::FindSelectable(function<bool(Card*)> condition)
 {
 	bool result = false;
 

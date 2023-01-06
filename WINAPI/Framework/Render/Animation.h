@@ -11,7 +11,7 @@ public:
 	void Update();
 
 	void SetDefault(bool loop = true, bool pingpong = false);
-	void SetPart(UINT start, UINT end, bool loop = true, bool pingpong = false);
+	void SetPart(UINT state, UINT end, bool loop = true, bool pingpong = false);
 	void SetArray(int* arr, int arrSize, bool loop = false, bool pingpong = false);
 	void SetPingpong();
 

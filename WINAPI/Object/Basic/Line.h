@@ -3,7 +3,7 @@ class Line : public GameObject
 {
 public:
 	Line() = default;
-	Line(Vector2 start, Vector2 end);
+	Line(Vector2 state, Vector2 end);
 
 
 	// GameObject을(를) 통해 상속됨

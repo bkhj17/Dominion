@@ -5,9 +5,9 @@
 #include "Act.h"
 #include "Card.h"
 #include "CardSet.h"
-#include "CardDataManager.h"
 #include "CardManager.h"
 #include "GameMaster.h"
+#include "SelectWindow.h"
 
 DominionGameMaster::DominionGameMaster()
 {	
@@ -33,6 +33,7 @@ DominionGameMaster::DominionGameMaster()
 		supplier->size = { 60.0f, 90.0f };
 	}
 
+	SelectWindow::Get()->SetResize({ CENTER_X, CENTER_Y }, { 800.0f, 400.0f });
 }
 
 DominionGameMaster::~DominionGameMaster()
@@ -69,12 +70,13 @@ void DominionGameMaster::GameStart()
 
 		for(int j = 0; j < 5; j++)
 			players[i]->hand->InputCard(players[i]->deck->Pop());
+
+		Observer::Get()->ExcuteParamEvents("CalcScore", players[i]);
 	}
 
+	
 	turnPlayer = -1;
 	NextTurn();
-
-
 
 	auto testAct = new MainGameAct();
 
@@ -85,38 +87,56 @@ void DominionGameMaster::GameStart()
 
 void DominionGameMaster::Update()
 {
-	if (start) {
-		start = false;
+	switch (state)
+	{
+	case DominionGameState::Start:
+		state = DominionGameState::Playing;
 		GameStart();
-	}
+		break;
+	case DominionGameState::Playing:
+		if (!curAct->isDone) {
+			curAct->Update();
+		}
+		else {
+			//게임 종료
+			state = DominionGameState::End;
+			return;
+		}
 
-	if (!curAct->isDone) {
-		curAct->Update();
-	}
-	else {
-		//게임 종료
+		if (control == turnPlayer)
+			endButton->Update();
+		break;
+	case DominionGameState::End:
+		break;
 	}
 
 	CardManager::Get()->Update();
-
-	if (control == turnPlayer)
-		endButton->Update();
 }
 
 void DominionGameMaster::Render(HDC hdc)
 {
-	players[control]->Render(hdc);
-	players[side]->Render(hdc);
-
 	for (auto& supplier : suppliers) {
 		supplier->Render(hdc);
 	}
 
-	if(control == turnPlayer)
+	players[control]->Render(hdc);
+	players[side]->Render(hdc);
+
+	if (!strExplain.empty()) {
+		TextOutA(hdc, 
+			(int)(endButton->Right() - strExplain.size() * 8), 
+			(int)endButton->Top() - 20, 
+			strExplain.c_str(), 
+			(int)strExplain.size());
+	}
+
+	SelectWindow::Get()->Render(hdc);
+
+	if (control == turnPlayer)
 		endButton->Render(hdc);
 }
 
-bool DominionGameMaster::IsGameEnd()
+bool DominionGameMaster::GameEndTrigger()
 {
 	int cnt = 0;
 	for (auto supplier : suppliers) {
@@ -134,11 +154,20 @@ void DominionGameMaster::MakePlayers()
 	players.resize(2);
 	//화면 보는 놈
 	players[0] = new DominionPlayer(true, false);
+	players[0]->name = "사람";
 	control = 0;
-
 	//화면 안 보는 놈. AI로 돌릴꺼다
 	players[1] = new DominionPlayer(false, true);
+	players[1]->name = "봇";
 	side = 1;
+
+	Observer::Get()->AddParamEvent("CalcScore", [this](void* player) {
+		auto p = (DominionPlayer*)player;
+		if (p == nullptr)
+			return;
+		
+		p->CalcScore();
+	});
 }
 
 void DominionGameMaster::MakeSuppliers( )
@@ -183,7 +212,6 @@ void DominionGameMaster::MakeSuppliers( )
 			WIN_WIDTH * 0.2f + 380.0f + col * kingdom->size.x,
 			240.0f + row * kingdom->size.y
 		};
-
 		if(CardDataManager::Get()->datas[kingdomKey[kingdomIndex]].type[(int)CardType::VICTORY])
 			kingdom->Init(kingdomKey[kingdomIndex], 8);
 		else 
@@ -199,20 +227,29 @@ vector<int> DominionGameMaster::GetRandomSupplierKey(int num)
 		v[i-7] = i;
 	}
 
+	
+	vector<CardKey> setkey = {
+		CardKey::SMITHY,
+		CardKey::VILLAGE,
+		CardKey::MARKET,
+		CardKey::LABORATORY,
+		CardKey::GARDENS,
+		CardKey::FESTIVAL,
+		CardKey::COUNCILROOM,
+		CardKey::ARTISAN,
+		CardKey::HARBINGER,
+		CardKey::POACHER,
+	};
+
 	for (int i = 0; i < num; i++) {
 		int p = Random(i, (int)v.size()-1);
-		if (i == 0) {
-			p = (int)CardKey::SMITHY-7;
-		}
-		else if (i == 1) {
-			p = (int)CardKey::ARTISAN-7;
-		}
-		else if (i == 2) {
-			p = (int)CardKey::POACHER-7;
+
+		if (i < setkey.size()) {
+			p = (int)setkey[i] - 7;
 		}
 		swap(v[i], v[p]);
 	}
-
+	
 	return v;
 }
 
@@ -252,7 +289,23 @@ CardData* DominionGameMaster::GetMouseOn()
 void DominionGameMaster::NextTurn()
 {
 	turnPlayer = (turnPlayer+1) % players.size();
-	if (!players[turnPlayer]->isController) {
+	if (!players[turnPlayer]->IsController()) {
 		side = turnPlayer;
 	}
+}
+
+void DominionGameMaster::SetEndButton(string buttonText, Event endEvent, string explain)
+{
+	endButton->isActive = true;
+	endButton->SetText(buttonText);
+	endButton->SetEvent(endEvent);
+	strExplain = explain;
+}
+
+void DominionGameMaster::OffEndButton()
+{
+	endButton->isActive = false;
+	endButton->SetText("");
+	endButton->SetEvent(nullptr);
+	strExplain = "";
 }

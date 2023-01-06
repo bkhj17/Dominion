@@ -6,6 +6,12 @@ class CardSupplier;
 class CardSet;
 class CardData;
 
+enum class DominionGameState {
+	Start,
+	Playing,
+	End
+};
+
 class DominionGameMaster : public Singleton<DominionGameMaster>
 {
 	friend class Act;
@@ -15,12 +21,11 @@ private:
 	~DominionGameMaster();
 
 public:
-	void GameSetUp();
 	void GameStart();
 	void Update();
 	void Render(HDC hdc);
-	
-	bool IsGameEnd();
+
+	bool GameEndTrigger();
 
 	void MakePlayers();
 	void MakeSuppliers();
@@ -34,6 +39,10 @@ public:
 	DominionPlayer* GetSidePlayer() { return players[side]; }
 
 	void NextTurn();
+	void SetEndButton(string buttonText, Event endEvent, string explain = "");
+	void OffEndButton();
+
+	DominionGameState GetGameState() { return state; }
 public:
 	const int COIN_NUM = 3;
 	const int VICTORY_NUM = 4;
@@ -47,12 +56,11 @@ public:
 
 	CardSet* trash;
 
-	bool start = true;
-
+	string strExplain = "";
 	Button* endButton;
 
-
 private:
+	DominionGameState state = DominionGameState::Start;
 	Act* mainAct = nullptr;
 	Act* curAct = nullptr;
 };

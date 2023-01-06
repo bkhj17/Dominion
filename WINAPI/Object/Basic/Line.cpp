@@ -1,8 +1,8 @@
 #include "framework.h"
 #include "Line.h"
 
-Line::Line(Vector2 start, Vector2 end)
-	: GameObject(start), end(end)
+Line::Line(Vector2 state, Vector2 end)
+	: GameObject(state), end(end)
 {
 }
 

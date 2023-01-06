@@ -3,6 +3,7 @@
 #include "Card.h"
 #include "CardDataManager.h"
 #include "GameMaster.h"
+#include "MyMovement.h"
 
 CardManager::CardManager()
 {
@@ -16,14 +17,30 @@ CardManager::~CardManager()
 	DeleteObject(selectedPen);
 }
 
+
 void CardManager::CreateObjects(int key, UINT poolSize)
 {
-	vector<GameObject*> cards(poolSize);
+
 	auto& data = CardDataManager::Get()->datas[key];
-	for (auto& card : cards) {
-		card = new Card(data);
+
+	if (totalObjects.find(data.name) != totalObjects.end()) {
+		//이미 만들어진게 있을 경우
+		totalObjects[data.name].reserve(poolSize);
+		while (poolSize > totalObjects[data.name].size()) {
+			Card* card = new Card(&data);
+			card->isActive = false;
+			totalObjects[data.name].push_back(card);
+		}
 	}
-	totalObjects[data.name] = cards;
+	else {
+		//새로 만들어야 하는 경우
+		vector<GameObject*> cards(poolSize);
+		for (auto& card : cards) {
+			card = new Card(&data);
+			card->isActive = false;
+		}
+		totalObjects[data.name] = cards;
+	}
 	//카드 키에 따라 카드 생성
 }
 

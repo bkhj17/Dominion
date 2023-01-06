@@ -5,14 +5,16 @@
 
 const Vector2 Card::DEFAULT_SIZE = { 60, 90 };
 
-Card::Card(CardData data)
+Card::Card(CardData* data)
 {
 	movement = new MyPointMovement(this);
-	this->data = new CardData(data);
+	this->data = data;
 	isActive = false;
 	size = { 60.0f, 90.0f };
 
-	ImageRect::SetTexture(data.texture);
+	ImageRect::SetTexture(data->texture);
+
+	
 }
 
 Card::~Card()
@@ -28,23 +30,29 @@ void Card::Update()
 
 void Card::Render(HDC hdc)
 {
-	if (!isVisible)
+	if (!isActive || !isVisible)
 		return;
+
+	//소유자
 
 	Render(hdc, this, isCovered);
 }
 
 void Card::Render(HDC hdc, Rect* rect, bool covered)
 {
+	if (!isActive || !isVisible)
+		return;
+
 	//visible 여부에 상관 없이 정해진 위치에 띄우기
+	
 	texture->Render(hdc, rect, covered ? data->covered : data->frame);
 
 	if (isSelected) {
+		//선택된 카드 표시
 		auto post = SelectObject(hdc, selectedPen);
 		rect->LineRender(hdc);
 		SelectObject(hdc, post);
-	}
-	else if (isSelectable) {
+	} else if (isSelectable) {
 		//선택 가능한 카드 표시
 		auto post = SelectObject(hdc, selectablePen);
 		rect->LineRender(hdc);
@@ -52,18 +60,8 @@ void Card::Render(HDC hdc, Rect* rect, bool covered)
 	}
 }
 
-int Card::GetVictory()
+void Card::SetSelectable(function<bool(Card*)> condition)
 {
-	if (SpecialVictory) {
-		return SpecialVictory(data->key);
-	}
-	else {
-		return data->victory;
-	}
-}
-
-void Card::SetSelectable(function<bool(CardData*)> condition)
-{
-	isSelectable = condition ? condition(data) : false;
-	this->isSelected = false;
+	
+	isSelectable = isSelected || ( condition ? condition(this) : false);
 }
