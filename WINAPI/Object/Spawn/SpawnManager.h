@@ -25,6 +25,6 @@ public:
 	int score = 0;
 
 
-	Rect* cardRect;
+	Rect* rect;
 };
 

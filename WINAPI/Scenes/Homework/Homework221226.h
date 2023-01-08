@@ -83,7 +83,7 @@ public:
     void SetEnemy(Player1226* player);
     vector<GameObject*>& GetMonsters() { return totalObjects["Monster"]; }
 
-    void Collision(Rect* cardRect);
+    void Collision(Rect* rect);
 private:
     virtual void CreateObjects(string key, UINT poolSize);
 };

@@ -32,10 +32,10 @@ Direction Brick::Collision(Circle* ball)
 	
 	Vector2 size(1.0f, 1.0f);
 	size *= ball->GetRadius() * 2;
-	Rect cardRect(ball->pos, size);
+	Rect rect(ball->pos, size);
 
 	Vector2 overlapSize;
-	IsRectCollision(&cardRect, &overlapSize);
+	IsRectCollision(&rect, &overlapSize);
 
 	if (overlapSize.x > overlapSize.y) {
 		//ªÛ«œ

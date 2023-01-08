@@ -110,28 +110,28 @@ void Stage221223::Render(HDC hdc, Rect* screen)
 	}
 }
 
-void Stage221223::LandCollision(Rect* cardRect)
+void Stage221223::LandCollision(Rect* rect)
 {
 	for (auto land : lands) {
-		Megaman* megaman = (Megaman*)cardRect;
+		Megaman* megaman = (Megaman*)rect;
 		if (megaman->LandCollision(land))
 			return;
 	}
 }
 
-void Stage221223::DustCollision(Rect* cardRect)
+void Stage221223::DustCollision(Rect* rect)
 {
 	for (auto dust : dusts) {
-		if (dust->isActive && dust->IsRectCollision(cardRect)) {
+		if (dust->isActive && dust->IsRectCollision(rect)) {
 			dust->isActive = false;
 			HomeworkScene221223::score++;
 		}
 	}
 }
 
-bool Stage221223::GoalCollision(Rect* cardRect)
+bool Stage221223::GoalCollision(Rect* rect)
 {
-	return goal->IsRectCollision(cardRect);
+	return goal->IsRectCollision(rect);
 }
 
 

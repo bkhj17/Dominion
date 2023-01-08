@@ -14,7 +14,7 @@ public:
 
 private:
     //POINT rectPos = { (int)CENTER_X, (int)CENTER_Y };
-    Rect* cardRect;
+    Rect* rect;
     int speed = 10;
 
     HBRUSH hBrush;

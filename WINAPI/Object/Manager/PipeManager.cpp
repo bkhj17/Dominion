@@ -51,12 +51,12 @@ void PipeManager::Render(HDC hdc)
 	}
 }
 
-bool PipeManager::Collision(Rect* cardRect)
+bool PipeManager::Collision(Rect* rect)
 {
 
 	for (UINT i = 0; i < PIPE_NUM; i++) {
-		if (upPipes[i]->IsRectCollision(cardRect) 
-			|| downPipes[i]->IsRectCollision(cardRect))
+		if (upPipes[i]->IsRectCollision(rect) 
+			|| downPipes[i]->IsRectCollision(rect))
 			return true;
 
 	}

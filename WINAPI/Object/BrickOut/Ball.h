@@ -9,7 +9,7 @@ public:
 	void Update();
 	void Render(HDC hdc);
 
-	void SetBarRect(Rect* cardRect) { barRect = cardRect; }
+	void SetBarRect(Rect* rect) { barRect = rect; }
 
 private:
 	void Move();

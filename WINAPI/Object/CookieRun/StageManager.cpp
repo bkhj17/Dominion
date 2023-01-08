@@ -19,10 +19,10 @@ void StageManager::Update()
             object->Update();
 
             object->pos.x -= speed * DELTA;
-            Rect* cardRect = (Rect*)object;
-            if (cardRect->Right() <= 0.0f) {
-                cardRect->isActive = true;
-                cardRect->pos.x += width * tileSize.x;
+            Rect* rect = (Rect*)object;
+            if (rect->Right() <= 0.0f) {
+                rect->isActive = true;
+                rect->pos.x += width * tileSize.x;
             }
         }
     }
@@ -31,25 +31,25 @@ float StageManager::GetGroundHeight(Vector2 pos)
 {
     float minHeight = WIN_HEIGHT;
     for (auto object : totalObjects["Ground"]) {
-        ImageRect* cardRect = (ImageRect*)object;
-        if (pos.x < cardRect->Left() || pos.x > cardRect->Right())
+        ImageRect* rect = (ImageRect*)object;
+        if (pos.x < rect->Left() || pos.x > rect->Right())
             continue;
 
-        if (pos.y >= cardRect->Top())
+        if (pos.y >= rect->Top())
             continue;
 
-        minHeight = min(cardRect->Top(), minHeight);
+        minHeight = min(rect->Top(), minHeight);
     }
 
     return minHeight;
 }
-bool StageManager::CollisionCoin(Rect* cardRect)
+bool StageManager::CollisionCoin(Rect* rect)
 {
     for (auto coin : totalObjects["Coin"]) {
         if (!coin->isActive)
             continue;
 
-        if(coin->IsRectCollision(cardRect)) {
+        if(coin->IsRectCollision(rect)) {
             coin->isActive = false;
             score++;
             return true;
@@ -59,11 +59,11 @@ bool StageManager::CollisionCoin(Rect* cardRect)
     return false;
 }
 
-bool StageManager::CollisionObstacle(Rect* cardRect)
+bool StageManager::CollisionObstacle(Rect* rect)
 {
 
     for (auto obstacle : totalObjects["Obstacle"]) {
-        if (obstacle->IsCollision(cardRect)) {
+        if (obstacle->IsCollision(rect)) {
             return true;
         }
     }
@@ -74,8 +74,8 @@ bool StageManager::CollisionObstacle(Rect* cardRect)
 void StageManager::Render(HDC hdc)
 {
     for (auto ground : totalObjects["Ground"]) {
-        ImageRect* cardRect = (ImageRect*)ground;
-        cardRect->Render(hdc);
+        ImageRect* rect = (ImageRect*)ground;
+        rect->Render(hdc);
     }
 
     for (auto object : totalObjects["Coin"]) {
@@ -84,8 +84,8 @@ void StageManager::Render(HDC hdc)
     }
 
     for (auto obstacle : totalObjects["Obstacle"]) {
-        ImageRect* cardRect = (ImageRect*)obstacle;
-        cardRect->Render(hdc);
+        ImageRect* rect = (ImageRect*)obstacle;
+        rect->Render(hdc);
     }
 
     wstring str = L"Score : " + to_wstring(score);

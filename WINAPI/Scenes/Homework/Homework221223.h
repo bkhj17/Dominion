@@ -21,9 +21,9 @@ public:
 
 	void Update(Vector2 velocity);
 	void Render(HDC hdc, Rect* screen);
-	void LandCollision(Rect* cardRect);
-	void DustCollision(Rect* cardRect);
-	bool GoalCollision(Rect* cardRect);
+	void LandCollision(Rect* rect);
+	void DustCollision(Rect* rect);
+	bool GoalCollision(Rect* rect);
 
 	vector<ImageRect*> lands;
 	vector<ImageRect*> dusts;

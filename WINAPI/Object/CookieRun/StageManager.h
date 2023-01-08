@@ -17,8 +17,8 @@ public:
 	virtual void Render(HDC hdc) override;
 
 	float GetGroundHeight(Vector2 pos);
-	bool CollisionCoin(Rect* cardRect);
-	bool CollisionObstacle(Rect* cardRect);
+	bool CollisionCoin(Rect* rect);
+	bool CollisionObstacle(Rect* rect);
 
 	void LoadTileData(wstring file);
 

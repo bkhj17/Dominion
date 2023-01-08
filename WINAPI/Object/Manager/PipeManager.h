@@ -13,7 +13,7 @@ public:
 	void Update();
 	void Render(HDC hdc);
 
-	bool Collision(Rect* cardRect);
+	bool Collision(Rect* rect);
 
 private:
 	vector<ImageRect*> upPipes;

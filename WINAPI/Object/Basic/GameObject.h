@@ -17,8 +17,8 @@ public:
 
 	virtual bool IsCollision(const GameObject* object) const;
 	virtual bool IsPointCollision(const Vector2& point) const = 0;
-	virtual bool IsRectCollision(const Rect* cardRect) const = 0;	
-	virtual bool IsRectCollision(IN const Rect* cardRect, OUT Vector2* overlapRect) { return false; }
+	virtual bool IsRectCollision(const Rect* rect) const = 0;	
+	virtual bool IsRectCollision(IN const Rect* rect, OUT Vector2* overlapRect) { return false; }
 	virtual bool IsCircleCollision(const Circle* circle) const = 0;
 
 	virtual bool IsLineCollision(const Line* line) const = 0;

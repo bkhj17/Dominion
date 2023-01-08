@@ -215,14 +215,14 @@ void HomeworkScene221221::Ball1221::Render(HDC hdc)
     __super::Render(hdc);
 }
 
-bool HomeworkScene221221::Ball1221::CollisionToRect(Rect* cardRect)
+bool HomeworkScene221221::Ball1221::CollisionToRect(Rect* rect)
 {
-    if (!IsCollision(cardRect))
+    if (!IsCollision(rect))
         return false;
 
     Rect boundary(pos.x - radius, pos.y - radius, pos.x + radius, pos.y + radius);
     Vector2 overlap;
-    if(!boundary.IsRectCollision(cardRect, &overlap))
+    if(!boundary.IsRectCollision(rect, &overlap))
         return false;
     if(overlap.x < radius && overlap.y < radius){
         //모서리 충돌
@@ -231,12 +231,12 @@ bool HomeworkScene221221::Ball1221::CollisionToRect(Rect* cardRect)
         int fy = distance.y > 0 ? 1 : -1;
         pos.y += fy * overlap.y;             // 
 
-        Vector2 v = (pos - cardRect->pos);
+        Vector2 v = (pos - rect->pos);
         distance.x = -distance.x + v.x;
         distance.y = -distance.y + v.y;
         distance.Normalize();
     }
-    else if (overlap.x < overlap.y || overlap.y == cardRect->size.y) {
+    else if (overlap.x < overlap.y || overlap.y == rect->size.y) {
         //좌우 충돌
         int f = distance.x > 0 ? 1 : -1;
 

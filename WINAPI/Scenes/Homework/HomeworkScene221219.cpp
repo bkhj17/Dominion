@@ -69,10 +69,10 @@ void HomeworkScene221219::VanishingRect::Start()
 		DeleteObject(brush);
 	brush = CreateSolidBrush(RGB(rand() % 256, rand() % 256, rand() % 256));
 
-	cardRect;
+	rect;
 	
-	cardRect.pos.x = Random(cardRect.size.x * 0.5f, winSize.right - cardRect.size.x*0.5f);
-	cardRect.pos.y = Random(cardRect.size.y * 0.5f, winSize.right - cardRect.size.y * 0.5f);
+	rect.pos.x = Random(rect.size.x * 0.5f, winSize.right - rect.size.x*0.5f);
+	rect.pos.y = Random(rect.size.y * 0.5f, winSize.right - rect.size.y * 0.5f);
 	vanishTime = clock() + rand()%(MAX_VANISH_TIME-MIN_VANISH_TIME) + MIN_VANISH_TIME;
 
 }
@@ -86,14 +86,14 @@ void HomeworkScene221219::VanishingRect::Render(HDC hdc)
 
 	if (shape == SHAPE::RECT) {
 		auto origin = SelectObject(hdc, brush);
-		cardRect.Render(hdc);
+		rect.Render(hdc);
 		SelectObject(hdc, origin);
 	}
 	else {
-		int left = (int)(cardRect.pos.x - cardRect.size.x *0.5f);
-		int right = (int)(cardRect.pos.x + cardRect.size.x * 0.5f);
-		int top = (int)(cardRect.pos.y - cardRect.size.y * 0.5f);
-		int bottom = (int)(cardRect.pos.y + cardRect.size.y * 0.5f);
+		int left = (int)(rect.pos.x - rect.size.x *0.5f);
+		int right = (int)(rect.pos.x + rect.size.x * 0.5f);
+		int top = (int)(rect.pos.y - rect.size.y * 0.5f);
+		int bottom = (int)(rect.pos.y + rect.size.y * 0.5f);
 
 		if (shape == SHAPE::ELLIPSE) {
 			auto origin = SelectObject(hdc, brush);

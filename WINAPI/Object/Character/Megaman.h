@@ -15,7 +15,7 @@ public:
 
     Vector2 GetVelocity() { return velocity; }
     
-    bool LandCollision(Rect* cardRect);
+    bool LandCollision(Rect* rect);
     Rect* GetBody() { return bodyRect; }
 private:
     void Fire();

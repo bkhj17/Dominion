@@ -10,9 +10,9 @@ bool GameObject::IsCollision(const GameObject* object) const
 	if (circle != nullptr)
 		return IsCircleCollision(circle);
 
-	const Rect* cardRect = dynamic_cast<const Rect*>(object);
-	if (cardRect != nullptr)
-		return IsRectCollision(cardRect);
+	const Rect* rect = dynamic_cast<const Rect*>(object);
+	if (rect != nullptr)
+		return IsRectCollision(rect);
 
 	const Line* line = dynamic_cast<const Line*>(object);
 	if (line != nullptr)

@@ -26,7 +26,7 @@ class HomeworkScene221219 : public Scene
     private:
         RECT winSize = RECT();
         SHAPE shape = SHAPE::RECT;
-        Rect cardRect = Rect();
+        Rect rect = Rect();
         HBRUSH brush = nullptr;
 
         clock_t vanishTime = 0;
