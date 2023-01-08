@@ -5,17 +5,17 @@
 
 TestScene::TestScene()
 {
-	rect = new TestRect({ CENTER_X, CENTER_Y }, {100.0f, 100.0f});
+	cardRect = new TestRect({ CENTER_X, CENTER_Y }, {100.0f, 100.0f});
 }
 
 TestScene::~TestScene()
 {
-	delete rect;
+	delete cardRect;
 }
 
 void TestScene::Start()
 {
-	rect->pos = { CENTER_X, CENTER_Y };
+	cardRect->pos = { CENTER_X, CENTER_Y };
 }
 
 void TestScene::Update()
@@ -23,14 +23,14 @@ void TestScene::Update()
 	
 	if (requestControl) {
 		if (KEY_DOWN(VK_LBUTTON)) {
-			rect->movement->SetTargetPosByTime(mousePos, 2.0f);
+			cardRect->movement->SetTargetPosByTime(mousePos, 2.0f);
 			requestControl = false;
 		}
 	}
 
 
-	rect->Update();
-	if (!rect->movement->IsMoving()) {
+	cardRect->Update();
+	if (!cardRect->movement->IsMoving()) {
 		requestControl = true;
 	}
 
@@ -38,5 +38,5 @@ void TestScene::Update()
 
 void TestScene::Render(HDC hdc)
 {
-	rect->Render(hdc);
+	cardRect->Render(hdc);
 }

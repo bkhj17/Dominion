@@ -17,15 +17,15 @@ bool Line::IsPointCollision(const Vector2& point) const
 	return false;
 }
 
-bool Line::IsRectCollision(const Rect* rect) const
+bool Line::IsRectCollision(const Rect* cardRect) const
 {
-	if (rect->IsPointCollision(pos) || rect->IsPointCollision(end))
+	if (cardRect->IsPointCollision(pos) || cardRect->IsPointCollision(end))
 		return true;
 
-	Vector2 leftTop(rect->Left(), rect->Top());
-	Vector2 leftBottom(rect->Left(), rect->Bottom());
-	Vector2 rightTop(rect->Right(), rect->Top());
-	Vector2 rightBottom(rect->Right(), rect->Bottom());
+	Vector2 leftTop(cardRect->Left(), cardRect->Top());
+	Vector2 leftBottom(cardRect->Left(), cardRect->Bottom());
+	Vector2 rightTop(cardRect->Right(), cardRect->Top());
+	Vector2 rightBottom(cardRect->Right(), cardRect->Bottom());
 
 	Line lines[4]; 
 	lines[0] = Line(leftTop, leftBottom);

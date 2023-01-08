@@ -13,8 +13,8 @@ public:
 	void LineRender(HDC hdc);
 
 	virtual bool IsPointCollision(const Vector2& point) const override;
-	virtual bool IsRectCollision(const Rect* rect) const override;
-	virtual bool IsRectCollision(IN const Rect* rect, OUT Vector2* overlapSize) const;
+	virtual bool IsRectCollision(const Rect* cardRect) const override;
+	virtual bool IsRectCollision(IN const Rect* cardRect, OUT Vector2* overlapSize) const;
 	virtual bool IsCircleCollision(const Circle* circle) const override;
 
 	// GameObject을(를) 통해 상속됨

@@ -55,27 +55,27 @@ bool Rect::IsLineCollision(const Line* line) const
 	return false;
 }
 
-bool Rect::IsRectCollision(const Rect* rect) const
+bool Rect::IsRectCollision(const Rect* cardRect) const
 {
-	if(!isActive || !rect->isActive)
+	if(!isActive || !cardRect->isActive)
 		return false;
 
-	if (rect->Left() < Right() && rect->Right() > Left()) {
-		if (rect->Top() < Bottom() && rect->Bottom() > Top())
+	if (cardRect->Left() < Right() && cardRect->Right() > Left()) {
+		if (cardRect->Top() < Bottom() && cardRect->Bottom() > Top())
 			return true;
 	}
 	return false;
 }
 
-bool Rect::IsRectCollision(IN const Rect* rect, OUT Vector2* overlapSize) const
+bool Rect::IsRectCollision(IN const Rect* cardRect, OUT Vector2* overlapSize) const
 {
-	if (!isActive || !rect->isActive)
+	if (!isActive || !cardRect->isActive)
 		return false;
 
-	float left = max(rect->Left(), Left());
-	float right = min(rect->Right(), Right());
-	float top = max(rect->Top(), Top());
-	float bottom = min(rect->Bottom(), Bottom());
+	float left = max(cardRect->Left(), Left());
+	float right = min(cardRect->Right(), Right());
+	float top = max(cardRect->Top(), Top());
+	float bottom = min(cardRect->Bottom(), Bottom());
 
 	overlapSize->x = right - left;
 	overlapSize->y = bottom - top;

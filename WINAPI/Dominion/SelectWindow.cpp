@@ -10,11 +10,12 @@ SelectWindow::SelectWindow()
 	selectedResult = new GetCardResult();
 	unselectedResult = new GetCardResult();
 
-	rect.resize(30);
+	cardRect.resize(30);
 
 
-	for (int i = 0; i < rect.size(); i++) {
-		rect[i] = { new ImageRect(), nullptr };
+	for (int i = 0; i < cardRect.size(); i++) {
+		cardRect[i] = { new ImageRect(), nullptr };
+		cardRect[i].first->isActive = false;
 	}
 
 	isActive = false;
@@ -24,11 +25,11 @@ SelectWindow::~SelectWindow()
 {
 	delete selectedResult;
 	delete unselectedResult;
-	for (auto& r : rect) {
+	for (auto& r : cardRect) {
 		delete r.first;
 	}
-	rect.clear();
-	rect.shrink_to_fit();
+	cardRect.clear();
+	cardRect.shrink_to_fit();
 }
 
 void SelectWindow::Init(
@@ -59,12 +60,12 @@ void SelectWindow::Init(
 	float sum = margin + Left();
 
 	for (int i = 0; i < nRect; i++) {
-		rect[i].second = request->cards[i];
+		cardRect[i].second = request->cards[i];
 
-		rect[i].first->isActive = true;
-		rect[i].first->size = rect[i].second->size;
-		rect[i].first->pos.x = sum + rect[i].first->size.x * 0.5f;
-		sum += rect[i].first->size.x + margin;
+		cardRect[i].first->isActive = true;
+		cardRect[i].first->size = cardRect[i].second->size;
+		cardRect[i].first->pos.x = sum + cardRect[i].first->size.x * 0.5f;
+		sum += cardRect[i].first->size.x + margin;
 
 		request->cards[i]->SetSelectable(selectableFunc);
 	}
@@ -78,8 +79,8 @@ void SelectWindow::SetResize(Vector2 pos, Vector2 size)
 	this->size = size;
 
 	for (int i = 0; i < 10; i++) {
-		rect[i].first->pos.y = pos.y;
-		rect[i].first->isActive = false;
+		cardRect[i].first->pos.y = pos.y;
+		cardRect[i].first->isActive = false;
 	}
 }
 
@@ -88,8 +89,7 @@ void SelectWindow::Done()
 	//버튼 비활성화
 	DominionGameMaster::Get()->OffEndButton();
 
-
-	for (auto& r : rect) {
+	for (auto& r : cardRect) {
 		if (r.second != nullptr) {
 			r.second->SetSelected(false);
 			r.second->SetSelectable(nullptr);
@@ -116,16 +116,15 @@ void SelectWindow::Update()
 	}
 
 	for (int i = 0; i < nRect; i++) {
-		rect[i].second->SetSelectable(selectableFunc);
+		cardRect[i].second->SetSelectable(selectableFunc);
 	}
 	if (player->isAi) {
 		int cnt = 0;
 		for (int i = 0; i < nRect; i++) {
-			if (rect[i].second->IsSelectable() && !rect[i].second->IsSelected()) {
-				selectFunc(rect[i].second);
-			}
+			if (cardRect[i].second->IsSelectable() && !cardRect[i].second->IsSelected())
+				selectFunc(cardRect[i].second);
 
-			if (rect[i].second->IsSelected())
+			if (cardRect[i].second->IsSelected())
 				cnt++;
 
 			if (cnt >= minNum) {
@@ -140,9 +139,8 @@ void SelectWindow::Update()
 		if (KEY_DOWN(VK_LBUTTON)) {
 			//눌린 카드 찾기
 			for (int i = 0; i < nRect; i++) {
-				if (rect[i].first->IsPointCollision(mousePos) && rect[i].second->IsSelectable()) {
-					selectFunc(rect[i].second);
-				}
+				if (cardRect[i].first->IsPointCollision(mousePos) && cardRect[i].second->IsSelectable())
+					selectFunc(cardRect[i].second);
 			}
 		}
 	}
@@ -156,20 +154,34 @@ void SelectWindow::Render(HDC hdc)
 	__super::Render(hdc);
 
 	for (int i = 0; i < nRect; i++) {
-		if(rect[i].first->isActive)
-			rect[i].second->Render(hdc, rect[i].first, covered);
+		if(cardRect[i].first->isActive)
+			cardRect[i].second->Render(hdc, cardRect[i].first, covered);
 	}
+}
+
+int SelectWindow::CurSelectedNum()
+{
+	int result = 0;
+	for (int i = 0; i < cardRect.size(); i++) {
+		if (!cardRect[i].first->isActive)
+			continue;
+
+		if (cardRect[i].second->IsSelected())
+			result++;
+	}
+
+	return result;
 }
 
 CardData* SelectWindow::GetMouseOn()
 {
 	CardData* result = nullptr;
-	for (int i = 0; i < rect.size(); i++) {
-		if (!rect[i].first->isActive)
+	for (int i = 0; i < cardRect.size(); i++) {
+		if (!cardRect[i].first->isActive)
 			continue;
 
-		if (rect[i].first->IsPointCollision(mousePos)) {
-			result = rect[i].second->data;
+		if (cardRect[i].first->IsPointCollision(mousePos)) {
+			result = cardRect[i].second->data;
 		}
 		else if (result != nullptr)
 			break;

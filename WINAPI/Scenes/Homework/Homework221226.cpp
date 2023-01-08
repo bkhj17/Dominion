@@ -457,7 +457,7 @@ void MonsterManager::SetEnemy(Player1226* player)
 	}
 }
 
-void MonsterManager::Collision(Rect* rect)
+void MonsterManager::Collision(Rect* cardRect)
 {
 	float left = WIN_WIDTH;
 
@@ -472,7 +472,7 @@ void MonsterManager::Collision(Rect* rect)
 		left = min(monster->Left(), left);
 	}
 
-	rect->pos.x = min(left - rect->Half().x, rect->pos.x);
+	cardRect->pos.x = min(left - cardRect->Half().x, cardRect->pos.x);
 }
 
 void MonsterManager::CreateObjects(string key, UINT poolSize)

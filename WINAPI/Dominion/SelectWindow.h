@@ -27,6 +27,8 @@ public:
 	void Render(HDC hdc);
 	void SetExplain(string str) { explain = str; }
 
+	int CurSelectedNum();
+
 	const GetCardResult* GetSelected() { return selectedResult; }
 	const GetCardResult* GetUnSelected() { return unselectedResult; }
 
@@ -46,7 +48,7 @@ private:
 	bool isEnd = false;
 
 	int nRect = 0;
-	vector<pair<ImageRect*, Card*>> rect;
+	vector<pair<ImageRect*, Card*>> cardRect;
 
 	function<bool(Card*)> selectableFunc = nullptr;	//
 	function<void(Card*)> selectFunc = nullptr;			//클릭 시의 행동처리

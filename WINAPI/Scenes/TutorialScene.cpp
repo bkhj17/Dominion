@@ -2,13 +2,13 @@
 
 TutorialScene::TutorialScene()
 {
-    rect = new Rect(Vector2((long)CENTER_X, (long)CENTER_Y), Vector2(50, 50));
+    cardRect = new Rect(Vector2((long)CENTER_X, (long)CENTER_Y), Vector2(50, 50));
     hBrush = CreateSolidBrush(RGB(0, 255, 255));
 }
 
 TutorialScene::~TutorialScene()
 {
-    delete rect;
+    delete cardRect;
     DeleteObject(hBrush);
 }
 
@@ -22,30 +22,30 @@ void TutorialScene::Update()
     GetClientRect(hWnd, &winSize);
 
     if (GetAsyncKeyState(VK_RIGHT)) {
-        rect->pos.x += speed;
-        if (rect->pos.x > winSize.right - rect->size.x / 2)
-            rect->pos.x = winSize.right - rect->size.x / 2;
+        cardRect->pos.x += speed;
+        if (cardRect->pos.x > winSize.right - cardRect->size.x / 2)
+            cardRect->pos.x = winSize.right - cardRect->size.x / 2;
     }
     if (GetAsyncKeyState(VK_LEFT)) {
-        rect->pos.x -= speed;
-        if (rect->pos.x < rect->size.x / 2)
-            rect->pos.x = rect->size.x / 2;
+        cardRect->pos.x -= speed;
+        if (cardRect->pos.x < cardRect->size.x / 2)
+            cardRect->pos.x = cardRect->size.x / 2;
     }
     if (GetAsyncKeyState(VK_UP)) {
-        rect->pos.y -= speed;
-        if (rect->pos.y < rect->size.y / 2)
-            rect->pos.y = rect->size.y / 2;
+        cardRect->pos.y -= speed;
+        if (cardRect->pos.y < cardRect->size.y / 2)
+            cardRect->pos.y = cardRect->size.y / 2;
     }
     if (GetAsyncKeyState(VK_DOWN)) {
-        rect->pos.y += speed;
-        if (rect->pos.y > winSize.bottom - rect->size.y / 2)
-            rect->pos.y = winSize.bottom - rect->size.y / 2;
+        cardRect->pos.y += speed;
+        if (cardRect->pos.y > winSize.bottom - cardRect->size.y / 2)
+            cardRect->pos.y = winSize.bottom - cardRect->size.y / 2;
     }
 }
 
 void TutorialScene::Render(HDC hdc)
 {
     auto origin = SelectObject(hdc, hBrush);
-    rect->Render(hdc);
+    cardRect->Render(hdc);
     SelectObject(hdc, origin);
 }

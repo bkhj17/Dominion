@@ -7,7 +7,8 @@ public:
 	CardSet(bool isCovered, bool isOneSet);
 	~CardSet();
 	
-	void Render(HDC hdc);
+	virtual void Update() {}
+	virtual void Render(HDC hdc);
 
 	void InputCard(Card* input, bool toTop = false, bool teleport = false);
 	void InputCard(vector<Card*>& inputs, bool toTop = false, bool teleport = false);
@@ -19,7 +20,7 @@ public:
 
 	void Shuffle();
 
-	Card* GetByPos(Vector2 pos);
+	virtual Card* GetByPos(Vector2 pos);
 
 	Card* Pop();
 	Card* Out(Card* out);
@@ -35,6 +36,5 @@ public:
 	bool isCovered;		//카드 공개여부
 	bool isOneSet;		//묶음인지 아닌지 여부
 	bool frontRender = true;
-	Vector2 cardSize;
 };
 

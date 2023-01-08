@@ -21,7 +21,7 @@ DominionGameMaster::DominionGameMaster()
 	endButton->SetOverTexture(over);
 	endButton->SetDownTexture(down);
 	endButton->size = { 150.0f, 50.0f };
-	endButton->pos = { WIN_WIDTH - endButton->size.x, 500.0f };
+	endButton->pos = { WIN_WIDTH - endButton->Half().x, 500.0f};
 	endButton->isActive = false;
 
 	trash = new CardSet(true, true);
@@ -110,6 +110,9 @@ void DominionGameMaster::Update()
 		break;
 	}
 
+	for (auto player : players) {
+		player->Update();
+	}
 	CardManager::Get()->Update();
 }
 

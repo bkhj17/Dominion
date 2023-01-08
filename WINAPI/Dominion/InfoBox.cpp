@@ -39,7 +39,7 @@ void InfoBox::Update()
 
 void InfoBox::Render(HDC hdc)
 {
-	LineRender(hdc);
+	__super::Render(hdc);
 
 	if (dataInfo != nullptr) {
 		dataInfo->texture->Render(hdc, image, dataInfo->frame);

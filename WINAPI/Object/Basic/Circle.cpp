@@ -35,31 +35,31 @@ bool Circle::IsCircleCollision(const Circle* circle) const
 	return distance < radius+circle->radius;
 }
 
-bool Circle::IsRectCollision(const Rect* rect) const
+bool Circle::IsRectCollision(const Rect* cardRect) const
 {
 	Vector2 edges[4] = {
-		{rect->Left(), rect->Top()},
-		{rect->Right(), rect->Top()},
-		{rect->Left(), rect->Bottom()},
-		{rect->Right(), rect->Bottom()}
+		{cardRect->Left(), cardRect->Top()},
+		{cardRect->Right(), cardRect->Top()},
+		{cardRect->Left(), cardRect->Bottom()},
+		{cardRect->Right(), cardRect->Bottom()}
 	};
 
 
-	if (rect->Left() < pos.x+radius 
-		&& rect->Right() > pos.x-radius
-		&& rect->Top() < pos.y+radius
-		&& rect->Bottom() > pos.y-radius) {
+	if (cardRect->Left() < pos.x+radius 
+		&& cardRect->Right() > pos.x-radius
+		&& cardRect->Top() < pos.y+radius
+		&& cardRect->Bottom() > pos.y-radius) {
 
-		if (pos.x < rect->Left() && pos.y < rect->Top()) {
+		if (pos.x < cardRect->Left() && pos.y < cardRect->Top()) {
 			return IsPointCollision(edges[0]);
 		}
-		if (pos.x > rect->Right() && pos.y < rect->Top()) {
+		if (pos.x > cardRect->Right() && pos.y < cardRect->Top()) {
 			return IsPointCollision(edges[1]);
 		}
-		if (pos.x < rect->Left() && pos.y > rect->Bottom()) {
+		if (pos.x < cardRect->Left() && pos.y > cardRect->Bottom()) {
 			return IsPointCollision(edges[2]);
 		}
-		if (pos.x > rect->Right() && pos.y > rect->Bottom()) {
+		if (pos.x > cardRect->Right() && pos.y > cardRect->Bottom()) {
 			return IsPointCollision(edges[3]);
 		}
 

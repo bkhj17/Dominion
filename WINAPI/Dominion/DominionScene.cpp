@@ -17,6 +17,10 @@ DominionScene::DominionScene()
 	infoBox = new InfoBox();
 	infoBox->size = { 300.0f, WIN_HEIGHT-2};
 	infoBox->pos = { infoBox->Half().x + 10, CENTER_Y};
+
+	background = new ImageRect(L"Textures/Dominion/Background.bmp");
+	background->size = { WIN_WIDTH, WIN_HEIGHT };
+	background->pos = { CENTER_X, CENTER_Y };
 }
 
 DominionScene::~DominionScene()
@@ -58,7 +62,7 @@ void DominionScene::Update()
 
 void DominionScene::Render(HDC hdc)
 {
-
+	background->Render(hdc);
 	infoBox->Render(hdc);
 
 	DominionGameMaster::Get()->Render(hdc);
@@ -66,28 +70,32 @@ void DominionScene::Render(HDC hdc)
 	auto turnPlayer = DominionGameMaster::Get()->GetTurnPlayer();
 	wstring wstr = turnPlayer->GetInfo();
 	TextOut(hdc, (int)(CENTER_X - 100.0f), (int)(CENTER_Y + 200.0f), wstr.c_str(), (int)wstr.size());
-	if (turnPlayer != DominionGameMaster::Get()->GetControlPlayer()) {
+	
+	if (DominionGameMaster::Get()->GetGameState() == DominionGameState::End) {
+		RenderGameEnd(hdc);
+	} else if(turnPlayer != DominionGameMaster::Get()->GetControlPlayer()) {
 		wstr = L"Player" + to_wstring(DominionGameMaster::Get()->turnPlayer) + L"ÀÇ ÅÏ";
 		TextOut(hdc, (int)(CENTER_X - 100.0f), (int)(CENTER_Y + 180.0f), wstr.c_str(), (int)wstr.size());
 	}
+}
 
-	if (DominionGameMaster::Get()->GetGameState() == DominionGameState::End) {
-		wstring strGameEnd = L"°ÔÀÓ Á¾·á";
-		TextOutW(hdc, CENTER_X, CENTER_Y, strGameEnd.c_str(), (int)strGameEnd.size());
-		
-		string strWinner = "";
+void DominionScene::RenderGameEnd(HDC hdc)
+{
+	wstring strGameEnd = L"°ÔÀÓ Á¾·á";
+	TextOutW(hdc, CENTER_X, CENTER_Y, strGameEnd.c_str(), (int)strGameEnd.size());
 
-		for (int i = 0; i < winner.size(); i++) {
-			strWinner += winner[i]->name + "(" + to_string(winner[i]->GetScore()) + ") ";
-		}
-		if (winner.size() > 1) {
-			//ºñ°å´Ù
-			strWinner += "ºñ±è";
-		}
-		else {
-			strWinner += "½Â¸®";
-		}
+	string strWinner = "";
 
-		TextOutA(hdc, CENTER_X, CENTER_Y, strWinner.c_str(), (int)strWinner.size());
+	for (int i = 0; i < winner.size(); i++) {
+		strWinner += winner[i]->name + "(" + to_string(winner[i]->GetScore()) + ") ";
 	}
+	if (winner.size() > 1) {
+		//ºñ°å´Ù
+		strWinner += "ºñ±è";
+	}
+	else {
+		strWinner += "½Â¸®";
+	}
+
+	TextOutA(hdc, CENTER_X, CENTER_Y, strWinner.c_str(), (int)strWinner.size());
 }

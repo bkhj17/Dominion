@@ -40,7 +40,7 @@ class HomeworkScene221221 :
         virtual void Render(HDC hdc) override;
 
         void BoundToWar();
-        bool CollisionToRect(Rect* rect);
+        bool CollisionToRect(Rect* cardRect);
     public:
         Vector2 distance;
         float speed = 300.0f;

@@ -9,9 +9,9 @@ CardDataManager::CardDataManager()
 	LoadData();
 }
 
-void CardDataManager::RenderCovered(HDC hdc, Rect* rect)
+void CardDataManager::RenderCovered(HDC hdc, Rect* cardRect)
 {
-	texture->Render(hdc, rect);
+	texture->Render(hdc, cardRect);
 }
 
 void CardDataManager::LoadData()

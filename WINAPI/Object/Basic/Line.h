@@ -11,7 +11,7 @@ public:
 
 	virtual bool IsPointCollision(const Vector2& point) const override;
 
-	virtual bool IsRectCollision(const Rect* rect) const override;
+	virtual bool IsRectCollision(const Rect* cardRect) const override;
 
 	virtual bool IsCircleCollision(const Circle* circle) const override;
 

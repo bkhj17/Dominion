@@ -9,6 +9,8 @@ public:
 	~DominionPlayer();
 
 	void ReloadDeck();
+
+	void Update();
 	void Render(HDC hdc);
 
 	void TurnStart();

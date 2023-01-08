@@ -38,24 +38,24 @@ void Card::Render(HDC hdc)
 	Render(hdc, this, isCovered);
 }
 
-void Card::Render(HDC hdc, Rect* rect, bool covered)
+void Card::Render(HDC hdc, Rect* cardRect, bool covered)
 {
 	if (!isActive || !isVisible)
 		return;
 
 	//visible 여부에 상관 없이 정해진 위치에 띄우기
 	
-	texture->Render(hdc, rect, covered ? data->covered : data->frame);
+	texture->Render(hdc, cardRect, covered ? data->covered : data->frame);
 
 	if (isSelected) {
 		//선택된 카드 표시
 		auto post = SelectObject(hdc, selectedPen);
-		rect->LineRender(hdc);
+		cardRect->LineRender(hdc);
 		SelectObject(hdc, post);
 	} else if (isSelectable) {
 		//선택 가능한 카드 표시
 		auto post = SelectObject(hdc, selectablePen);
-		rect->LineRender(hdc);
+		cardRect->LineRender(hdc);
 		SelectObject(hdc, post);
 	}
 }

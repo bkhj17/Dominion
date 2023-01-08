@@ -11,7 +11,7 @@ public:
 	virtual void Render(HDC hdc) override;
 
 private:
-	class TestRect* rect;
+	class TestRect* cardRect;
 
 	bool requestControl = true;
 };

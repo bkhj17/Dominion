@@ -9,7 +9,7 @@ SpawnManager::SpawnManager()
 		object = new SpawnObject();
 	}
 
-	rect = new Rect(Vector2(), Vector2(50.0f, 50.0f));
+	cardRect = new Rect(Vector2(), Vector2(50.0f, 50.0f));
 }
 
 SpawnManager::~SpawnManager()
@@ -18,7 +18,7 @@ SpawnManager::~SpawnManager()
 		delete spawnObject;
 	}
 
-	delete rect;
+	delete cardRect;
 }
 
 void SpawnManager::Update()
@@ -43,7 +43,7 @@ void SpawnManager::Update()
 		spawnObject->Update();
 	}
 
-	rect->pos = mousePos;
+	cardRect->pos = mousePos;
 }
 
 void SpawnManager::Render(HDC hdc)
@@ -52,7 +52,7 @@ void SpawnManager::Render(HDC hdc)
 		spawnObject->Render(hdc);
 	}
 
-	rect->Render(hdc);
+	cardRect->Render(hdc);
 
 	wstring scoreText = L"Score : " + to_wstring(score);
 	TextOut(hdc, (int)CENTER_X, 0, scoreText.c_str(), (int)scoreText.length());
@@ -62,7 +62,7 @@ void SpawnManager::DestroyObject(Vector2 point)
 {
 	for (auto spawnObject : spawnObjects) {
 
-		if (spawnObject->IsCollision(rect)) {
+		if (spawnObject->IsCollision(cardRect)) {
 			spawnObject->Destroy();
 			score++;
 			return;

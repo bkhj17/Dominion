@@ -1297,7 +1297,7 @@ void HarbingerEffectAct::NextSubAct()
 
 bool HarbingerEffectAct::Selectable(SelectWindow* window, Card* card)
 {
-	if (window->GetSelected()->cards.size() >= window->maxNum)
+	if (window->CurSelectedNum() >= window->maxNum)
 		return card->IsSelected();
 	else
 		return true;

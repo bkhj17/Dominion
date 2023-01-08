@@ -7,7 +7,7 @@
 CardSet::CardSet(bool isCovered, bool isOneSet)
 	: isCovered(isCovered), isOneSet(isOneSet)
 {
-	cardSize = Card::DEFAULT_SIZE;
+	size = Card::DEFAULT_SIZE;
 }
 
 CardSet::~CardSet()
@@ -155,6 +155,7 @@ Card* CardSet::GetByPos(Vector2 pos)
 			//카드가 겹치는 경우 제일 위에 있는 카드를 집어야 하기 때문에 바로 끊지 않는다
 		}
 		else if (result != nullptr) {
+			//근데 잡힌게 있는데 안 잡히면 이상하지
 			break;
 		}
 	}

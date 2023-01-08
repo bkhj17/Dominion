@@ -16,7 +16,7 @@ public:
 
     void SetTarget(GameObject* target) { this->target = target; }
     void SetOffset(const float& x, const float& y) { offset = { x, y }; }
-    void SetMapRect(Rect* rect) { mapRect = rect; }
+    void SetMapRect(Rect* cardRect) { mapRect = cardRect; }
 
     Vector2 GetPos();
     void SetPos(Vector2 pos);
@@ -27,7 +27,7 @@ private:
     void FixPos(Vector2& pos);
 
 private:
-    Rect* rect;
+    Rect* cardRect;
     float moveSpeed = 500.0f;
     float followSpeed = 5.0f;
 

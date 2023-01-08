@@ -13,7 +13,7 @@ public:
 
 	Texture* texture = nullptr;
 
-	void RenderCovered(HDC hdc, Rect* rect);
+	void RenderCovered(HDC hdc, Rect* cardRect);
 private:
 	void LoadData();
 };

@@ -11,8 +11,13 @@ public:
 	virtual void Update() override;
 	virtual void Render(HDC hdc) override;
 private:
+	void RenderGameEnd(HDC hdc);
+
+private:
 	class InfoBox* infoBox;
 
 	deque<class DominionPlayer*> winner;
+
+	ImageRect* background;
 };
 

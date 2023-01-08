@@ -309,9 +309,6 @@
     <ClInclude Include="Dominion\GameMaster.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Dominion\DominionPositions.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Dominion\CardManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -325,6 +322,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Dominion\SelectWindow.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Dominion\ScrollableCardSet.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -627,6 +627,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Dominion\SelectWindow.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Dominion\ScrollableCardSet.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

@@ -58,18 +58,18 @@ void Texture::Delete()
     }
 }
 
-void Texture::Render(HDC hdc, Rect* rect, POINT curFrame, bool isTrans)
+void Texture::Render(HDC hdc, Rect* cardRect, POINT curFrame, bool isTrans)
 {
     if (isDebugMode)
-        rect->LineRender(hdc);
+        cardRect->LineRender(hdc);
 
     if (!isTrans) {
         BitBlt(
             hdc,
-            (int)rect->Left(),
-            (int)rect->Top(),
-            (int)rect->size.x,
-            (int)rect->size.y,
+            (int)cardRect->Left(),
+            (int)cardRect->Top(),
+            (int)cardRect->size.x,
+            (int)cardRect->size.y,
             memDC,
             0, 
             0,
@@ -80,10 +80,10 @@ void Texture::Render(HDC hdc, Rect* rect, POINT curFrame, bool isTrans)
 
     GdiTransparentBlt(
             hdc,
-            (int)rect->Left(),
-            (int)rect->Top(),
-            (int)rect->size.x,
-            (int)rect->size.y,
+            (int)cardRect->Left(),
+            (int)cardRect->Top(),
+            (int)cardRect->size.x,
+            (int)cardRect->size.y,
             memDC,
             cutSize.x * curFrame.x,
             cutSize.y * curFrame.y,
@@ -93,22 +93,22 @@ void Texture::Render(HDC hdc, Rect* rect, POINT curFrame, bool isTrans)
     );
 }
 
-void Texture::Render(HDC hdc, Rect* rect, int alphaValue, POINT curFrame, bool isTrans)
+void Texture::Render(HDC hdc, Rect* cardRect, int alphaValue, POINT curFrame, bool isTrans)
 {
     if (isDebugMode)
-        rect->LineRender(hdc);
+        cardRect->LineRender(hdc);
 
     blendFunc.SourceConstantAlpha = alphaValue;
 
     if (isDebugMode)
-        rect->LineRender(hdc);
+        cardRect->LineRender(hdc);
     if (!isTrans) {
         GdiAlphaBlend(
             hdc,
-            (int)rect->Left(),
-            (int)rect->Top(),
-            (int)rect->size.x,
-            (int)rect->size.y,
+            (int)cardRect->Left(),
+            (int)cardRect->Top(),
+            (int)cardRect->size.x,
+            (int)cardRect->size.y,
             memDC,
             cutSize.x * curFrame.x,
             cutSize.y * curFrame.y,
@@ -125,8 +125,8 @@ void Texture::Render(HDC hdc, Rect* rect, int alphaValue, POINT curFrame, bool i
         cutSize.x,
         cutSize.y,
         hdc,
-        (int)rect->Left(),
-        (int)rect->Top(),
+        (int)cardRect->Left(),
+        (int)cardRect->Top(),
         SRCCOPY
     );
 
@@ -145,10 +145,10 @@ void Texture::Render(HDC hdc, Rect* rect, int alphaValue, POINT curFrame, bool i
 	);
 	GdiAlphaBlend(
 		hdc,
-		(int)rect->Left(),
-		(int)rect->Top(),
-		(int)rect->size.x,
-		(int)rect->size.y,
+		(int)cardRect->Left(),
+		(int)cardRect->Top(),
+		(int)cardRect->size.x,
+		(int)cardRect->size.y,
 		alphaMemDC,
 		0,
 		0,
