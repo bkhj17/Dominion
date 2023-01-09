@@ -1135,7 +1135,9 @@ void SelectFromWindowAct::Init(GetCardResult* request,
 		return;
 	}
 
-	SelectWindow::Get()->Init(player, request, (GetCardResult*)result, unselected, selectableFunc, selectFunc, endFunc, !player->IsController());
+	SelectWindow::Get()->Init(player, 
+		request, (GetCardResult*)result, unselected, 
+		selectableFunc, selectFunc, endFunc, !player->IsController());
 	SelectWindow::Get()->minNum = minNum;
 	SelectWindow::Get()->maxNum = maxNum;
 
@@ -1335,7 +1337,7 @@ void ArtisanEffectAct::NextSubAct()
 		//Result가 이미 선언되어 있으니 연결하면 잘만 된다
 	}
 	else if (curSubAct == 3) {
-		//패에서 카드 1장을 골라 
+		//패에서 카드 1장을 골라
 		a3->SetExplain("덱 맨 위에 놓을 카드 1장을 고르시오");
 		a3->Init(1, 1, &ActCondition::IsTrue);
 	}

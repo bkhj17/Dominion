@@ -10,8 +10,6 @@ Card::Card(CardData* data)
 	size = { 60.0f, 90.0f };
 
 	ImageRect::SetTexture(data->texture);
-
-	
 }
 
 Card::~Card()
@@ -29,9 +27,7 @@ void Card::Render(HDC hdc)
 {
 	if (!isActive || !isVisible)
 		return;
-
-	//¼ÒÀ¯ÀÚ
-
+	
 	Render(hdc, this, isCovered);
 }
 
@@ -59,6 +55,5 @@ void Card::Render(HDC hdc, Rect* cardRect, bool covered)
 
 void Card::SetSelectable(function<bool(Card*)> condition)
 {
-	
 	isSelectable = isSelected || ( condition ? condition(this) : false);
 }

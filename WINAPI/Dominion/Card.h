@@ -47,8 +47,6 @@ enum class CardType : int {
 	END
 };
 
-
-
 class CardData {
 public:
 	CardData() = default;

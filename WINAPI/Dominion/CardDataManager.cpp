@@ -61,7 +61,6 @@ void CardDataManager::LoadData()
 		}
 
 		data.cost = stoi(vs[3]);
-		
 		data.text = SplitString(vs[4], "/");
 		for (auto& t : data.text) {
 			for (auto& c : t) {
@@ -72,11 +71,9 @@ void CardDataManager::LoadData()
 
 		data.victory = stoi(vs[5]);
 		data.sVictory = vs[6] == "1";
-		
 		data.texture = texture;
 		data.covered = { 0, 0 };
 		data.frame = { (data.key+1) % 9, (data.key+1) / 9};
-
 		datas[data.key] = data;
 	}
 

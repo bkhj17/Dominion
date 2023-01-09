@@ -51,11 +51,6 @@ public:
 	virtual void Clear() = 0;
 };
 
-class CardListData {
-public:
-	deque<Card*> cards;
-};
-
 class Act
 {
 	friend class MainGameAct;

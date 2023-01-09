@@ -13,7 +13,6 @@ SelectWindow::SelectWindow()
 
 	cardRect.resize(80);
 
-
 	for (int i = 0; i < cardRect.size(); i++) {
 		cardRect[i] = { new ImageRect(), nullptr };
 		cardRect[i].first->isActive = false;
@@ -143,10 +142,8 @@ void SelectWindow::Update()
 		for (int i = 0; i < nRect; i++) {
 			if (cardRect[i].second->IsSelectable() && !cardRect[i].second->IsSelected())
 				selectFunc(cardRect[i].second);
-
 			if (cardRect[i].second->IsSelected())
 				cnt++;
-
 			if (cnt >= minNum) {
 				EndCall();
 				return;
@@ -165,7 +162,6 @@ void SelectWindow::Update()
 				selectFunc(card);
 		}
 	}
-
 }
 
 void SelectWindow::Render(HDC hdc)

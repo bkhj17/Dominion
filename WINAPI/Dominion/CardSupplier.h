@@ -1,11 +1,10 @@
 #pragma once
 
 class CardData;
-
 class CardSupplier : public ImageRect
 {
 public:
-	CardSupplier();
+	CardSupplier() = default;
 
 	CardData* data = nullptr;
 

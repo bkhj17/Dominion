@@ -10,9 +10,7 @@ InfoBox::InfoBox()
 	: ImageRect(L"Textures/Dominion/Texture/InfoBox.bmp")
 {
 	image = new Rect(imagePos, { 200.0f, 300.0f });
-
 	scoreBox = new ImageRect(L"Textures/Dominion/Texture/ScoreBox.bmp");
-	
 }
 
 InfoBox::~InfoBox()
@@ -44,7 +42,6 @@ void InfoBox::Update()
 void InfoBox::Render(HDC hdc)
 {
 	int postMode = SetBkMode(hdc, 0);
-
 	__super::Render(hdc);
 
 	if (dataInfo != nullptr) {
@@ -55,7 +52,6 @@ void InfoBox::Render(HDC hdc)
 		CardDataManager::Get()->RenderCovered(hdc, image);
 
 	RenderScore(hdc);
-
 	SetBkMode(hdc, postMode);
 }
 
@@ -69,7 +65,6 @@ void InfoBox::SetPos(Vector2 pos)
 void InfoBox::RenderText(HDC hdc)
 {
 	SetTextColor(hdc, YELLOW);
-
 
 	Vector2 strStartPos = { image->pos.x - 100.0f, image->Bottom() + 5.0f };
 	int cntLine = 0;
@@ -101,7 +96,6 @@ void InfoBox::RenderText(HDC hdc)
 			spos = next;
 		}
 	}
-
 	SetTextColor(hdc, BLACK);
 }
 
@@ -129,5 +123,4 @@ void InfoBox::RenderScore(HDC hdc)
 		str = to_string(player->GetScore());
 		TextOutA(hdc, (int)strEndPos.x - 6 * ((int)str.size()-1), (int)strStartPos.y + 20 * (cnt++), str.c_str(), (int)str.size());
 	}
-
 }
