@@ -19,28 +19,32 @@ void CardSet::Render(HDC hdc)
 {
 	if (!isVisible)
 		return;
-
-	if (isOneSet && isCovered) {
-		CardDataManager::Get()->RenderCovered(hdc, this);
-		return;
-	}
-
-	
-	if (cards.empty()) {
+		
+	if (cards.empty() && !isCovered) {
 		return;
 	}
 
 	if (isOneSet) {
-		if (frontRender) {
+		if (isCovered) {
+			if(cards.empty())
+				CardDataManager::Get()->RenderCovered(hdc, this, 100);
+			else
+				CardDataManager::Get()->RenderCovered(hdc, this);
+		}
+		else if (frontRender)
 			cards.front()->Render(hdc);
-			wstring str = to_wstring(cards.size());
-			TextOut(hdc, (int)Left(), (int)Top(), str.c_str(), (int)str.size());
-		}
-		else {
+		else
 			cards.back()->Render(hdc);
-			wstring str = to_wstring(cards.size());
-			TextOut(hdc, (int)Left(), (int)Top(), str.c_str(), (int)str.size());
-		}
+
+		SetBkMode(hdc, 2);
+		SetTextColor(hdc, cards.empty() ? WHITE : YELLOW);
+
+		wstring str = to_wstring(cards.size());
+		TextOut(hdc, (int)Left(), (int)Top(), str.c_str(), (int)str.size());
+
+		SetTextColor(hdc, BLACK);
+		SetBkMode(hdc, 0);
+
 	}
 	else {
 		for (auto card : cards)
@@ -149,14 +153,16 @@ void CardSet::Shuffle()
 Card* CardSet::GetByPos(Vector2 pos)
 {
 	Card* result = nullptr;
-	for (auto c : cards) {
-		if (c->IsPointCollision(pos)) {
-			result = c;
-			//카드가 겹치는 경우 제일 위에 있는 카드를 집어야 하기 때문에 바로 끊지 않는다
-		}
-		else if (result != nullptr) {
-			//근데 잡힌게 있는데 안 잡히면 이상하지
-			break;
+	if (isOneSet) {
+		if (this->IsPointCollision(pos) && !cards.empty())
+			result = frontRender ? cards.front() : cards.back();
+	} else {
+		for (auto c : cards) {
+			if (c->IsPointCollision(pos)) {
+				//카드가 겹치는 경우 제일 위에 있는 카드를 집어야 하기 때문에 바로 끊지 않는다 - 겹치는 경우는 없지만 그렇게 했다
+				if (c->isActive && c->isVisible && !c->isCovered)
+					result = c;
+			}
 		}
 	}
 

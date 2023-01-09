@@ -74,7 +74,6 @@ void DominionGameMaster::GameStart()
 		Observer::Get()->ExcuteParamEvents("CalcScore", players[i]);
 	}
 
-	
 	turnPlayer = -1;
 	NextTurn();
 
@@ -268,22 +267,17 @@ CardData* DominionGameMaster::GetMouseOn()
 	for (auto player : players) {
 		//패 정보
 		mouseOn = player->hand->GetByPos(mousePos);
+		if (mouseOn != nullptr)
+			return mouseOn->data;
 
-		if (mouseOn != nullptr) {
-			if (!mouseOn->isActive || !mouseOn->isVisible || mouseOn->isCovered)
-				mouseOn = nullptr;
-			if (mouseOn != nullptr)
-				return mouseOn->data;
-		}
 		//사용한 카드 정보
 		mouseOn = player->used->GetByPos(mousePos);
+		if (mouseOn != nullptr)
+			return mouseOn->data;
 
-		if (mouseOn != nullptr) {
-			if (!mouseOn->isActive || !mouseOn->isVisible || mouseOn->isCovered)
-				mouseOn = nullptr;
-			if (mouseOn != nullptr)
-				return mouseOn->data;
-		}
+		mouseOn = player->discard->GetByPos(mousePos);
+		if (mouseOn != nullptr)
+			return mouseOn->data;
 	}
 
 	return nullptr;

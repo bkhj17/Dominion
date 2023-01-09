@@ -19,5 +19,7 @@ private:
 	deque<class DominionPlayer*> winner;
 
 	ImageRect* background;
+
+	HFONT font;
 };
 

@@ -1,7 +1,7 @@
 #pragma once
 
 class InfoBox :
-    public Rect
+    public ImageRect
 {
 public:
     InfoBox();
@@ -16,6 +16,8 @@ public:
             dataInfo = data; 
     }
 
+    void SetPos(Vector2 pos);
+
 private:
     void RenderText(HDC hdc);
     void RenderOneLine(HDC hdc, string str, Vector2 startPos, int& cnt);
@@ -24,5 +26,8 @@ private:
     Vector2 imagePos;
     Rect* image;
     class CardData* dataInfo = nullptr;
+
+    ImageRect* scoreBox;
+
 };
 

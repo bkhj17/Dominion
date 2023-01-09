@@ -6,6 +6,7 @@
 #include "DominionPlayer.h"
 
 SelectWindow::SelectWindow()
+	: ImageRect(L"Textures/Dominion/Texture/SelectWindow.bmp")
 {
 	selectedResult = new GetCardResult();
 	unselectedResult = new GetCardResult();
@@ -157,6 +158,10 @@ void SelectWindow::Render(HDC hdc)
 		if(cardRect[i].first->isActive)
 			cardRect[i].second->Render(hdc, cardRect[i].first, covered);
 	}
+
+	SetTextColor(hdc, WHITE);
+	TextOutA(hdc, (int)(pos.x - 4.0f * explain.size()), (int)Top() + 10, explain.c_str(), explain.size());
+	SetTextColor(hdc, BLACK);
 }
 
 int SelectWindow::CurSelectedNum()

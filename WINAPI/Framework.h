@@ -80,8 +80,6 @@ using namespace GameMath;
 
 using namespace Utility;
 
-
-
 #define DELTA			Timer::Get()->GetElapsedTime()
 
 #define KEY_DOWN(k)		KeyBoard::Get()->Down(k)
@@ -104,53 +102,33 @@ using namespace Utility;
 #include "Object/Manager/PipeManager.h"
 #include "Object/Manager/DataManager.h"
 
-#include "Object/Spawn/SpawnObject.h"
-#include "Object/Spawn/SpawnManager.h"
-
-#include "Object/Shooting/Bullet.h"
-#include "Object/Shooting/BulletManager.h"
-#include "Object/Shooting/Plane.h"
-#include "Object/Shooting/Enemy.h"
-#include "Object/Shooting/EnemyManager.h"
-#include "Object/Shooting/Cannon.h"
-
 #include "Object/Character/Character.h"
-#include "Object/Character/PixelCharacter.h"
-#include "Object/Character/Megaman.h"
-#include "Object/Character/Siva.h"
-#include "Object/Character/BattleCharacter.h"
-#include "Object/Character/Fighter.h"
-#include "Object/Character/Monster.h"
-
-#include "Object/BrickOut/BrickManager.h"
-#include "Object/BrickOut/ControlBar.h"
-#include "Object/BrickOut/Ball.h"
-#include "Object/BrickOut/Brick.h"
-
-#include "Object/FlappyBird/LandScape.h"
-#include "Object/FlappyBird/FlappyBird.h"
-
-#include "Object/CookieRun/Coin.h"
-#include "Object/CookieRun/Cookie.h"
-#include "Object/CookieRun/StageManager.h"
-
-#include "Object/Dig/Bomb.h"
-#include "Object/Dig/BoomManager.h"
 
 #include "Object/Inventory/Item.h"
 #include "Object/Inventory/Panel.h"
 #include "Object/Inventory/Store.h"
 #include "Object/Inventory/Inventory.h"
 
-#include "Scenes/Homework/Homework221229/DataManager1229.h"
-#include "Scenes/Homework/Homework221229/Inventory1229.h"
 
 //사용자 정의 헤더
 #include "WINAPI.h"
 
 //Scenes Header
 #include "Scenes/Scene.h"
-#include "Scenes/TutorialScene.h"
+
+#include "Dominion/Act.h"
+#include "Dominion/MyMovement.h"
+#include "Dominion/Card.h"
+
+#include "Dominion/CardDataManager.h"
+#include "Dominion/CardManager.h"
+#include "Dominion/CardSet.h"
+
+#include "Dominion/ScrollableCardSet.h"
+#include "Dominion/SelectWindow.h"
+
+#include "Dominion/GameMaster.h"
+#include "Dominion/DominionPlayer.h"
 
 //Manager Header
 #include "Manager/SceneManager.h"

@@ -1,7 +1,4 @@
 #include "framework.h"
-#include "Act.h"
-#include "MyMovement.h"
-#include "Card.h"
 
 const Vector2 Card::DEFAULT_SIZE = { 60, 90 };
 

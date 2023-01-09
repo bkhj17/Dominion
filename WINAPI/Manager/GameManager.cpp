@@ -1,38 +1,9 @@
 #include "framework.h"
-//#include "Scenes/TutorialScene.h"
-//#include "Scenes/HomeworkScene221219.h"
-//#include "Scenes/HomeworkScene221220.h"
-//#include "Scenes/HomeworkScene221221.h"
-//#include "Scenes/HomeworkScene221222.h"
-//#include "Scenes/Homework221223.h"
-//#include "Scenes/Homework221226.h"
-//#include "Scenes/Homework/Homework221228.h"
-//#include "Scenes/Homework/Homework221229/Homework221229.h"
-//#include "Scenes/Homework/Homework221229/ShopScene1229.h"
-//#include "Scenes/Homework/Homework221229/SellScene1229.h"
-//#include "Scenes/Homework/Homework221229/InventoryScene1229.h"
-//#include "Scenes/SpawnScene.h"
-#include "Scenes/CollisionScene.h"
-//#include "Scenes/ShootingScene.h"
-//#include "Scenes/AngleScene.h"
-//#include "Scenes/BrickOutScene.h"
-//#include "Scenes/BitmapScene.h"
-//#include "Scenes/FlappyBirdScene.h"
-//#include "Scenes/CookieRunScene.h"
-//#include "Scenes/BattleScene.h"
-//#include "Scenes/PixelCollisionScene.h"
-//#include "Scenes/DigGameScene.h"
-#include "Scenes/ButtonScene.h"
-#include "Scenes/InventoryScene.h"
-//#include "MyFramework/TestScene.h"
 #include "Dominion/DominionScene.h"
 
 GameManager::GameManager()
 {
-	//Timer::Get()->SetLockFPS(1000);
-
 	Start();
-	//SceneManager::Get()->Add("InventoryScene", new InventoryScene);
 	SceneManager::Get()->Add("DominionScene", new DominionScene);
 	SceneManager::Get()->ChangeScene("DominionScene");
 }
@@ -84,6 +55,9 @@ void GameManager::Render()
 	//InvalidateRect(hWnd, nullptr, true);            //출력메세지 호출
 
 	SceneManager::Get()->Render(hBackDC);
+
+	SetBkMode(hBackDC, 0);
+
 	EffectManager::Get()->Render(hBackDC);
 	Timer::Get()->Render(hBackDC);
 

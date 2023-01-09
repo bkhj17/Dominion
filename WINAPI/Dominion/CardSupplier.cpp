@@ -24,6 +24,7 @@ void CardSupplier::Init(int key, int num)
 
 void CardSupplier::Render(HDC hdc)
 {
+
 	if (num == 0)
 		__super::Render(hdc, 125, data->frame);
 	else
@@ -35,8 +36,14 @@ void CardSupplier::Render(HDC hdc)
 		SelectObject(hdc, post);
 	}
 
+	SetBkMode(hdc, 2);
+	SetTextColor(hdc, num > 0 ? YELLOW : RED);
+
 	wstring str = to_wstring(num);
 	TextOut(hdc, (int)Left(), (int)Top(), str.c_str(), (int)str.size());
+
+	SetTextColor(hdc, BLACK);
+	SetBkMode(hdc, 0);
 }
 
 Card* CardSupplier::SupplyCard()

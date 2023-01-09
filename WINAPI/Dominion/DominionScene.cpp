@@ -16,9 +16,9 @@ DominionScene::DominionScene()
 
 	infoBox = new InfoBox();
 	infoBox->size = { 300.0f, WIN_HEIGHT-2};
-	infoBox->pos = { infoBox->Half().x + 10, CENTER_Y};
+	infoBox->SetPos({ infoBox->Half().x + 10, CENTER_Y });
 
-	background = new ImageRect(L"Textures/Dominion/Background.bmp");
+	background = new ImageRect(L"Textures/Dominion/Texture/Background.bmp");
 	background->size = { WIN_WIDTH, WIN_HEIGHT };
 	background->pos = { CENTER_X, CENTER_Y };
 }
@@ -67,16 +67,26 @@ void DominionScene::Render(HDC hdc)
 
 	DominionGameMaster::Get()->Render(hdc);
 
+
+
+	SetBkMode(hdc, 2);
+	SetBkColor(hdc, BLACK);
+	SetTextColor(hdc, WHITE);
+
+	int renderX = (int)(CENTER_X - 330.0f);
+
 	auto turnPlayer = DominionGameMaster::Get()->GetTurnPlayer();
 	wstring wstr = turnPlayer->GetInfo();
-	TextOut(hdc, (int)(CENTER_X - 100.0f), (int)(CENTER_Y + 200.0f), wstr.c_str(), (int)wstr.size());
+	TextOut(hdc, renderX, (int)(CENTER_Y + 200.0f), wstr.c_str(), (int)wstr.size());
 	
 	if (DominionGameMaster::Get()->GetGameState() == DominionGameState::End) {
 		RenderGameEnd(hdc);
 	} else if(turnPlayer != DominionGameMaster::Get()->GetControlPlayer()) {
 		wstr = L"Player" + to_wstring(DominionGameMaster::Get()->turnPlayer) + L"ÀÇ ÅÏ";
-		TextOut(hdc, (int)(CENTER_X - 100.0f), (int)(CENTER_Y + 180.0f), wstr.c_str(), (int)wstr.size());
+		TextOut(hdc, renderX, (int)(CENTER_Y + 180.0f), wstr.c_str(), (int)wstr.size());
 	}
+
+	SetTextColor(hdc, BLACK);
 }
 
 void DominionScene::RenderGameEnd(HDC hdc)
@@ -89,13 +99,8 @@ void DominionScene::RenderGameEnd(HDC hdc)
 	for (int i = 0; i < winner.size(); i++) {
 		strWinner += winner[i]->name + "(" + to_string(winner[i]->GetScore()) + ") ";
 	}
-	if (winner.size() > 1) {
-		//ºñ°å´Ù
-		strWinner += "ºñ±è";
-	}
-	else {
-		strWinner += "½Â¸®";
-	}
-
-	TextOutA(hdc, CENTER_X, CENTER_Y, strWinner.c_str(), (int)strWinner.size());
+	
+	strWinner += (winner.size() > 1) ? "ºñ±è" : "½Â¸®";
+	
+	TextOutA(hdc, CENTER_X, CENTER_Y + 20, strWinner.c_str(), (int)strWinner.size());
 }

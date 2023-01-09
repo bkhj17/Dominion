@@ -1,11 +1,6 @@
 #include "framework.h"
-#include "Act.h"
-#include "Card.h"
-#include "CardManager.h"
 #include "CardSet.h"
-#include "MyMovement.h"
 #include "CardSupplier.h"
-#include "GameMaster.h"
 #include "DominionPlayer.h"
 #include "SelectWindow.h"
 
@@ -908,22 +903,7 @@ void ActiveCardAct::Init(int key)
 	break;
 	case CardKey::ARTISAN:	//완료
 	{
-		//코스트 5 이하의 카드 1장을 공급처에서 가져온다
-		auto a0 = new GetSupplierAct(this, player);
-		a0->Init([](CardSupplier* supplier) -> bool {
-			return CostLimit(*supplier->data, 5);
-			});
-		subActs.push_back(a0);
-
-		auto a1 = new SupplyCardAct(this, player);
-		a1->SetRequested(a0->ReturnResult());
-		a1->Init();
-		subActs.push_back(a1);
-
-		auto a2 = new InputCardAct(this, player);
-		a2->Init(player->hand, (GetCardResult*)a1->ReturnResult());
-		subActs.push_back(a2);
-		//Result가 이미 선언되어 있으니 연결하면 잘만 된다
+		subActs.push_back(new ArtisanEffectAct(this, player));
 	}
 	break;
 	/*
@@ -936,8 +916,7 @@ void ActiveCardAct::Init(int key)
 	case CardKey::HARBINGER:	//완료
 		//버리는 카드에서 선택효과...
 	{
-		auto a0 = new HarbingerEffectAct(this, player);
-		subActs.push_back(a0);
+		subActs.push_back(new HarbingerEffectAct(this, player));
 	}
 		break;
 	/*
@@ -948,8 +927,7 @@ void ActiveCardAct::Init(int key)
 	*/
 	case CardKey::POACHER:	//완료
 	{
-		auto a0 = new PoacherEffectAct(this, player);
-		subActs.push_back(a0);
+		subActs.push_back(new PoacherEffectAct(this, player));
 	}
 		break;
 	/*
@@ -1228,11 +1206,6 @@ void PoacherEffectAct::NextSubAct()
 	}
 }
 
-void PoacherEffectAct::Done()
-{
-	Act::Done();
-}
-
 HarbingerEffectAct::HarbingerEffectAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
 {
@@ -1279,6 +1252,7 @@ void HarbingerEffectAct::NextSubAct()
 			bind(&HarbingerEffectAct::Select, this, placeholders::_1),
 			bind(&HarbingerEffectAct::EndSelect, this)			
 		);
+		window->SetExplain("버린 카드 중 1장 골라 덱 맨 위에 놓는다");
 	}
 	else if(curSubAct == 3) {
 		auto a2 = (SelectFromWindowAct*)subActs[2];
@@ -1315,5 +1289,54 @@ void HarbingerEffectAct::EndSelect()
 	for (auto card : discards->cards) {
 		if (card->IsSelected())
 			r2->cards.push_back(card);
+	}
+}
+
+ArtisanEffectAct::ArtisanEffectAct(Act* parent, DominionPlayer* player)
+	: Act(parent, player)
+{
+	subActs.push_back(new GetSupplierAct(this, player));
+	subActs.push_back(new SupplyCardAct(this, player));
+	subActs.push_back(new InputCardAct(this, player));
+	subActs.push_back(new SelectRangeFromHandAct(this, player));
+	subActs.push_back(new InputCardAct(this, player));
+}
+
+void ArtisanEffectAct::Init()
+{
+	//코스트 5 이하의 카드 1장을 공급처에서 가져온다
+	auto a0 = (GetSupplierAct*)subActs[0];
+	a0->Init([](CardSupplier* supplier) -> bool {
+		return CostLimit(*supplier->data, 5);
+	});
+
+	auto a1 = (SupplyCardAct*)subActs[1];
+	a1->SetRequested(a0->ReturnResult());
+	a1->Init();
+
+	auto a2 = (InputCardAct*)subActs[2];
+	a2->Init(player->hand, (GetCardResult*)a1->ReturnResult());
+	//Result가 이미 선언되어 있으니 연결하면 잘만 된다
+
+	auto a3 = (SelectRangeFromHandAct*)subActs[3];
+	a3->Init(1, 1, &ActCondition::IsTrue);
+	a3->SetExplain("덱 맨 위에 놓을 카드 1장을 고르시오");
+
+
+	Act::Init();
+}
+
+void ArtisanEffectAct::NextSubAct()
+{
+	if (curSubAct == 4) {
+		auto r3 = (GetCardResult*)subActs[3]->ReturnResult();
+		for(auto card : r3->cards)
+			player->hand->Out(card);
+
+		auto a4 = (InputCardAct*)subActs[4];
+		a4->Init(player->deck, r3, true);
+	}
+	else {
+		__super::NextSubAct();
 	}
 }

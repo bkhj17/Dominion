@@ -7,8 +7,11 @@
 ScrollableCardSet::ScrollableCardSet(float xLength, bool isCovered, bool control)
 	: CardSet(isCovered, false), xLength(xLength), isControlable(control)
 {
-	leftTab = new Rect();
-	rightTab = new Rect();
+	Texture* button = Texture::Add(L"Textures/Dominion/Texture/ScrollTab.bmp", 2, 1);
+
+
+	leftTab = new ImageRect(button);
+	rightTab = new ImageRect(button);
 	rightTab->size = leftTab->size = { 50.0f, 50.0f };
 
 	leftPos.x = -leftTab->size.x;
@@ -44,9 +47,9 @@ void ScrollableCardSet::Render(HDC hdc)
 
 	if (isControlable && !isMoving) {
 		if (!RightEnd())
-			leftTab->Render(hdc);
+			leftTab->Render(hdc, {1, 0}, false);
 		if (!LeftEnd())
-			rightTab->Render(hdc);
+			rightTab->Render(hdc, { 0, 0 }, false);
 	}
 }
 
@@ -78,10 +81,8 @@ Card* ScrollableCardSet::GetByPos(Vector2 pos)
 			continue;
 
 		if (card->IsPointCollision(pos)) {
-			result = card;
-		}
-		else if (result != nullptr) {
-			break;
+			if (card->isActive && card->isVisible && !card->isCovered)
+				result = card;
 		}
 	}
 
@@ -91,10 +92,8 @@ Card* ScrollableCardSet::GetByPos(Vector2 pos)
 void ScrollableCardSet::SetPos(Vector2 pos)
 {
 	this->pos = pos;
-	leftTab->pos.x = leftPos.x + Left();
-	leftTab->pos.y = pos.y;
-	rightTab->pos.x = rightPos.x + Right();
-	rightTab->pos.y = pos.y;
+	leftTab->pos = { leftPos.x + Left(), pos.y };
+	rightTab->pos = { rightPos.x + Right(), pos.y };
 }
 
 bool ScrollableCardSet::LeftEnd()

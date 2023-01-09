@@ -445,7 +445,7 @@ private:
 };
 
 
-//POACHER
+//π–∑∆≤€
 class PoacherEffectAct : public Act
 {
 public:
@@ -453,6 +453,15 @@ public:
 
 	void Init() override;
 	void NextSubAct() override;
-	void Done() override;
-private:
 };
+
+//¿Â¿Œ
+class ArtisanEffectAct : public Act 
+{
+public:
+	ArtisanEffectAct(Act* parent, DominionPlayer* player);
+
+	void Init() override;
+	void NextSubAct() override;
+};
+

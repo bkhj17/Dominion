@@ -7,9 +7,12 @@
 #include "SelectWindow.h"
 
 InfoBox::InfoBox()
-	: Rect()
+	: ImageRect(L"Textures/Dominion/Texture/InfoBox.bmp")
 {
 	image = new Rect(imagePos, { 200.0f, 300.0f });
+
+	scoreBox = new ImageRect(L"Textures/Dominion/Texture/ScoreBox.bmp");
+	
 }
 
 InfoBox::~InfoBox()
@@ -24,8 +27,6 @@ void InfoBox::Init()
 
 void InfoBox::Update()
 {
-	image->pos = {pos.x, Top() + image->Half().y};
-
 	CardData* mouseOn = nullptr;
 	if (SelectWindow::Get()->isActive)
 		mouseOn = SelectWindow::Get()->GetMouseOn();
@@ -39,6 +40,8 @@ void InfoBox::Update()
 
 void InfoBox::Render(HDC hdc)
 {
+	int postMode = SetBkMode(hdc, 0);
+
 	__super::Render(hdc);
 
 	if (dataInfo != nullptr) {
@@ -49,6 +52,15 @@ void InfoBox::Render(HDC hdc)
 		CardDataManager::Get()->RenderCovered(hdc, image);
 
 	RenderScore(hdc);
+
+	SetBkMode(hdc, postMode);
+}
+
+void InfoBox::SetPos(Vector2 pos)
+{
+	this->pos = pos;
+	image->pos = { pos.x, Top() + image->Half().y + 40.0f };
+	scoreBox->pos = { pos.x, Bottom() - scoreBox->Half().y };
 }
 
 void InfoBox::RenderText(HDC hdc)
@@ -92,7 +104,9 @@ void InfoBox::RenderOneLine(HDC hdc, string str, Vector2 startPos, int& cnt)
 
 void InfoBox::RenderScore(HDC hdc)
 {
-	Vector2 strStartPos = { pos.x, Bottom() - 100.0f };
+	scoreBox->Render(hdc);
+
+	Vector2 strStartPos = { scoreBox->pos.x, scoreBox->pos.y - 20.0f };
 	
 	auto players = DominionGameMaster::Get()->players;
 	int cnt = 0;

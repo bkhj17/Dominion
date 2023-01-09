@@ -3,7 +3,7 @@
 class Card;
 class GetCardResult;
 
-class SelectWindow : public Rect,  public Singleton<SelectWindow>
+class SelectWindow : public ImageRect,  public Singleton<SelectWindow>
 {
 private:
 	friend class Singleton;

@@ -27,10 +27,10 @@ private:
 
 	float xLength;
 
-	Rect* leftTab;
+	ImageRect* leftTab;
 	Vector2 leftPos;
 	
-	Rect* rightTab;
+	ImageRect* rightTab;
 	Vector2 rightPos;
 };
 

@@ -22,30 +22,26 @@ DominionPlayer::DominionPlayer(bool isControl, bool isAi)
 		used = new ScrollableCardSet(350.0f, false, isController); 
 		((ScrollableCardSet*)used)->SetPos({ 700.0f, WIN_HEIGHT - 180.0f });
 		used->size = size;
-
-		discard = new CardSet(false, true);
-		discard->pos = { deck->pos.x + size.x, deck->pos.y };
-		discard->size = size;
-		discard->frontRender = false;
 	}
 	else {
 		deck = new CardSet(true, true);
 		deck->pos = { 400.0f, 60.0f };
 		deck->size = size;
 
-		hand = new ScrollableCardSet(450.0f, false, isController);
+		hand = new ScrollableCardSet(450.0f, true, isController);
 		hand->size = size;
 		((ScrollableCardSet*)hand)->SetPos({ 700.0f, 60.0f });
 
-		used = new ScrollableCardSet(350.0f, false, isController);
+		used = new ScrollableCardSet(350.0f, false, true);
 		((ScrollableCardSet*)used)->SetPos({ 700.0f, 180.0f });
 		used->size = size;
 
-		discard = new CardSet(false, true);
-		discard->pos = { deck->pos.x + size.x, deck->pos.y };
-		discard->size = size;
-		discard->frontRender = false;
 	}
+
+	discard = new CardSet(false, true);
+	discard->pos = { deck->pos.x + size.x, deck->pos.y };
+	discard->size = size;
+	discard->frontRender = false;
 }
 
 DominionPlayer::~DominionPlayer()

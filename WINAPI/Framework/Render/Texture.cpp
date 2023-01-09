@@ -71,8 +71,8 @@ void Texture::Render(HDC hdc, Rect* rect, POINT curFrame, bool isTrans)
             (int)rect->size.x,
             (int)rect->size.y,
             memDC,
-            0, 
-            0,
+            cutSize.x * curFrame.x,
+            cutSize.y * curFrame.y,
             SRCCOPY
         );
         return;
