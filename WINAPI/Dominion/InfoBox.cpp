@@ -28,9 +28,12 @@ void InfoBox::Init()
 void InfoBox::Update()
 {
 	CardData* mouseOn = nullptr;
-	if (SelectWindow::Get()->isActive)
-		mouseOn = SelectWindow::Get()->GetMouseOn();
-	else 
+	if (SelectWindow::Get()->isActive) {
+		auto card = SelectWindow::Get()->GetCardMouseOn();
+		if(card != nullptr)
+			mouseOn = card->data;
+	} 
+	else
 		mouseOn = DominionGameMaster::Get()->GetMouseOn();
 
 	if (mouseOn != nullptr) {
@@ -65,7 +68,10 @@ void InfoBox::SetPos(Vector2 pos)
 
 void InfoBox::RenderText(HDC hdc)
 {
-	Vector2 strStartPos = { image->pos.x, image->Bottom() + 5.0f };
+	SetTextColor(hdc, YELLOW);
+
+
+	Vector2 strStartPos = { image->pos.x - 100.0f, image->Bottom() + 5.0f };
 	int cntLine = 0;
 
 	string str = dataInfo->name;
@@ -95,24 +101,33 @@ void InfoBox::RenderText(HDC hdc)
 			spos = next;
 		}
 	}
+
+	SetTextColor(hdc, BLACK);
 }
 
 void InfoBox::RenderOneLine(HDC hdc, string str, Vector2 startPos, int& cnt)
 {
-	TextOutA(hdc, (int)startPos.x - 4 * (int)str.size(), (int)startPos.y + 20 * (cnt++), str.c_str(), (int)str.size());
+	TextOutA(hdc, (int)startPos.x, (int)startPos.y + 20 * (cnt++), str.c_str(), (int)str.size());
 }
 
 void InfoBox::RenderScore(HDC hdc)
 {
 	scoreBox->Render(hdc);
 
-	Vector2 strStartPos = { scoreBox->pos.x, scoreBox->pos.y - 20.0f };
-	
-	auto players = DominionGameMaster::Get()->players;
+	Vector2 strStartPos = { scoreBox->pos.x - 60.0f, scoreBox->pos.y-40.0f };
+	Vector2 strEndPos = { scoreBox->pos.x + 60.0f , scoreBox->pos.y - 40.0f };
+
+	auto& players = DominionGameMaster::Get()->players;
 	int cnt = 0;
+	RenderOneLine(hdc, "Score", {scoreBox->pos.x - 15.0f, strStartPos.y}, cnt);
+
+	string str;
 	for (auto player : players) {
-		string str = player->name + " : " + to_string(player->GetScore());
-		RenderOneLine(hdc, str, strStartPos, cnt);
+		str = player->name;
+		TextOutA(hdc, (int)strStartPos.x, (int)strStartPos.y + 20 * (cnt), str.c_str(), (int)str.size());
+	
+		str = to_string(player->GetScore());
+		TextOutA(hdc, (int)strEndPos.x - 6 * ((int)str.size()-1), (int)strStartPos.y + 20 * (cnt++), str.c_str(), (int)str.size());
 	}
 
 }

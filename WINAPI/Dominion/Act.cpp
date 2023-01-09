@@ -17,11 +17,10 @@ void Act::Init()
 {
 	if (result != nullptr)
 		result->Clear();
-	curSubAct = 0;
-	isDoing = false;
-	isDone = false;
-
-	isReady = true;
+	curSubAct = 0;		//현재 처리할 서브액트
+	isDoing = false;	//현재 서브액트 처리중. 병렬 대기 시 사용
+	isDone = false;		//완료 상태
+	isReady = true;		//준비 완료
 }
 
 void Act::SetRequested(ActResult* request)
@@ -32,8 +31,8 @@ void Act::SetRequested(ActResult* request)
 void Act::Update()
 {
 	if (!DefaultUpdate()) {
-		//현재 서브 액트가 대기 상태인가?
-		//맞으면 준비
+		//현재 서브 액트가 실행 중 혹은 완료 상태인가?
+		//아니라면 준비
 		NextSubAct();
 	}
 }
@@ -42,28 +41,30 @@ void Act::Update()
 bool Act::DefaultUpdate()
 {
 	if (curSubAct == subActs.size()) {
+		//모든 작업이 끝났다
 		Done();
 		return true;
 	}
-	//현재 서브 액트는 완료된 상황이다
 	if (subActs[curSubAct]->isDone) {
+		//현재 서브 액트는 완료된 상황이다
 		curSubAct++;
 	}
-	//작업은 가능한 상황
 	else if (subActs[curSubAct]->isReady) {
-		//작업해
+		//작업 진행중
 		subActs[curSubAct]->Update();
 	}
 	else {
-		//아니야
+		//진행 중도 완료 상태도 아니다
 		return false;
 	}
+
+	//실행중이다
 	return true;
 }
 
 void Act::NextSubAct()
 {
-	//통상 매뉴얼
+	//남은 작업이 없다
 	if (curSubAct >= subActs.size())
 		return;
 
@@ -473,7 +474,7 @@ void UseCardFromHandAct::NextSubAct()
 
 		auto preAct = (SelectFromHandAct*)subActs[0];
 		//선택된 카드를 손에서 제거
-		auto cards = ((GetCardResult*)preAct->ReturnResult())->cards;
+		auto& cards = ((GetCardResult*)preAct->ReturnResult())->cards;
 		if (cards.empty()) {
 			//카드 선택 안 함
 			shutDown = true;
@@ -660,16 +661,21 @@ void SelectRangeFromHandAct::Update()
 		return;
 
 	SelectFromHandAct::Update();
+	if (player->isAi) {
+		return;
+	}
+
 	if (!player->isAi && !isEnd) {
 		isDone = false;
 	}
-	auto endButton = DominionGameMaster::Get()->endButton;
-	DominionGameMaster::Get()->SetEndButton(
-		END_BUTTON_TEXT, 
-		bind(&SelectRangeFromHandAct::EndCall, this), 
-		explain
-	);
 
+	if (player->IsController()) {
+		DominionGameMaster::Get()->SetEndButton(
+			END_BUTTON_TEXT,
+			bind(&SelectRangeFromHandAct::EndCall, this),
+			explain
+		);
+	}
 
 	if (isEnd) {
 		Done();
@@ -678,7 +684,7 @@ void SelectRangeFromHandAct::Update()
 
 void SelectRangeFromHandAct::Done()
 {
-	if (isEnd) {
+	if (isEnd || player->isAi) {
 		DominionGameMaster::Get()->OffEndButton();
 		SelectFromHandAct::Done();
 	}
@@ -1302,38 +1308,43 @@ ArtisanEffectAct::ArtisanEffectAct(Act* parent, DominionPlayer* player)
 	subActs.push_back(new InputCardAct(this, player));
 }
 
-void ArtisanEffectAct::Init()
-{
-	//코스트 5 이하의 카드 1장을 공급처에서 가져온다
-	auto a0 = (GetSupplierAct*)subActs[0];
-	a0->Init([](CardSupplier* supplier) -> bool {
-		return CostLimit(*supplier->data, 5);
-	});
-
-	auto a1 = (SupplyCardAct*)subActs[1];
-	a1->SetRequested(a0->ReturnResult());
-	a1->Init();
-
-	auto a2 = (InputCardAct*)subActs[2];
-	a2->Init(player->hand, (GetCardResult*)a1->ReturnResult());
-	//Result가 이미 선언되어 있으니 연결하면 잘만 된다
-
-	auto a3 = (SelectRangeFromHandAct*)subActs[3];
-	a3->Init(1, 1, &ActCondition::IsTrue);
-	a3->SetExplain("덱 맨 위에 놓을 카드 1장을 고르시오");
-
-
-	Act::Init();
-}
-
 void ArtisanEffectAct::NextSubAct()
 {
-	if (curSubAct == 4) {
-		auto r3 = (GetCardResult*)subActs[3]->ReturnResult();
+	auto a0 = (GetSupplierAct*)subActs[0];
+	auto a1 = (SupplyCardAct*)subActs[1];
+	auto a2 = (InputCardAct*)subActs[2];
+	auto a3 = (SelectRangeFromHandAct*)subActs[3];
+	auto a4 = (InputCardAct*)subActs[4];
+
+	if (curSubAct == 0) {
+		//코스트 5 이하의 카드 1장을 공급처에서 가져온다
+		a0->Init([this](CardSupplier* supplier) -> bool {
+			return CostLimit(*supplier->data, COST_LIMIT);
+		});
+		string str = "코스트 " + to_string(COST_LIMIT) + "이하의 카드를 패로 가져온다.";
+		DominionGameMaster::Get()->SetExplain(str);
+	}
+	else if (curSubAct == 1) {
+		DominionGameMaster::Get()->SetExplain("");
+		a1->SetRequested(a0->ReturnResult());
+		a1->Init();
+	}
+	else if (curSubAct == 2) {
+
+		a2->Init(player->hand, (GetCardResult*)a1->ReturnResult());
+		//Result가 이미 선언되어 있으니 연결하면 잘만 된다
+	}
+	else if (curSubAct == 3) {
+		//패에서 카드 1장을 골라 
+		a3->SetExplain("덱 맨 위에 놓을 카드 1장을 고르시오");
+		a3->Init(1, 1, &ActCondition::IsTrue);
+	}
+	else if (curSubAct == 4) {
+		//덱 맨 위에 놓는다
+		auto r3 = (GetCardResult*)a3->ReturnResult();
 		for(auto card : r3->cards)
 			player->hand->Out(card);
 
-		auto a4 = (InputCardAct*)subActs[4];
 		a4->Init(player->deck, r3, true);
 	}
 	else {
