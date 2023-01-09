@@ -11,7 +11,7 @@ SelectWindow::SelectWindow()
 	selectedResult = new GetCardResult();
 	unselectedResult = new GetCardResult();
 
-	cardRect.resize(30);
+	cardRect.resize(80);
 
 
 	for (int i = 0; i < cardRect.size(); i++) {
@@ -20,6 +20,11 @@ SelectWindow::SelectWindow()
 	}
 
 	isActive = false;
+
+	Texture* tab = Texture::Add(L"Textures/Dominion/Texture/ScrollTab.bmp", 2, 1);
+
+	leftTab = new ImageRect(tab);
+	rightTab = new ImageRect(tab);
 }
 
 SelectWindow::~SelectWindow()
@@ -31,6 +36,9 @@ SelectWindow::~SelectWindow()
 	}
 	cardRect.clear();
 	cardRect.shrink_to_fit();
+
+	delete leftTab;
+	delete rightTab;
 }
 
 void SelectWindow::Init(
@@ -57,21 +65,18 @@ void SelectWindow::Init(
 	this->selectFunc = selectFunc;
 	this->endFunc = endFunc;
 
-	float margin = 5.0f ;
-	float sum = margin + Left();
-
 	for (int i = 0; i < nRect; i++) {
 		cardRect[i].second = request->cards[i];
-
 		cardRect[i].first->isActive = true;
 		cardRect[i].first->size = cardRect[i].second->size;
-		cardRect[i].first->pos.x = sum + cardRect[i].first->size.x * 0.5f;
-		sum += cardRect[i].first->size.x + margin;
-
 		request->cards[i]->SetSelectable(selectableFunc);
 	}
 
+	SortRects();
+
 	this->covered = covered;
+
+	waitTime = 0.0f;
 }
 
 void SelectWindow::SetResize(Vector2 pos, Vector2 size)
@@ -79,10 +84,12 @@ void SelectWindow::SetResize(Vector2 pos, Vector2 size)
 	this->pos = pos;
 	this->size = size;
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < cardRect.size(); i++) {
 		cardRect[i].first->pos.y = pos.y;
-		cardRect[i].first->isActive = false;
 	}
+
+	leftTab->pos = { Left() + leftTab->size.x * 0.5f, pos.y};
+	rightTab->pos = { Right() - rightTab->size.x * 0.5f, pos.y};
 }
 
 void SelectWindow::Done()
@@ -108,9 +115,21 @@ void SelectWindow::Done()
 	isActive = false;
 	isEnd = false;
 }
-
+void SelectWindow::EndCall() 
+{
+	int cur = CurSelectedNum();
+	if (CurSelectedNum() >= minNum) {
+		endFunc(); 
+		isEnd = true; 
+	} 
+}
 void SelectWindow::Update()
 {
+	if (player->isAi && waitTime < waitRate) {
+		waitTime += DELTA;
+		return;
+	}
+
 	if (isEnd) {
 		Done();
 		return;
@@ -137,14 +156,16 @@ void SelectWindow::Update()
 	else {
 		//버튼 설정
 		DominionGameMaster::Get()->SetEndButton("완료", bind(&SelectWindow::EndCall, this));
+		MoveRects();
+		
 		if (KEY_DOWN(VK_LBUTTON)) {
 			//눌린 카드 찾기
-			for (int i = 0; i < nRect; i++) {
-				if (cardRect[i].first->IsPointCollision(mousePos) && cardRect[i].second->IsSelectable())
-					selectFunc(cardRect[i].second);
-			}
+			auto card = GetCardMouseOn();
+			if(card != nullptr && card->IsSelectable())
+				selectFunc(card);
 		}
 	}
+
 }
 
 void SelectWindow::Render(HDC hdc)
@@ -155,12 +176,15 @@ void SelectWindow::Render(HDC hdc)
 	__super::Render(hdc);
 
 	for (int i = 0; i < nRect; i++) {
-		if(cardRect[i].first->isActive)
+		if(cardRect[i].first->isActive && IsClickable(i))
 			cardRect[i].second->Render(hdc, cardRect[i].first, covered);
 	}
 
+	leftTab->Render(hdc, { 1, 0 });
+	rightTab->Render(hdc, { 0, 0 });
+
 	SetTextColor(hdc, WHITE);
-	TextOutA(hdc, (int)(pos.x - 4.0f * explain.size()), (int)Top() + 10, explain.c_str(), explain.size());
+	TextOutA(hdc, (int)(pos.x - FONT_WIDTH / 2 * explain.size()), (int)Top() + 10, explain.c_str(), (int)explain.size());
 	SetTextColor(hdc, BLACK);
 }
 
@@ -178,19 +202,58 @@ int SelectWindow::CurSelectedNum()
 	return result;
 }
 
-CardData* SelectWindow::GetMouseOn()
+Card* SelectWindow::GetCardMouseOn()
 {
-	CardData* result = nullptr;
+	Card* result = nullptr;
 	for (int i = 0; i < cardRect.size(); i++) {
 		if (!cardRect[i].first->isActive)
 			continue;
 
+		if (!IsClickable(i))
+			continue;
+
 		if (cardRect[i].first->IsPointCollision(mousePos)) {
-			result = cardRect[i].second->data;
+			result = cardRect[i].second;
 		}
 		else if (result != nullptr)
 			break;
 	}
 
 	return result;
+}
+
+void SelectWindow::SortRects()
+{
+	float margin = 5.0f;
+	float sum = margin + Left() + leftTab->size.x;
+
+	for (int i = 0; i < cardRect.size(); i++) {
+		cardRect[i].first->pos.x = sum + cardRect[i].first->size.x * 0.5f;
+		sum += cardRect[i].first->size.x + margin;
+	}
+}
+
+void SelectWindow::MoveRects()
+{
+	float move = 0.0f;
+	if (leftTab->IsPointCollision(mousePos)
+		&& cardRect[0].first->Left() < Left() + leftTab->size.x) {
+		move += 200.0f * DELTA;
+	} 
+
+	if (rightTab->IsPointCollision(mousePos)
+		&& cardRect[nRect - 1].first->Right() > Right() - rightTab->size.x) {
+		move -= 200.0f * DELTA;
+	}
+
+	if (abs(move) > 0.0f) {
+		for (auto& rect : cardRect)
+			rect.first->pos.x += move;
+	}
+}
+
+bool SelectWindow::IsClickable(int i)
+{
+	return (cardRect[i].first->Right() >= Left() + leftTab->size.x &&
+		cardRect[i].first->Left() <= Right() - rightTab->size.x);
 }

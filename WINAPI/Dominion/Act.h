@@ -461,7 +461,9 @@ class ArtisanEffectAct : public Act
 public:
 	ArtisanEffectAct(Act* parent, DominionPlayer* player);
 
-	void Init() override;
 	void NextSubAct() override;
+
+private:
+	const int COST_LIMIT = 5;
 };
 

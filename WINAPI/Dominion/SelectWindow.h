@@ -21,7 +21,7 @@ public:
 	void SetResize(Vector2 pos, Vector2 size);
 
 	void Done();
-	void EndCall() { endFunc(); isEnd = true; }
+	void EndCall();
 
 	void Update();
 	void Render(HDC hdc);
@@ -32,7 +32,11 @@ public:
 	const GetCardResult* GetSelected() { return selectedResult; }
 	const GetCardResult* GetUnSelected() { return unselectedResult; }
 
-	CardData* GetMouseOn();
+	Card* GetCardMouseOn();
+
+	void SortRects();
+	void MoveRects();
+	bool IsClickable(int i);
 
 	int minNum = 0, maxNum = 0;
 
@@ -53,5 +57,11 @@ private:
 	function<bool(Card*)> selectableFunc = nullptr;	//
 	function<void(Card*)> selectFunc = nullptr;			//클릭 시의 행동처리
 	function<void()> endFunc = nullptr;				//끝날 때의 결과처리
+
+	ImageRect* leftTab;
+	ImageRect* rightTab;
+
+	float waitTime = 0.0f;
+	float waitRate = 0.5f;
 };
 

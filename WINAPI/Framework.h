@@ -86,6 +86,9 @@ using namespace Utility;
 #define KEY_UP(k)		KeyBoard::Get()->Up(k)
 #define KEY_PRESS(k)	KeyBoard::Get()->Press(k)
 
+#define FONT_WIDTH 12
+#define FONT_HEIGHT 18
+
 #include "Object/Basic/GameObject.h"
 #include "Object/Basic/Rect.h"
 #include "Object/Basic/Circle.h"

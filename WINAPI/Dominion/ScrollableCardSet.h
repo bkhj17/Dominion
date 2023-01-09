@@ -23,7 +23,7 @@ private:
 	//지금은 카드 매니저에서 렌더 안 하니 괜찮다
 
 	bool isControlable;
-	float scrollSpeed = 100.0f;
+	const float scrollSpeed = 200.0f;
 
 	float xLength;
 

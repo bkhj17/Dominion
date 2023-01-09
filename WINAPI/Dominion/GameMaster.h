@@ -42,6 +42,8 @@ public:
 	void SetEndButton(string buttonText, Event endEvent, string explain = "");
 	void OffEndButton();
 
+	void SetExplain(string str) { strExplain = str; }
+
 	DominionGameState GetGameState() { return state; }
 public:
 	const int COIN_NUM = 3;

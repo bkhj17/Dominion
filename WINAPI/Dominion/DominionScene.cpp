@@ -16,11 +16,19 @@ DominionScene::DominionScene()
 
 	infoBox = new InfoBox();
 	infoBox->size = { 300.0f, WIN_HEIGHT-2};
-	infoBox->SetPos({ infoBox->Half().x + 10, CENTER_Y });
+	infoBox->SetPos({ infoBox->Half().x, CENTER_Y });
 
 	background = new ImageRect(L"Textures/Dominion/Texture/Background.bmp");
 	background->size = { WIN_WIDTH, WIN_HEIGHT };
 	background->pos = { CENTER_X, CENTER_Y };
+
+	messageBox = new ImageRect(L"Textures/Dominion/Texture/Message.bmp");
+	messageBox->pos = { CENTER_X, CENTER_Y };
+
+	font = CreateFont(FONT_HEIGHT, FONT_WIDTH, 0, 0, FW_LIGHT,
+		false, false, false, 
+		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, 
+		DEFAULT_QUALITY, DEFAULT_PITCH, L"¹è¹Î À»Áö·Î10³âÈÄÃ¼");
 }
 
 DominionScene::~DominionScene()
@@ -28,6 +36,8 @@ DominionScene::~DominionScene()
 	DominionGameMaster::Delete();
 	CardManager::Delete();
 	CardDataManager::Delete();
+
+	DeleteObject(font);
 }
 
 void DominionScene::Start()
@@ -62,12 +72,12 @@ void DominionScene::Update()
 
 void DominionScene::Render(HDC hdc)
 {
+	auto postFont = SelectObject(hdc, font);
+
 	background->Render(hdc);
 	infoBox->Render(hdc);
 
 	DominionGameMaster::Get()->Render(hdc);
-
-
 
 	SetBkMode(hdc, 2);
 	SetBkColor(hdc, BLACK);
@@ -87,12 +97,19 @@ void DominionScene::Render(HDC hdc)
 	}
 
 	SetTextColor(hdc, BLACK);
+
+	SelectObject(hdc, postFont);
 }
 
 void DominionScene::RenderGameEnd(HDC hdc)
 {
+	messageBox->Render(hdc);
+
+	int postBk = SetBkMode(hdc, 0);
+	auto postColor = SetTextColor(hdc, RGB(255, 152, 6));
+
 	wstring strGameEnd = L"°ÔÀÓ Á¾·á";
-	TextOutW(hdc, CENTER_X, CENTER_Y, strGameEnd.c_str(), (int)strGameEnd.size());
+	TextOutW(hdc, (int)(CENTER_X - strGameEnd.size()*(FONT_WIDTH>>1)), (int)CENTER_Y, strGameEnd.c_str(), (int)strGameEnd.size());
 
 	string strWinner = "";
 
@@ -101,6 +118,9 @@ void DominionScene::RenderGameEnd(HDC hdc)
 	}
 	
 	strWinner += (winner.size() > 1) ? "ºñ±è" : "½Â¸®";
-	
-	TextOutA(hdc, CENTER_X, CENTER_Y + 20, strWinner.c_str(), (int)strWinner.size());
+	TextOutA(hdc, (int)(CENTER_X - (int)(strWinner.size()-6) * (FONT_WIDTH >> 1)), (int)CENTER_Y + FONT_HEIGHT, strWinner.c_str(), (int)strWinner.size());
+
+
+	SetBkMode(hdc, postBk);
+	SetTextColor(hdc, postColor);
 }

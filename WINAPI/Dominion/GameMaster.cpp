@@ -126,8 +126,8 @@ void DominionGameMaster::Render(HDC hdc)
 
 	if (!strExplain.empty()) {
 		TextOutA(hdc, 
-			(int)(endButton->Right() - strExplain.size() * 8), 
-			(int)endButton->Top() - 20, 
+			(int)(endButton->Right() - strExplain.size() * FONT_WIDTH * 0.5f), 
+			(int)endButton->Top() - FONT_HEIGHT, 
 			strExplain.c_str(), 
 			(int)strExplain.size());
 	}
