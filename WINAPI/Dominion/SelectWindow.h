@@ -34,31 +34,33 @@ public:
 
 	Card* GetCardMouseOn();
 
-
-	int minNum = 0, maxNum = 0;
 private:
 	void SortRects();
 	void MoveRects();
 	bool IsClickable(int i);
 
-
+public:
+	int minNum = 0, maxNum = 0;
 private:
+	const UINT POOL_SIZE = 80;
+
 	DominionPlayer* player = nullptr;
-
-	string explain;
-	GetCardResult* request = nullptr;
-	GetCardResult* selectedResult = nullptr;
-	GetCardResult* unselectedResult = nullptr;
-	bool covered = false;
-
-	bool isEnd = false;
 
 	int nRect = 0;
 	vector<pair<ImageRect*, Card*>> cardRect;
 
+	
+	GetCardResult* request = nullptr;
+	GetCardResult* selectedResult = nullptr;
+	GetCardResult* unselectedResult = nullptr;
+
+	string explain;
+	bool covered = false;
 	function<bool(Card*)> selectableFunc = nullptr;	//
 	function<void(Card*)> selectFunc = nullptr;			//클릭 시의 행동처리
 	function<void()> endFunc = nullptr;				//끝날 때의 결과처리
+
+	bool isEnd = false;
 
 	ImageRect* leftTab;
 	ImageRect* rightTab;

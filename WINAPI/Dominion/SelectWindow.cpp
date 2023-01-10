@@ -11,7 +11,7 @@ SelectWindow::SelectWindow()
 	selectedResult = new GetCardResult();
 	unselectedResult = new GetCardResult();
 
-	cardRect.resize(80);
+	cardRect.resize(POOL_SIZE);
 
 	for (int i = 0; i < cardRect.size(); i++) {
 		cardRect[i] = { new ImageRect(), nullptr };
@@ -116,9 +116,9 @@ void SelectWindow::Done()
 }
 void SelectWindow::EndCall() 
 {
-	int cur = CurSelectedNum();
+	//최소 선택 이상이 선택된 경우에만 종료 가능
 	if (CurSelectedNum() >= minNum) {
-		endFunc(); 
+		endFunc();
 		isEnd = true; 
 	} 
 }
@@ -126,7 +126,7 @@ void SelectWindow::Update()
 {
 	if (isEnd) {
 		if (player->isAi && waitTime < waitRate) {
-			//AI라면 바로 끝내지 말고 잠깐 보여주자
+			//AI라면 바로 끝내지 말고 잠시 보여준다
 			waitTime += DELTA;
 			return;
 		}
