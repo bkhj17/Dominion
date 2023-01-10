@@ -46,6 +46,11 @@ enum class ActType {
 	COMMAND_REACT_CARD,
 };
 
+class ActResult {
+public:
+	virtual void Clear() = 0;
+};
+
 class Act
 {
 	friend class MainGameAct;

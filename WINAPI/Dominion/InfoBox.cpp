@@ -45,7 +45,6 @@ void InfoBox::Update()
 void InfoBox::Render(HDC hdc)
 {
 	int postMode = SetBkMode(hdc, 0);
-
 	__super::Render(hdc);
 
 	if (dataInfo != nullptr) {
@@ -56,7 +55,6 @@ void InfoBox::Render(HDC hdc)
 		CardDataManager::Get()->RenderCovered(hdc, showImage);
 
 	RenderScore(hdc);
-
 	SetBkMode(hdc, postMode);
 }
 
