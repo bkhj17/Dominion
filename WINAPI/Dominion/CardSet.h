@@ -1,6 +1,7 @@
 #pragma once
 class Card;
 
+//카드 뭉치
 class CardSet : public Rect
 {
 public:
@@ -10,6 +11,7 @@ public:
 	virtual void Update() {}
 	virtual void Render(HDC hdc);
 
+	//카드 넣기
 	void InputCard(Card* input, bool toTop = false, bool teleport = false);
 	void InputCard(vector<Card*>& inputs, bool toTop = false, bool teleport = false);
 	void InputCard(deque<Card*>& inputs, bool toTop = false, bool teleport = false);
@@ -25,6 +27,7 @@ public:
 
 	virtual Card* GetByPos(Vector2 pos);
 
+	//카드 빼기
 	Card* Pop();
 	Card* Out(Card* out);
 	Card* Out(int n);

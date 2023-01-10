@@ -9,12 +9,6 @@ using namespace ActCondition;
 
 //////////////////////////////////////////////////////////////////////////////
 
-void GetCardResult::Clear()
-{
-	cards.clear();
-	cards.shrink_to_fit();
-}
-
 //////////////////////////////////////////////////////////////////////////////
 
 Act::~Act()
@@ -143,7 +137,7 @@ void Act::Loop()
 	}
 }
 
-/// //////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
 
 TurnAct::TurnAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
@@ -155,6 +149,8 @@ TurnAct::TurnAct(Act* parent, DominionPlayer* player)
 	subActs.push_back(new BuyPhaseAct(this, player));
 	subActs.push_back(new TurnEndAct(this, player));
 }
+
+//////////////////////////////////////////////////////////////
 
 ActionPhaseAct::ActionPhaseAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
@@ -216,6 +212,8 @@ void ActionPhaseAct::Done() {
 	DominionGameMaster::Get()->OffEndButton();
 	endCall = false; 
 }
+
+//////////////////////////////////////////////////////////////
 
 BuyPhaseAct::BuyPhaseAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
@@ -283,6 +281,8 @@ void BuyPhaseAct::Update()
 	}
 }
 
+//////////////////////////////////////////////////////////////
+
 BuyCardAct::BuyCardAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
 {
@@ -344,6 +344,8 @@ bool BuyCardAct::SelectSupplierCondition(CardSupplier* supplier)
 {
 	return CostLimit(*(supplier->data), GetPlayerGold());
 }
+
+//////////////////////////////////////////////////////////////
 
 GetSupplierAct::GetSupplierAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
@@ -416,10 +418,7 @@ void GetSupplierAct::PlayerSelect(vector<CardSupplier*>& selectables)
 	}
 }
 
-void GetSupplierResult::Clear()
-{
-	supplier = nullptr;
-}
+//////////////////////////////////////////////////////////////
 
 SupplyCardAct::SupplyCardAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
@@ -1143,7 +1142,9 @@ void SelectFromWindowAct::Init(GetCardResult* request,
 		return;
 	}
 
-	SelectWindow::Get()->Init(player, request, (GetCardResult*)result, unselected, selectableFunc, selectFunc, endFunc, !player->IsController());
+	SelectWindow::Get()->Init(player, 
+		request, (GetCardResult*)result, unselected, 
+		selectableFunc, selectFunc, endFunc, !player->IsController());
 	SelectWindow::Get()->minNum = minNum;
 	SelectWindow::Get()->maxNum = maxNum;
 
@@ -1343,7 +1344,7 @@ void ArtisanEffectAct::NextSubAct()
 		//Result가 이미 선언되어 있으니 연결하면 잘만 된다
 	}
 	else if (curSubAct == 3) {
-		//패에서 카드 1장을 골라 
+		//패에서 카드 1장을 골라
 		a3->SetExplain("덱 맨 위에 놓을 카드 1장을 고르시오");
 		a3->Init(1, 1, &ActCondition::IsTrue);
 	}

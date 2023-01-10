@@ -153,15 +153,6 @@ private:
 	bool endCall = false;
 };
 
-//선택된 카드들 목록
-class GetCardResult : public ActResult {
-public:
-	deque<Card*> cards;
-
-	void Clear() override;
-};
-
-
 class TurnEndAct : public Act {
 public:
 	TurnEndAct(Act* parent, DominionPlayer* player);
@@ -203,17 +194,11 @@ private:
 
 };
 
-//공급처 선택 결과
-class GetSupplierResult : public ActResult {
-public:
-	CardSupplier* supplier = nullptr;
-	void Clear() override;
-};
 //공급처 선택
 class GetSupplierAct : public Act {
 public:
 	GetSupplierAct(Act* parent, DominionPlayer* player);
-		//
+	//
 	virtual void Init() override;
 	void Init(function<bool(CardSupplier*)> condition);
 	void Update();

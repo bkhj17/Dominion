@@ -15,7 +15,6 @@ void CardSupplier::Init(int key, int num)
 
 void CardSupplier::Render(HDC hdc)
 {
-
 	if (num == 0)
 		__super::Render(hdc, 125, data->frame);
 	else
