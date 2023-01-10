@@ -36,6 +36,7 @@
 #include <memory.h>
 #include <tchar.h>
 */
+// c 헤더
 #include <cmath>
 #include <cstring>
 
@@ -119,9 +120,11 @@ using namespace Utility;
 //Scenes Header
 #include "Scenes/Scene.h"
 
-#include "Dominion/Act.h"
 #include "Dominion/MyMovement.h"
 #include "Dominion/Card.h"
+#include "Dominion/CardSupplier.h"
+#include "Dominion/ActResult.h"
+#include "Dominion/Act.h"
 
 #include "Dominion/CardDataManager.h"
 #include "Dominion/CardManager.h"

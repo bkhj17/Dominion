@@ -15,8 +15,7 @@ DominionScene::DominionScene()
 	Observer::Get();
 
 	infoBox = new InfoBox();
-	infoBox->size = { 300.0f, WIN_HEIGHT-2};
-	infoBox->SetPos({ infoBox->Half().x, CENTER_Y });
+	infoBox->SetPos({ infoBox->Half().x, CENTER_Y }, { 300.0f, WIN_HEIGHT - 2 });
 
 	background = new ImageRect(L"Textures/Dominion/Texture/Background.bmp");
 	background->size = { WIN_WIDTH, WIN_HEIGHT };

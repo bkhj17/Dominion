@@ -34,11 +34,13 @@ public:
 
 	Card* GetCardMouseOn();
 
+
+	int minNum = 0, maxNum = 0;
+private:
 	void SortRects();
 	void MoveRects();
 	bool IsClickable(int i);
 
-	int minNum = 0, maxNum = 0;
 
 private:
 	DominionPlayer* player = nullptr;

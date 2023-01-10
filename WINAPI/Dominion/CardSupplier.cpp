@@ -1,18 +1,9 @@
 #include "framework.h"
-#include "Card.h"
-#include "CardDataManager.h"
-#include "CardManager.h"
-#include "CardSupplier.h"
-#include "GameMaster.h"
-
-CardSupplier::CardSupplier()
-{
-}
 
 void CardSupplier::Init(int key, int num)
 {
 	this->num = num;
-	this->data = &CardDataManager::Get()->datas[key];
+	this->data = CardDataManager::Get()->GetData(key);
 
 	auto originSize = size;
 	SetTexture(data->texture);

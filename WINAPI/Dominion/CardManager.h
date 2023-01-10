@@ -6,7 +6,6 @@ private:
 
 	CardManager();
 	~CardManager();
-
 public:
 	void CreateObjects(int key, UINT poolSize);
 	GameObject* PopByIntKey(int key);
@@ -14,7 +13,7 @@ public:
 	HPEN GetSelectablePen() { return selectablePen; }
 	HPEN GetSelectedPen() { return selectedPen; }
 private:
-	HPEN selectablePen;
-	HPEN selectedPen;
+	HPEN selectablePen;	//선택 가능한 카드 표시용
+	HPEN selectedPen;	//선택한 카드 표시용
 };
 

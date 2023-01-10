@@ -214,7 +214,7 @@ void DominionGameMaster::MakeSuppliers( )
 			WIN_WIDTH * 0.2f + 380.0f + col * kingdom->size.x,
 			240.0f + row * kingdom->size.y
 		};
-		if(CardDataManager::Get()->datas[kingdomKey[kingdomIndex]].type[(int)CardType::VICTORY])
+		if(CardDataManager::Get()->GetData(kingdomKey[kingdomIndex])->type[(int)CardType::VICTORY])
 			kingdom->Init(kingdomKey[kingdomIndex], 8);
 		else 
 			kingdom->Init(kingdomKey[kingdomIndex], 10);
@@ -229,7 +229,6 @@ vector<int> DominionGameMaster::GetRandomSupplierKey(int num)
 		v[i-7] = i;
 	}
 
-	
 	vector<CardKey> setkey = {
 		CardKey::SMITHY,
 		CardKey::VILLAGE,
@@ -255,7 +254,7 @@ vector<int> DominionGameMaster::GetRandomSupplierKey(int num)
 	return v;
 }
 
-CardData* DominionGameMaster::GetMouseOn()
+const CardData* DominionGameMaster::GetMouseOn()
 {
 	for (auto supplier : suppliers) {
 		if (supplier->IsPointCollision(mousePos)) {

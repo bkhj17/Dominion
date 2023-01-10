@@ -27,6 +27,7 @@ void CardSet::Render(HDC hdc)
 	if (isOneSet) {
 		if (isCovered) {
 			if(cards.empty())
+				//카드 없으면 반투명
 				CardDataManager::Get()->RenderCovered(hdc, this, 100);
 			else
 				CardDataManager::Get()->RenderCovered(hdc, this);
@@ -36,15 +37,15 @@ void CardSet::Render(HDC hdc)
 		else
 			cards.back()->Render(hdc);
 
-		SetBkMode(hdc, 2);
-		SetTextColor(hdc, cards.empty() ? WHITE : YELLOW);
+		//카드 수량 출력
+		auto postBk = SetBkMode(hdc, 2);
+		auto postColor = SetTextColor(hdc, cards.empty() ? WHITE : YELLOW);
 
 		wstring str = to_wstring(cards.size());
 		TextOut(hdc, (int)Left(), (int)Top(), str.c_str(), (int)str.size());
 
-		SetTextColor(hdc, BLACK);
-		SetBkMode(hdc, 0);
-
+		SetTextColor(hdc, postColor);
+		SetBkMode(hdc, postBk);
 	}
 	else {
 		for (auto card : cards)
@@ -137,9 +138,8 @@ void CardSet::SetCardPos(Card* card, int index, bool teleport)
 
 void CardSet::SortCardPos()
 {
-	for (int i = 0; i < cards.size(); i++) {
+	for (int i = 0; i < cards.size(); i++)
 		SetCardPos(cards[i], i, false);
-	}
 }
 
 void CardSet::Shuffle()
@@ -148,20 +148,23 @@ void CardSet::Shuffle()
 		int p = Random(i, (int)cards.size() - 1);
 		swap(cards[i], cards[p]);
 	}
+
+	SortCardPos();
 }
 
 Card* CardSet::GetByPos(Vector2 pos)
 {
 	Card* result = nullptr;
 	if (isOneSet) {
+		//쌓은 카드셋일 경우 위 혹은 아래 1장 출력
 		if (this->IsPointCollision(pos) && !cards.empty())
 			result = frontRender ? cards.front() : cards.back();
 	} else {
 		for (auto c : cards) {
-			if (c->IsPointCollision(pos)) {
-				//카드가 겹치는 경우 제일 위에 있는 카드를 집어야 하기 때문에 바로 끊지 않는다 - 겹치는 경우는 없지만 그렇게 했다
-				if (c->isActive && c->isVisible && !c->isCovered)
-					result = c;
+			//커서가 카드 위에 있고 
+			if (c->IsMouseOn() && !c->isCovered) {
+				//카드가 겹치는 경우 제일 위에 있는 카드를 집어야 하기 때문에 바로 끊지 않는다
+				result = c;
 			}
 		}
 	}
@@ -184,15 +187,11 @@ Card* CardSet::Pop()
 Card* CardSet::Out(Card* out)
 {
 	Card* result = nullptr;
-	for (auto it = cards.begin(); it != cards.end(); it++) {
-		if (out == *it) {
-			result = *it;
-			cards.erase(it);
-			break;
-		}
+	for (int i = 0; i < cards.size(); i++) {
+		if (cards[i] == out)
+			Out(i);
 	}
 
-	SortCardPos();
 	return result;
 }
 
@@ -203,6 +202,8 @@ Card* CardSet::Out(int n)
 
 	Card* out = cards[n];
 	cards.erase(cards.begin() + n);
+
+	//남은 카드들 재배치
 	SortCardPos();
 	return out;
 }
@@ -211,16 +212,19 @@ bool CardSet::FindSelectable(function<bool(Card*)> condition)
 {
 	bool result = false;
 
+	//condition에 따라 카드들 선택 가능 여부 설정
 	for (auto card : cards) {
 		card->SetSelectable(condition);
 		result |= card->IsSelectable();
 	}
 
+	//선택 가능한 카드가 존재했는지 여부 반환
 	return result;
 }
 
 void CardSet::SetUnselectable()
 {
+	//모든 카드 선택 해제
 	for (auto card : cards) {
 		card->SetSelected(false);
 		card->SetSelectable(nullptr);

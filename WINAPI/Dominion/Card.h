@@ -1,5 +1,16 @@
 #pragma once
 
+//카드의 범주
+enum class CardType : int {
+	TREASURE,
+	VICTORY,
+	CURSE,
+	ACTION,
+	ATTACK,
+	REACT,
+	END
+};
+//카드의 종류
 enum class CardKey : int {
 	COOPER = 0,		//동화
 	SILVER,			//은화
@@ -37,18 +48,6 @@ enum class CardKey : int {
 	SIZE
 };
 
-enum class CardType : int {
-	TREASURE,
-	VICTORY,
-	CURSE,
-	ACTION,
-	ATTACK,
-	REACT,
-	END
-};
-
-
-
 class CardData {
 public:
 	CardData() = default;
@@ -63,8 +62,7 @@ public:
 	int victory = 0;
 	bool sVictory = 0;
 
-
-	vector<int> acts;
+//	vector<int> acts;
 	Texture* texture = nullptr;
 	POINT covered = { 0,0 }, frame = { 0,0 };
 };
@@ -76,7 +74,7 @@ public:
 	static const Vector2 DEFAULT_SIZE;
 	
 public:
-	Card(CardData* data);
+	Card(const CardData* data);
 	~Card();
 
 	void Update() override;
@@ -84,11 +82,13 @@ public:
 	void Render(HDC hdc, Rect* renderPos, bool covered);
 
 	bool IsType(CardType type) { return data->type[(int)type]; }
+	bool IsMouseOn();
 
 	bool isVisible = true;
 	bool isCovered = false;
-	class MyPointMovement* movement;
-	CardData* data;
+	
+	MyPointMovement* movement;
+	const CardData* data;
 
 	function<int(int)> SpecialVictory = nullptr;
 

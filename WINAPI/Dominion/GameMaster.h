@@ -32,7 +32,7 @@ public:
 	vector<int> GetRandomSupplierKey(int num = 10);
 
 
-	CardData* GetMouseOn();
+	const CardData* GetMouseOn();
 
 	DominionPlayer* GetTurnPlayer() { return players[turnPlayer]; }
 	DominionPlayer* GetControlPlayer() { return players[control]; }

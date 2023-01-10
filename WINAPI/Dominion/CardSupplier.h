@@ -2,12 +2,13 @@
 
 class CardData;
 
+//카드 공급처 객체
 class CardSupplier : public ImageRect
 {
 public:
-	CardSupplier();
+	CardSupplier() = default;
 
-	CardData* data = nullptr;
+	const CardData* data = nullptr;
 
 	void Init(int key, int num = 10);
 	void Render(HDC hdc);

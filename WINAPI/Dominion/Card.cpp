@@ -2,7 +2,7 @@
 
 const Vector2 Card::DEFAULT_SIZE = { 60, 90 };
 
-Card::Card(CardData* data)
+Card::Card(const CardData* data)
 {
 	movement = new MyPointMovement(this);
 	this->data = data;
@@ -10,8 +10,6 @@ Card::Card(CardData* data)
 	size = { 60.0f, 90.0f };
 
 	ImageRect::SetTexture(data->texture);
-
-	
 }
 
 Card::~Card()
@@ -29,8 +27,6 @@ void Card::Render(HDC hdc)
 {
 	if (!isActive || !isVisible)
 		return;
-
-	//소유자
 
 	Render(hdc, this, isCovered);
 }
@@ -57,8 +53,17 @@ void Card::Render(HDC hdc, Rect* cardRect, bool covered)
 	}
 }
 
+bool Card::IsMouseOn()
+{
+	if (!isActive || !isVisible)
+		return false;
+
+	return IsPointCollision(mousePos);
+}
+
 void Card::SetSelectable(function<bool(Card*)> condition)
 {
-	
-	isSelectable = isSelected || ( condition ? condition(this) : false);
+	//이미 선택된 카드 => 해제를 위해 선택 가능 상태로
+	//아니라면 condition에 따라
+	isSelectable = isSelected || (condition ? condition(this) : false);
 }

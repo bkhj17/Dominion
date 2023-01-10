@@ -61,9 +61,9 @@ void SelectWindow::Init(
 
 	nRect = (int)request->cards.size();
 
-	this->selectableFunc = selectableFunc;
-	this->selectFunc = selectFunc;
-	this->endFunc = endFunc;
+	this->selectableFunc = selectableFunc;	//선택 가능 검사 함수
+	this->selectFunc = selectFunc;			//선택 시 처리 함수
+	this->endFunc = endFunc;				//선택 종료 후 결과 처리 함수
 
 	for (int i = 0; i < nRect; i++) {
 		cardRect[i].second = request->cards[i];
@@ -139,6 +139,7 @@ void SelectWindow::Update()
 		cardRect[i].second->SetSelectable(selectableFunc);
 	}
 	if (player->isAi) {
+		//AI : 앞에서부터 선택 가능한 것들 선택
 		int cnt = 0;
 		for (int i = 0; i < nRect; i++) {
 			if (cardRect[i].second->IsSelectable() && !cardRect[i].second->IsSelected())
@@ -147,6 +148,7 @@ void SelectWindow::Update()
 			if (cardRect[i].second->IsSelected())
 				cnt++;
 
+			//다 골랐으면 끝
 			if (cnt >= minNum) {
 				EndCall();
 				return;
@@ -191,7 +193,7 @@ void SelectWindow::Render(HDC hdc)
 int SelectWindow::CurSelectedNum()
 {
 	int result = 0;
-	for (int i = 0; i < cardRect.size(); i++) {
+	for (int i = 0; i < nRect; i++) {
 		if (!cardRect[i].first->isActive)
 			continue;
 
@@ -205,7 +207,7 @@ int SelectWindow::CurSelectedNum()
 Card* SelectWindow::GetCardMouseOn()
 {
 	Card* result = nullptr;
-	for (int i = 0; i < cardRect.size(); i++) {
+	for (int i = 0; i < nRect; i++) {
 		if (!cardRect[i].first->isActive)
 			continue;
 
@@ -227,7 +229,7 @@ void SelectWindow::SortRects()
 	float margin = 5.0f;
 	float sum = margin + Left() + leftTab->size.x;
 
-	for (int i = 0; i < cardRect.size(); i++) {
+	for (int i = 0; i < nRect; i++) {
 		cardRect[i].first->pos.x = sum + cardRect[i].first->size.x * 0.5f;
 		sum += cardRect[i].first->size.x + margin;
 	}

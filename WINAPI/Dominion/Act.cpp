@@ -6,6 +6,17 @@
 
 using namespace ActCondition;
 
+
+//////////////////////////////////////////////////////////////////////////////
+
+void GetCardResult::Clear()
+{
+	cards.clear();
+	cards.shrink_to_fit();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
 Act::~Act()
 {
 	DeleteSubAct();
@@ -239,7 +250,7 @@ void BuyPhaseAct::Update()
 			if (subActs[curSubAct]->isDoing)
 				return;
 			if (subActs[curSubAct]->isDone) {
-				if (subActs[curSubAct]->GetShutDown())
+				if (subActs[curSubAct]->shutDown)
 					curSubAct++;
 				else
 					subActs[curSubAct]->Loop();
@@ -288,17 +299,23 @@ void BuyCardAct::Init()
 
 void BuyCardAct::NextSubAct()
 {
-	if (curSubAct == 0) {
-		auto a0 = (GetSupplierAct*)subActs[0];
-		//구매 조건
-		a0->Init([this](CardSupplier* supplier) -> bool {
-			return CostLimit(*(supplier->data), GetPlayerGold());
-			});
+	auto actSelectSupplier = (GetSupplierAct*)subActs[0];
+	auto supplyCard = (SupplyCardAct*)subActs[1];
+	auto inputToDiscard = (InputCardAct*)subActs[2];
+	
+	switch (curSubAct) {
+	case 0:
+	{
+		//구매할 카드 공급처 선택
+		//구매 조건 설정
+		actSelectSupplier->Init(bind(&BuyCardAct::SelectSupplierCondition, this, placeholders::_1));
 	}
-	else if (curSubAct == 1) {
+		break;
+	case 1:
+	{
 		isDoing = true;
-		auto r0 = (GetSupplierResult*)subActs[0]->ReturnResult();
-		auto selectedSupplier = r0->supplier;
+		auto selectedSupplierResult = (GetSupplierResult*)subActs[0]->ReturnResult();
+		auto selectedSupplier = selectedSupplierResult->supplier;
 		if (selectedSupplier == nullptr) {
 			shutDown = true;
 			Done();
@@ -309,17 +326,23 @@ void BuyCardAct::NextSubAct()
 		player->gold -= cost;	//구매비용 지출
 		player->numBuy--;		//구매횟수 저하
 
-		auto supply = (SupplyCardAct*)subActs[1];
-		supply->SetRequested(r0);
-		supply->Init();
+		supplyCard->SetRequested(selectedSupplierResult);
+		supplyCard->Init();
 	}
-	else if (curSubAct == 2) {
-		Card* card = ((GetCardResult*)subActs[1]->ReturnResult())->cards[0];
-		auto inputAct = (InputCardAct*)subActs[2];
-		auto cardResult = (GetCardResult*)subActs[1]->ReturnResult();
-		inputAct->Init(player->discard, cardResult, false);
-		inputAct->isReady = true;
+		break;
+	case 2:
+	{
+		auto cardResult = (GetCardResult*)supplyCard->ReturnResult();
+		inputToDiscard->Init(player->discard, cardResult, false);
+		inputToDiscard->isReady = true;
 	}
+		break;
+	}
+}
+
+bool BuyCardAct::SelectSupplierCondition(CardSupplier* supplier)
+{
+	return CostLimit(*(supplier->data), GetPlayerGold());
 }
 
 GetSupplierAct::GetSupplierAct(Act* parent, DominionPlayer* player)
@@ -342,44 +365,55 @@ void GetSupplierAct::Init(function<bool(CardSupplier*)> condition)
 
 void GetSupplierAct::Update()
 {
+	vector<CardSupplier*> selectables = SearchSelectables();
+	player->isAi ? AISelect(selectables) : PlayerSelect(selectables);
+}
+
+void GetSupplierAct::Done()
+{
+	for (auto supplier : DominionGameMaster::Get()->suppliers)
+		supplier->SetSelectable(nullptr);
+	Act::Done();
+}
+
+vector<CardSupplier*> GetSupplierAct::SearchSelectables()
+{
 	vector<CardSupplier*> selectables;
 	for (auto supplier : DominionGameMaster::Get()->suppliers) {
 		supplier->SetSelectable(condition);
-
+		//ai가 저주나 동화를 사지 않게 하기 위한 조건(둘 다 cost 0)
 		bool aiDoNotBuyZero = !(player->isAi && supplier->data->cost == 0);
 
 		if (supplier->IsSelectable() && aiDoNotBuyZero)
 			selectables.push_back(supplier);
 	}
-
-	if (player->isAi) {
-		//선택 가능한 것들 중 아무거나 집는다.
-		//0짜리는 안 잡는다
-		if (!selectables.empty()) {
-			int i = rand() % selectables.size();
-			((GetSupplierResult*)result)->supplier = selectables[i];
-		}
-
-		Done();
-	}
-	else {
-		for (auto supplier : selectables) {
-			if (KEY_DOWN(VK_LBUTTON) && supplier->IsPointCollision(mousePos)) {
-				((GetSupplierResult*)result)->supplier = supplier;
-				Done();
-				break;
-			}
-		}
-	}
-	selectables.clear();
+	return selectables;
 }
 
-void GetSupplierAct::Done()
+void GetSupplierAct::AISelect(vector<CardSupplier*>& selectables)
 {
-	for (auto supplier : DominionGameMaster::Get()->suppliers) {
-		supplier->SetSelectable(nullptr);
+	//선택 가능한 것들 중 아무거나 집는다.
+	//0짜리는 안 잡는다
+	if (!selectables.empty()) {
+		int i = rand() % selectables.size();
+		((GetSupplierResult*)result)->supplier = selectables[i];
 	}
-	Act::Done();
+
+	Done();
+}
+
+void GetSupplierAct::PlayerSelect(vector<CardSupplier*>& selectables)
+{
+	if (!KEY_DOWN(VK_LBUTTON))
+		return;
+
+	for (auto supplier : selectables) {
+		if (supplier->IsPointCollision(mousePos)) {
+			((GetSupplierResult*)result)->supplier = supplier;
+			Done();
+			break;
+		}
+	}
 }
 
 void GetSupplierResult::Clear()
@@ -408,43 +442,6 @@ void SupplyCardAct::Update()
 	result->Clear();
 	((GetCardResult*)result)->cards.push_back(card);
 	Done();
-}
-
-void CardMoveAct::Init(Vector2 pos, bool isCovered, float timeRate)
-{
-	Act::Init();
-
-	this->pos = pos;
-	cards = ((GetCardResult*)requested)->cards;
-	curCard = 0;
-	time = this->timeRate = timeRate;
-}
-
-void CardMoveAct::Update()
-{
-	if (curCard == cards.size()) {
-		bool yet = false;
-		for (auto card : cards) {
-			yet |= card->movement->IsMoving();
-		}
-
-		if (!yet) {
-			DeleteResult();
-			auto result = new GetCardResult();
-			for (auto card : cards)
-				result->cards.push_back(card);
-			this->result = result;
-			Done();
-		}
-	}
-	else {
-		time += DELTA;
-		if (time >= timeRate) {
-			time = 0.0f;
-			cards[curCard]->isVisible = true;
-			cards[curCard++]->movement->SetTargetPosByTime(pos, 0.3f);
-		}
-	}
 }
 
 UseCardFromHandAct::UseCardFromHandAct(Act* parent, DominionPlayer* player)
@@ -505,8 +502,6 @@ InputCardAct::InputCardAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
 {
 	result = new GetCardResult();
-
-	subActs.push_back(new CardMoveAct(this, player));
 }
 
 void InputCardAct::Init(CardSet* cardSet, GetCardResult* requested, bool toTop, bool visible)
@@ -515,7 +510,6 @@ void InputCardAct::Init(CardSet* cardSet, GetCardResult* requested, bool toTop, 
 
 	this->cardSet = cardSet;
 	this->requested = requested;
-
 	this->toTop = toTop;
 
 	curCard = 0;
@@ -525,12 +519,15 @@ void InputCardAct::Update()
 {
 	auto& input = ((GetCardResult*)requested)->cards;
 	if (curCard == input.size()) {
-		bool yet = false;
-		for (auto card : input) {
-			yet |= card->movement->IsMoving();
-		}
+		//모든 카드가 이미 출발했다
 
+		//도착 안 한 카드가 있는지 확인
+		bool yet = false;
+		for (auto card : input)
+			yet |= card->movement->IsMoving();
+		
 		if (!yet) {
+			//전부 도착했다면 Act 종료
 			auto cardResult = (GetCardResult*)result;
 			for (auto card : input)
 				cardResult->cards.push_back(card);
@@ -538,8 +535,10 @@ void InputCardAct::Update()
 		}
 	}
 	else {
+		//아직 출발 안 한 카드가 있다
 		time += DELTA;
 		if (time >= timeRate) {
+			//대기 시간 기다렸다 1장 출발
 			time = 0.0f;
 			cardSet->InputCard(input[curCard++], toTop);
 		}
@@ -548,8 +547,11 @@ void InputCardAct::Update()
 
 void InputCardAct::Done()
 {
+	//새로운 카드가 들어왔을 수 있기 때문에 점수 계산 
 	Observer::Get()->ExcuteParamEvents("CalcScore", player);
+	//목적지 연결 풀기
 	cardSet = nullptr;
+	//종료 선언
 	Act::Done();
 }
 
@@ -635,11 +637,6 @@ void SelectFromHandAct::Done()
 	Act::Done();
 }
 
-SelectRangeFromHandAct::SelectRangeFromHandAct(Act* parent, DominionPlayer* player)
-	: SelectFromHandAct(parent, player)
-{
-}
-
 void SelectRangeFromHandAct::Init(int minNum, int maxNum, function<bool(Card*)> condition)
 {
 	if (maxNum == 0) {
@@ -694,6 +691,12 @@ void SelectRangeFromHandAct::EndCall()
 {
 	if (selected.size() >= minNum)
 		isEnd = true;
+}
+
+void SelectRangeFromHandAct::SetEnd(bool end) {
+	//최소 선택수보다 많이 선택됐을 경우에만 종료 선언 가능
+	if (selected.size() >= minNum)
+		isEnd = end;
 }
 
 /// <summary>
@@ -976,6 +979,9 @@ void DrawCardAct::NextSubAct()
 		a2->Init(player->hand, r1);
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+
 CardFromDeckAct::CardFromDeckAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
 {
@@ -984,8 +990,14 @@ CardFromDeckAct::CardFromDeckAct(Act* parent, DominionPlayer* player)
 
 void CardFromDeckAct::Init(int num)
 {
+	this->num = num;
 	result->Clear();
 
+	isReady = true;
+}
+
+void CardFromDeckAct::Update() 
+{
 	//버린 카드에서 덱 보충
 	if (player->deck->cards.size() < num)
 		player->ReloadDeck();
@@ -997,14 +1009,10 @@ void CardFromDeckAct::Init(int num)
 	for (int i = 0; i < num; i++) {
 		cardResult->cards.push_back(player->deck->Pop());
 	}
-	isReady = true;
+	Done(); 
 }
 
-void GetCardResult::Clear()
-{
-	cards.clear();
-	cards.shrink_to_fit();
-}
+//////////////////////////////////////////////////////////////////////////////
 
 TurnEndAct::TurnEndAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)

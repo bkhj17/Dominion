@@ -46,16 +46,6 @@ enum class ActType {
 	COMMAND_REACT_CARD,
 };
 
-class ActResult {
-public:
-	virtual void Clear() = 0;
-};
-
-class CardListData {
-public:
-	deque<Card*> cards;
-};
-
 class Act
 {
 	friend class MainGameAct;
@@ -71,18 +61,14 @@ public:
 	bool DefaultUpdate();
 	virtual void NextSubAct(); 
 
+	//액터 진행상태 초기화
 	void Loop();
-
-	virtual void Render(HDC hdc) {};
 
 	//자신의 실행 결과 반환
 	ActResult* ReturnResult() { return result; }
 
 	void ChangePlayer(DominionPlayer* newPlayer);
 	int GetPlayerGold();
-	bool GetShutDown() { return shutDown; }
-
-
 protected:
 	virtual void Done();
 	void DeleteResult();
@@ -92,25 +78,32 @@ protected:
 	void SetCurActThis();
 	void ReturnCurAct();
 public:
+	//액트 타입
 	ActType actType = ActType::ACT;
 
-	bool shutDown = false;
+	//준비 여부 : true면 Act 실행
 	bool isReady = false;
+	//액트 루프 없음
+	bool shutDown = false;
+	//액트 처리 중(병렬처리 중 다른 액트 처리 안 하게 함)
 	bool isDoing = false;
+	// Act 종료 여부
 	bool isDone = false;
 protected:
+	//현재 처리할 
 	int curSubAct = 0;
+	//자신의 상위 액트
 	Act* parent;
-	
+	//액트를 실행할 플레이어
 	DominionPlayer* player;
+	//자신의 하위 액트
 	deque<Act*> subActs;
-
-	bool waiting = true;
 	
 	ActResult* requested = nullptr;
 	ActResult* result = nullptr;
 };
  
+//게임 액트 : 최상위 액트. 
 class MainGameAct : public Act {
 public:
 	MainGameAct();
@@ -118,27 +111,26 @@ public:
 	void Update() override;
 };
 
-
+//턴 액트 : 1턴 진행
 class TurnAct : public Act {
 public:
 	TurnAct(Act* parent, DominionPlayer* player);
-	~TurnAct() = default;
 };
 
+//턴 시작 액트
 class TurnStartAct : public Act {
 public:
 	TurnStartAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
-	~TurnStartAct() = default;
 
 	void Update();
 };
 
+//액션 페이즈 액트 : 액션 카드 사용
 class ActionPhaseAct : public Act {
 public:
 	ActionPhaseAct(Act* parent, DominionPlayer* player);
 
-	// Act을(를) 통해 상속됨
-	void Init() override;
+	virtual void Init() override;
 	virtual void Update() override;
 
 	void EndCall() { endCall = true; }
@@ -151,7 +143,6 @@ private:
 class BuyPhaseAct : public Act {
 public:
 	BuyPhaseAct(Act* parent, DominionPlayer* player);
-	// Act을(를) 통해 상속됨
 
 	virtual void Init() override;
 	virtual void Update() override;
@@ -205,9 +196,20 @@ public:
 
 	void Init() override;
 	void NextSubAct() override;
+
+private:
+	bool SelectSupplierCondition(CardSupplier* supplier);
+
+
 };
 
-//공급처 받기
+//공급처 선택 결과
+class GetSupplierResult : public ActResult {
+public:
+	CardSupplier* supplier = nullptr;
+	void Clear() override;
+};
+//공급처 선택
 class GetSupplierAct : public Act {
 public:
 	GetSupplierAct(Act* parent, DominionPlayer* player);
@@ -218,15 +220,12 @@ public:
 
 	void Done() override;
 private:
+	vector<CardSupplier*> SearchSelectables();
+	void AISelect(vector<CardSupplier*>& selectables);
+	void PlayerSelect(vector<CardSupplier*>& selectables);
+
+private:
 	function<bool(CardSupplier*)> condition;
-};
-
-//선택된 공급처
-class GetSupplierResult : public ActResult {
-public:
-	CardSupplier* supplier = nullptr;
-
-	void Clear() override;
 };
 
 //공급처에서 카드 꺼내기
@@ -237,27 +236,12 @@ public:
 	virtual void Update() override;
 };
 
-class CardMoveAct : public Act {
-public:
-	CardMoveAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
-	void Init(Vector2 pos, bool isCovered, float timeRate = 0.3f);
-	void Update();
-private:
-	int curCard = 0;
-	deque<Card*> cards;
-	
-	Vector2 pos;
-
-	float time = 0.0f;
-	float timeRate = 0.3f;
-};
-
+//카드를 카드셋에 넣기
 class InputCardAct : public Act
 {
 public:
 	InputCardAct(Act* parent, DominionPlayer* player);
 
-	//카드 셋으로 클래스 정의?
 	void Init(CardSet* cardSet, GetCardResult* requested, bool toTop = false, bool visible = true);
 	void SetTimeRate(float timeRate) { this->timeRate = timeRate; }
 	void Update();
@@ -291,13 +275,14 @@ protected:
 class SelectRangeFromHandAct : public SelectFromHandAct
 {
 public:
-	SelectRangeFromHandAct(Act* parent, DominionPlayer* player);
+	SelectRangeFromHandAct(Act* parent, DominionPlayer* player) : SelectFromHandAct(parent, player) {}
 	virtual void Init(int minNum, int maxNum, function<bool(Card*)> condition);
 	virtual void Update() override;
 	virtual void Done() override;
 
 	void SetExplain(string str) { explain = str; }
 	int GetMinNum() { return minNum; }
+
 
 	string NumRangeText() { 
 		return minNum == selectNum ? to_string(selectNum)
@@ -306,19 +291,22 @@ public:
 
 	void EndCall();
 protected:
-	void SetEnd(bool end) { 
-		if(selected.size() >= minNum)
-			isEnd = end; 
-	}
+	void SetEnd(bool end);
 protected:
+	//버튼 문구
 	const string END_BUTTON_TEXT = "선택 완료";
 
+	//최소 숫자
 	int minNum = 0;
+	//최대 숫자는 SelectFromHandAct::selectNum을 사용
+
+	//버튼에 의한 종료 여부
 	bool isEnd = false;
+	//설명문구
 	string explain = "";
 };
 
-
+//재물 획득 액트
 class GainGoldAct : public Act {
 public:
 	GainGoldAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
@@ -329,7 +317,7 @@ private:
 	int num = 0;
 };
 
-
+//액션 횟수 획득 액트
 class GainActionAct : public Act {
 public:
 	GainActionAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
@@ -340,6 +328,7 @@ private:
 	int num = 0;
 };
 
+//구매 횟수 획득 액트
 class GainBuyAct : public Act {
 public:
 	GainBuyAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
@@ -350,7 +339,7 @@ private:
 	int num = 0;
 };
 
-//카드 효과 발동 시키는 놈. 우선 동, 은, 금만 하자
+//카드 효과 발동
 class ActiveCardAct : public Act {
 public:
 	ActiveCardAct(Act* parent, DominionPlayer* player) : Act(parent, player) {}
@@ -359,14 +348,17 @@ public:
 	//void Update();
 };
 
+//덱에서 카드 가져오기 : 드로우 등에 사용
 class CardFromDeckAct : public Act 
 {
 public:
 	CardFromDeckAct(Act* parent, DominionPlayer* player);
-	//;
 
 	void Init(int num);
-	void Update() { Done(); }
+	void Update();
+
+private:
+	int num = 0;
 };
 
 class DrawCardAct : public Act {
@@ -443,7 +435,6 @@ private:
 	void Select(Card* card);
 	void EndSelect();
 };
-
 
 //밀렵꾼
 class PoacherEffectAct : public Act

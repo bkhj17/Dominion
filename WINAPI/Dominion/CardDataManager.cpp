@@ -9,6 +9,16 @@ CardDataManager::CardDataManager()
 	LoadData();
 }
 
+const CardData* CardDataManager::GetData(int key)
+{
+	//키 값에 맞는 데이터가 없다
+	if (datas.find(key) == datas.end())
+		return nullptr;
+
+	//있으면 포인터 반환
+	return &datas[key];
+}
+
 void CardDataManager::RenderCovered(HDC hdc, Rect* cardRect)
 {
 	texture->Render(hdc, cardRect);
