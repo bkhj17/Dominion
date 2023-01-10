@@ -71,8 +71,8 @@ void Button::Render(HDC hdc)
 	}
 	COLORREF oldColor = SetTextColor(hdc, fontColor);
 
-	RECT rect = { (int)Left(), (int)pos.y - (fontSize>>1), Right(), (int)pos.y + (fontSize>>1) };
-	DrawTextA(hdc, text.c_str(), text.length(), &rect, (int)DT_CENTER);
+	RECT rect = { (int)Left(), (int)pos.y - (fontSize>>1), (int)Right(), (int)pos.y + (fontSize>>1) };
+	DrawTextA(hdc, text.c_str(), (int)text.length(), &rect, DT_CENTER);
 
 	SetTextColor(hdc, oldColor);
 	if (font) {

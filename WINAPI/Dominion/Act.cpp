@@ -23,7 +23,8 @@ void Act::Init()
 	if (result != nullptr)
 		result->Clear();
 	curSubAct = 0;		//현재 처리할 서브액트
-	isDoing = false;	//현재 서브액트 처리중. 병렬 대기 시 사용
+	isDoing = false;	//현재 서브액트 처리중 여부. 병렬 대기 시 사용
+	shutDown = false;	//강제 종료 상태
 	isDone = false;		//완료 상태
 	isReady = true;		//준비 완료
 }
@@ -172,19 +173,6 @@ void ActionPhaseAct::Init()
 
 void ActionPhaseAct::Update()
 {
-	//여기 병렬 안 하더라. 문제 있으면 알아서 해라 내일의 나
-	//액션 안 썼는데 자꾸 numAction 깎인다....
-	//구조 바꿔서 이제 깎이진 않는데 Action카드 없어도 안 넘어가...
-	if (!subActs[0]->isReady) {
-		bool haveAction = player->hand->FindSelectable(&IsActionCard);
-		player->hand->SetUnselectable();
-		
-		if (!haveAction)
-			Done();
-		else
-			subActs[0]->Init();
-	}
-
 	auto subAct = (UseCardFromHandAct*)subActs[0];
 	subAct->Update();
 	if (subAct->isDoing) {
@@ -192,9 +180,15 @@ void ActionPhaseAct::Update()
 	} 
 
 	if (subAct->isDone) {
-		if (subAct->used == UseCardFromHandAct::Result::USED)
+		if (!subAct->shutDown) {
 			player->numAction--;
-		subAct->Loop();
+			subAct->Loop();
+		}
+		else {
+			//shutDown 된거 => 쓸 수 있는 카드가 없으니 끝낸다
+			Done();
+			return;
+		}			
 	}
 
 	//엔드버튼 활성화
@@ -307,12 +301,12 @@ void BuyCardAct::NextSubAct()
 	case 0:
 	{
 		//구매할 카드 공급처 선택
-		//구매 조건 설정
 		actSelectSupplier->Init(bind(&BuyCardAct::SelectSupplierCondition, this, placeholders::_1));
 	}
 		break;
 	case 1:
 	{
+		//선택한 공급처에서 카드 받기 
 		isDoing = true;
 		auto selectedSupplierResult = (GetSupplierResult*)subActs[0]->ReturnResult();
 		auto selectedSupplier = selectedSupplierResult->supplier;
@@ -332,6 +326,7 @@ void BuyCardAct::NextSubAct()
 		break;
 	case 2:
 	{
+		//받은 카드를 버리는 카드에 넣기
 		auto cardResult = (GetCardResult*)supplyCard->ReturnResult();
 		inputToDiscard->Init(player->discard, cardResult, false);
 		inputToDiscard->isReady = true;
@@ -443,6 +438,8 @@ void SupplyCardAct::Update()
 	Done();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 UseCardFromHandAct::UseCardFromHandAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
 {
@@ -454,48 +451,60 @@ UseCardFromHandAct::UseCardFromHandAct(Act* parent, DominionPlayer* player)
 void UseCardFromHandAct::Init(function<bool(Card*)> conditionFunc)
 {
 	Act::Init();
-	used = Result::NOT;
+	//사용조건 함수
 	condition = conditionFunc;
 }
 
 void UseCardFromHandAct::NextSubAct()
 {
-	if (curSubAct == 0) {
-		auto subAct = (SelectFromHandAct*)subActs[0];
-		subAct->Init(1, condition);
-	}
-	else if (curSubAct == 1) {
-		isDoing = true;
-		//선택한 카드들 인식
+	auto selectCard = (SelectFromHandAct*)subActs[0];
+	auto inputToUsed = (InputCardAct*)subActs[1];
+	auto activeCard = (ActiveCardAct*)subActs[2];
 
-		auto preAct = (SelectFromHandAct*)subActs[0];
-		//선택된 카드를 손에서 제거
-		auto& cards = ((GetCardResult*)preAct->ReturnResult())->cards;
+	switch (curSubAct)
+	{
+	case 0:
+	{
+		//사용 조건에 맞는 카드 선택. 1장만
+		selectCard->Init(1, condition);
+	}
+		break;
+	case 1:
+	{
+		auto& cards = ((GetCardResult*)selectCard->ReturnResult())->cards;
 		if (cards.empty()) {
-			//카드 선택 안 함
+			//카드 선택 안 하고 넘어옴 => 선택할 카드가 없었음
 			shutDown = true;
 			Done();
 			return;
 		}
 
+		//입력 받고 진행중 -> 상위Act에서 다른 데로 못 빠지게 하기
+		isDoing = true;
+
+		//선택된 카드들 손에서 제거
 		for (auto card : cards) {
 			player->hand->Out(card);
 		}
 
-		auto subAct = (InputCardAct*)subActs[1];
-		subAct->SetRequested(preAct->ReturnResult());
-		subAct->Init(player->used, (GetCardResult*)preAct->ReturnResult());
+		//카드들 used로 이동
+		inputToUsed->SetRequested(selectCard->ReturnResult());
+		inputToUsed->Init(player->used, (GetCardResult*)selectCard->ReturnResult());
 	}
-	else if (curSubAct == 2) {
+		break;
+	case 2:
+	{
 		//카드 효과 발동
-		used = Result::USED;
-		auto preAct = (InputCardAct*)subActs[1];
-		auto card = ((GetCardResult*)preAct->ReturnResult())->cards[0];
-
-		auto act = (ActiveCardAct*)subActs[2];
-		act->Init(card->data->key);
+		//1장만 선택하도록 되어있었으니 1장 받기만 하면 된다
+		auto card = ((GetCardResult*)inputToUsed->ReturnResult())->cards[0];
+		activeCard->Init(card->data->key);
+	}
+		break;
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 InputCardAct::InputCardAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
@@ -554,6 +563,8 @@ void InputCardAct::Done()
 	Act::Done();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 SelectFromHandAct::SelectFromHandAct(Act* parent, DominionPlayer* player)
 	: Act(parent, player)
 {
@@ -574,13 +585,17 @@ void SelectFromHandAct::Init(int num, function<bool(Card*)> condition)
 
 void SelectFromHandAct::Update()
 {
+	//이번에 선택한 카드
 	Card* clicked = nullptr;
+
 	auto hand = player->hand;
 	if (!hand->FindSelectable(condition)) {
+		shutDown = true;
 		Done();
 	}
 
 	if (player->isAi) {
+		//ai : 앞에서부터 선택 가능한거 잡아서 넘기기
 		for (auto card : player->hand->cards) {
 			if (card->IsSelectable()) {
 				clicked = card;
@@ -589,19 +604,19 @@ void SelectFromHandAct::Update()
 		}
 	}
 	else {
+		//마우스 클릭 시 해당 위치의 카드를 선택 
 		if (KEY_DOWN(VK_LBUTTON)) {
 			clicked = hand->GetByPos(mousePos);
 			if (clicked != nullptr && !clicked->IsSelectable())
 				clicked = nullptr;
 		}
 
-		//애초에 안 눌렸다
-		if (clicked == nullptr) {
+		//선택된 카드가 없다
+		if (clicked == nullptr)
 			return;
-		}
 
 		for (int i = 0; i < selected.size(); i++) {
-			//누른걸 또 눌렀다
+			//선택된걸 다시 선택했다 -> 선택 해제
 			if (clicked == selected[i]) {
 				clicked->SetSelected(false);
 				selected.erase(selected.begin() + i);
@@ -610,19 +625,18 @@ void SelectFromHandAct::Update()
 		}
 	}
 
+	//선택된 카드 표시
 	if (clicked != nullptr && selected.size() < selectNum) {
 		clicked->SetSelected(true);
 		selected.push_back(clicked);
 	}
 
+	//선택해야할 만큼 다 선택했으면 종료
 	if (selectNum == selected.size()) {
 		Done();
 	}
 }
 
-/// <summary>
-/// ////////////////////////////////////////////////////////////////////////
-/// </summary>
 
 void SelectFromHandAct::Done()
 {
@@ -636,8 +650,13 @@ void SelectFromHandAct::Done()
 	Act::Done();
 }
 
+/// <summary>
+/// ////////////////////////////////////////////////////////////////////////
+/// </summary>
+/// 
 void SelectRangeFromHandAct::Init(int minNum, int maxNum, function<bool(Card*)> condition)
 {
+	//애초에 선택을 안 한다
 	if (maxNum == 0) {
 		isReady = true;
 		isEnd = true;
@@ -648,7 +667,6 @@ void SelectRangeFromHandAct::Init(int minNum, int maxNum, function<bool(Card*)> 
 	SelectFromHandAct::Init(maxNum, condition);
 	this->minNum = minNum;
 	isEnd = false;
-
 }
 
 void SelectRangeFromHandAct::Update()
@@ -656,16 +674,20 @@ void SelectRangeFromHandAct::Update()
 	if (isDone)
 		return;
 
+	//기본적인 과정은 일반 선택과 같다
 	SelectFromHandAct::Update();
 	if (player->isAi) {
+		EndCall();
 		return;
 	}
 
+	//플레이어가 버튼 눌러서 종료한게 아니면 종료하지 않는다 
 	if (!player->isAi && !isEnd) {
 		isDone = false;
 	}
 
 	if (player->IsController()) {
+		//종료버튼 활성화 -> 다른 Act에서 활성화 할 수도 있기 때문에 update에서 활성화한다
 		DominionGameMaster::Get()->SetEndButton(
 			END_BUTTON_TEXT,
 			bind(&SelectRangeFromHandAct::EndCall, this),
@@ -673,6 +695,7 @@ void SelectRangeFromHandAct::Update()
 		);
 	}
 
+	//직접 종료했다면 종료
 	if (isEnd) {
 		Done();
 	}		
@@ -680,7 +703,9 @@ void SelectRangeFromHandAct::Update()
 
 void SelectRangeFromHandAct::Done()
 {
-	if (isEnd || player->isAi) {
+	//플레이어인데 종료선택했거나 ai가 끝난거
+	if (isEnd) {
+		//버튼 활성화 해제
 		DominionGameMaster::Get()->OffEndButton();
 		SelectFromHandAct::Done();
 	}
@@ -705,11 +730,12 @@ void SelectRangeFromHandAct::SetEnd(bool end) {
 void GainGoldAct::Init(int n)
 {
 	num = n;
-	isReady = true;
+	Act::Init();
 }
 
 void GainGoldAct::Update()
 {
+	//골드 추가
 	player->gold += num;
 	Done();
 }
@@ -717,11 +743,12 @@ void GainGoldAct::Update()
 void GainActionAct::Init(int n)
 {
 	num = n;
-	isReady = true;
+	Act::Init();
 }
 
 void GainActionAct::Update()
 {
+	//액션 추가
 	player->numAction += num;
 	Done();
 }
@@ -729,22 +756,24 @@ void GainActionAct::Update()
 void GainBuyAct::Init(int n)
 {
 	num = n;
-	isReady = true;
+	Act::Init();
 }
 
 void GainBuyAct::Update()
 {
+	//구매 추가
 	player->numBuy += num;
 	Done();
 }
-/// <summary>
+
 ////////////////////////////////////////////////////////////////////////
-/// </summary>
 
 void ActiveCardAct::Init(int key)
 {
+	//이미 존재했던 하위 Act 삭제. 키값에 따라 사용할 하위 액트의 종류, 수가 다르다
 	DeleteSubAct();
 
+	//키값에 따른 하위액트 정의
 	switch (CardKey(key))
 	{
 	case CardKey::COOPER:
@@ -1106,26 +1135,6 @@ void MainGameAct::Update()
 		subActs[0]->ChangePlayer(DominionGameMaster::Get()->GetTurnPlayer());
 		Loop();
 	}
-}
-
-TrashCardAct::TrashCardAct(Act* parent, DominionPlayer* player)
-	: Act(parent, player)
-{
-	result = new GetCardResult();
-}
-
-void TrashCardAct::Init(CardSet* cardSet, GetCardResult* request)
-{
-	auto& trash = DominionGameMaster::Get()->trash;
-
-	result->Clear();
-	for (auto card : request->cards) {
-		cardSet->Out(card);
-		trash->InputCard(card, false, true);
-		((GetCardResult*)result)->cards.push_back(card);
-	}
-	request->Clear();
-	Done();
 }
 
 SelectFromWindowAct::SelectFromWindowAct(Act* parent, DominionPlayer* player)

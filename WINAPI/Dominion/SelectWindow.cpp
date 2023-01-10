@@ -87,8 +87,8 @@ void SelectWindow::SetResize(Vector2 pos, Vector2 size)
 		cardRect[i].first->pos.y = pos.y;
 	}
 
-	leftTab->pos = { Left() + leftTab->size.x * 0.5f, pos.y};
-	rightTab->pos = { Right() - rightTab->size.x * 0.5f, pos.y};
+	leftTab->pos = { Left() + leftTab->Half().x, pos.y};
+	rightTab->pos = { Right() - rightTab->Half().x, pos.y};
 }
 
 void SelectWindow::Done()
@@ -124,19 +124,22 @@ void SelectWindow::EndCall()
 }
 void SelectWindow::Update()
 {
-	if (player->isAi && waitTime < waitRate) {
-		waitTime += DELTA;
-		return;
-	}
-
 	if (isEnd) {
+		if (player->isAi && waitTime < waitRate) {
+			//AI라면 바로 끝내지 말고 잠깐 보여주자
+			waitTime += DELTA;
+			return;
+		}
+
 		Done();
 		return;
 	}
 
+	//선택 가능한 카드 표시
 	for (int i = 0; i < nRect; i++) {
 		cardRect[i].second->SetSelectable(selectableFunc);
 	}
+
 	if (player->isAi) {
 		//AI : 앞에서부터 선택 가능한 것들 선택
 		int cnt = 0;
@@ -204,18 +207,20 @@ int SelectWindow::CurSelectedNum()
 Card* SelectWindow::GetCardMouseOn()
 {
 	Card* result = nullptr;
+	//유효한 카드들 중 커서 올라간 카드 찾기
 	for (int i = 0; i < nRect; i++) {
+		//애초에 유효하지 않은 카드. 오류
 		if (!cardRect[i].first->isActive)
 			continue;
 
+		//출력 안 된 카드면 잡히지도 않는다
 		if (!IsClickable(i))
 			continue;
 
+		//잡혔는지 확인
 		if (cardRect[i].first->IsPointCollision(mousePos)) {
 			result = cardRect[i].second;
 		}
-		else if (result != nullptr)
-			break;
 	}
 
 	return result;
@@ -234,17 +239,18 @@ void SelectWindow::SortRects()
 
 void SelectWindow::MoveRects()
 {
+	//활성화된 카드가 없다 => 움직일 카드가 없다
 	if (nRect == 0)
 		return;
 
 	float move = 0.0f;
-	if (leftTab->IsPointCollision(mousePos)
-		&& cardRect[0].first->Left() < Left() + leftTab->size.x) {
+	//leftTab에 커서가 올라왔고 유효한 가장 왼쪽 카드가 leftTab에 걸리지 않았다
+	if (leftTab->IsPointCollision(mousePos)	&& cardRect[0].first->Left() < Left() + leftTab->size.x) {
 		move += 200.0f * DELTA;
 	} 
 
-	if (rightTab->IsPointCollision(mousePos)
-		&& cardRect[nRect-1].first->Right() > Right() - rightTab->size.x) {
+	//rightTab에 커서가 올라왔고 유효한 가장 오른쪽 카드가 rightTab에 걸리지 않았다
+	if (rightTab->IsPointCollision(mousePos) && cardRect[nRect-1].first->Right() > Right() - rightTab->size.x) {
 		move -= 200.0f * DELTA;
 	}
 
@@ -256,6 +262,6 @@ void SelectWindow::MoveRects()
 
 bool SelectWindow::IsClickable(int i)
 {
-	return (cardRect[i].first->Right() >= Left() + leftTab->size.x &&
-		cardRect[i].first->Left() <= Right() - rightTab->size.x);
+	//창에 출력되는 카드인지 검사 
+	return (cardRect[i].first->Right() >= Left() + leftTab->size.x && cardRect[i].first->Left() <= Right() - rightTab->size.x);
 }

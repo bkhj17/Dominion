@@ -168,19 +168,12 @@ private:
 
 class UseCardFromHandAct : public Act {
 public:
-	enum class Result {
-		NOT,
-		USED,
-		NO_SELECTABLE
-	};
-
 	UseCardFromHandAct(Act* parent, DominionPlayer* player);
 	void Init(function<bool(Card*)>);
 	virtual void NextSubAct();
 
+protected:
 	function<bool(Card*)> condition;
-
-	Result used = Result::NOT;
 };
 
 class BuyCardAct : public Act {
@@ -360,14 +353,6 @@ public:
 	void NextSubAct();
 private:
 	int num = 0;
-};
-
-//카드 폐기 Act
-class TrashCardAct : public Act {
-public:
-	TrashCardAct(Act* parent, DominionPlayer* player);
-
-	void Init(CardSet* cardSet, GetCardResult* request);
 };
 
 //창에서 선택 Act
