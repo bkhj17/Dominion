@@ -1055,6 +1055,14 @@ bool ActCondition::CostLimit(const CardData& cardData, int limit)
 	return cardData.cost <= limit;
 }
 
+bool ActCondition::CostLimit(const Card* card, int cost)
+{
+	if(card == nullptr)
+		return false;
+
+	return CostLimit(*card->data, cost);
+}
+
 bool ActCondition::IsActionCard(const Card* card)
 {
 	return card->data->type[(int)CardType::ACTION];

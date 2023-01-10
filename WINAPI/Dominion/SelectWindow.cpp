@@ -234,6 +234,9 @@ void SelectWindow::SortRects()
 
 void SelectWindow::MoveRects()
 {
+	if (nRect == 0)
+		return;
+
 	float move = 0.0f;
 	if (leftTab->IsPointCollision(mousePos)
 		&& cardRect[0].first->Left() < Left() + leftTab->size.x) {
@@ -241,7 +244,7 @@ void SelectWindow::MoveRects()
 	} 
 
 	if (rightTab->IsPointCollision(mousePos)
-		&& cardRect[nRect - 1].first->Right() > Right() - rightTab->size.x) {
+		&& cardRect[nRect-1].first->Right() > Right() - rightTab->size.x) {
 		move -= 200.0f * DELTA;
 	}
 
