@@ -9,13 +9,14 @@ MyPointMovement::MyPointMovement(GameObject* owner)
 void MyPointMovement::Update()
 {
 	if (isMoving) {
-		Vector2 vector = (targetPos - owner->pos);
-		if (vector.Length() <= tolerance) {
+		Vector2 v = (targetPos - startPos);
+		moved += speed * DELTA;
+		moved = Clamp(0, v.Length(), moved);
+
+		if (v.Length() - moved <= tolerance)
 			Teleport(targetPos);
-		}
-		else {
-			owner->pos += vector.GetNormalized() * speed * DELTA;
-		}
+		else
+			owner->pos = startPos + v.GetNormalized() * Clamp(0, v.Length(), moved);
 	}
 }
 
@@ -23,8 +24,10 @@ void MyPointMovement::SetTargetPos(Vector2 target, float speed, float tolerance)
 {
 	this->tolerance = tolerance;
 
-	Vector2 v = target - owner->pos;
-	if (v.Length() < tolerance) {
+	moved = 0.0f;
+	startPos = owner->pos;
+	
+	if ((target - startPos).Length() < tolerance) {
 		Teleport(target);
 		return;
 	}
@@ -36,12 +39,7 @@ void MyPointMovement::SetTargetPos(Vector2 target, float speed, float tolerance)
 
 void MyPointMovement::SetTargetPosByTime(Vector2 target, float time, float tolerance)
 {
-	this->tolerance = tolerance;
-
-	Vector2 v = target - owner->pos;
-	isMoving = true;
-	speed = v.Length() / time;
-	targetPos = target;
+	SetTargetPos(target, (target - owner->pos).Length() / time, tolerance);
 }
 
 void MyPointMovement::Teleport(Vector2 target)

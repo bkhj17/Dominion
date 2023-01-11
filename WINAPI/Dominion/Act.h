@@ -180,9 +180,7 @@ class BuyCardAct : public Act {
 public:
 	BuyCardAct(Act* parent, DominionPlayer* player);
 
-	void Init() override;
 	void NextSubAct() override;
-
 private:
 	//공급처 선택 조건 함수. 플레이어 재물보다 적어야 함
 	bool SelectSupplierCondition(CardSupplier* supplier);

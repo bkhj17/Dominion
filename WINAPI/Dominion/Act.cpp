@@ -74,7 +74,7 @@ void Act::NextSubAct()
 	if (curSubAct >= subActs.size())
 		return;
 
-	//준비
+	//하위 액트 준비
 	subActs[curSubAct]->Init();
 }
 
@@ -232,7 +232,6 @@ void BuyPhaseAct::Init()
 
 void BuyPhaseAct::Update()
 {
-	auto endButton = DominionGameMaster::Get()->endButton;
 	if (player->isAi) {
 		if (curSubAct == subActs.size()) {
 			endCall = true;
@@ -251,26 +250,20 @@ void BuyPhaseAct::Update()
 	}
 	else {
 		//하위 Act 병렬 처리
-		endButton->isActive = false;
 		for (auto subAct : subActs) {
 			subAct->Update();
 			if (subAct->isDoing) {
-				
 				return;
 			}
 			else if (subAct->isDone) {
 				subAct->Loop();
 			}
 		}
-		endButton->isActive = true;
+		DominionGameMaster::Get()->SetEndButton("Buy Phase End", bind(&BuyPhaseAct::EndCall, this));
 	}
 
-	if (endButton->isActive) {
-		endButton->SetText("Buy Phase End");
-		endButton->SetEvent(bind(&BuyPhaseAct::EndCall, this));
-	}
 	if (player->numBuy == 0 || endCall) {
-		endButton->isActive = false;
+		DominionGameMaster::Get()->OffEndButton();
 		Done();
 	}
 }
@@ -283,12 +276,6 @@ BuyCardAct::BuyCardAct(Act* parent, DominionPlayer* player)
 	subActs.push_back(new GetSupplierAct(this, nullptr));
 	subActs.push_back(new SupplyCardAct(this, nullptr));
 	subActs.push_back(new InputCardAct(this, nullptr));
-}
-
-void BuyCardAct::Init()
-{
-	shutDown = false;
-	Act::Init();
 }
 
 void BuyCardAct::NextSubAct()
@@ -1200,6 +1187,7 @@ PoacherEffectAct::PoacherEffectAct(Act* parent, DominionPlayer* player)
 void PoacherEffectAct::Init()
 {
 	subActs[3]->Loop();
+	subActs[4]->Loop();
 	Act::Init();
 }
 
