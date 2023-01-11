@@ -53,7 +53,7 @@ class Act
 	friend class MainGameAct;
 public:
 	Act(Act* parent, DominionPlayer* player) : parent(parent), player(player) {}
-	~Act();
+	virtual ~Act();
 
 	//자신을 실행하는데에 필요한 데이터 입력
 	virtual void Init();
@@ -158,7 +158,7 @@ private:
 class TurnEndAct : public Act {
 public:
 	TurnEndAct(Act* parent, DominionPlayer* player);
-	~TurnEndAct();
+	virtual ~TurnEndAct();
 
 	// Act을(를) 통해 상속됨
 	virtual void NextSubAct();
