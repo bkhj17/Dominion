@@ -397,7 +397,7 @@ class HarbingerEffectAct : public Act
 {
 public:
 	HarbingerEffectAct(Act* parent, DominionPlayer* player);
-	~HarbingerEffectAct();
+	virtual ~HarbingerEffectAct();
 	void NextSubAct();
 	
 private:
